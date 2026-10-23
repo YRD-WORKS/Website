@@ -178,8 +178,8 @@
     /* [nur Repo 23.10.] Geteilte Auswahl (Ruben): Einleitung DE/EN und ein deutlicher Knopf zu allen Arbeiten */
     var sh=document.getElementById('aw-sh');
     if(!sh){ sh=document.createElement('div'); sh.id='aw-sh'; sh.className='aw-sh';
-      sh.innerHTML='<p class="aw-sh-de">Diese Auswahl hat die Person, die dir den Link geschickt hat, für dich zusammengestellt. Bei Interesse findest du unter „Alle Arbeiten“ weitere Arbeiten von YRD.Works.</p>'
-        +'<p class="aw-sh-en" lang="en">The person who sent you this link put this selection together for you. If you are interested, you will find more works by YRD.Works under “All works”.</p>'
+      sh.innerHTML='<p class="aw-sh-de">Diese Auswahl der Projekte von YRD.Works wurde extra für dich zusammengestellt. Das gesamte Portfolio findest du unter „Alle Arbeiten“.</p>'
+        +'<p class="aw-sh-en" lang="en">This selection of YRD.Works projects was put together especially for you. You will find the full portfolio under “All works”.</p>'
         +'<a class="aw-sh-b" href="./" data-home>Alle Arbeiten / All works →</a>';
       sh.querySelector('a').addEventListener('click',function(){ try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){} });   /* Adresse ohne ?sel=, sonst kaeme beim Neuladen wieder die Auswahl */
       hd.appendChild(sh); }
