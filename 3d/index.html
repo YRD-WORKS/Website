@@ -1273,6 +1273,14 @@ function sideWall(s){
   room.walls.forEach((w,k)=>{ if(k===room.f) return; const a=angD(y0,-w.phi); if(Math.sign(a)===Math.sign(s) && Math.abs(a)<bd && Math.abs(a)>1e-4){ bd=Math.abs(a); b=k; } });
   return b;
 }
+/* Drehen begrenzen (23.10., Ruben): das linke und das rechte Bild sind das Ende der Strecke, kein Ueberdrehen.
+   Bei Raeumen, deren Flaechen rundum stehen (Abstand der Enden fast ein Vollkreis), keine Grenze. */
+function clampYaw(rm){
+  const y0=-rm.walls[rm.midK??0].phi; let lo=0, hi=0;
+  rm.walls.forEach(w=>{ const a=angD(y0,-w.phi); if(a<lo) lo=a; if(a>hi) hi=a; });
+  if(hi-lo>Math.PI*1.75) return;
+  const rel=angD(y0,rm.yawT), c=clamp(rel,lo,hi); if(c!==rel) rm.yawT+=c-rel;
+}
 function goWall(k, near){
   const w=room.walls[k]; endRead(); room.f=k;
   room.yawT=cam.yaw+angD(cam.yaw,-w.phi); room.pitchT=near?0:PITCH0; room.pxT=0; room.pyT=0;
@@ -1656,8 +1664,8 @@ el.addEventListener('pointermove',e=>{
       const want=room.pxT-dx*pw; if(Math.abs(want)>L.x+1e-6) ptr.ov=(ptr.ov||0)+dx;
       room.pxT=clamp(want,-L.x,L.x);
     } else if(touch && hochP()){ const k=2*Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*innerWidth/innerHeight)/innerWidth, now=performance.now(), dt=Math.max(8,now-(ptr.vt||now-16));
-      room.yawT+=dx*k; ptr.v=0.6*(ptr.v||0)+0.4*(dx*k/dt); ptr.vt=now; ptr.ov=(ptr.ov||0)+dx; ptr.calm=true; }   /* Handy (22.10. abends, Ruben): in Ruhe gleiten die Bilder waagrecht mit dem Finger, beim Loslassen rastet das naechste Bild ein; kein Kippen, kein Vor und Zurueck */
-    else { room.sT=0; room.yawT+=dx*(touch?0.005:0.0032); room.pitchT=clamp(room.pitchT+dy*(touch?0.003:0.0022),-0.3,0.3); }
+      room.yawT+=dx*k; clampYaw(room); ptr.v=0.6*(ptr.v||0)+0.4*(dx*k/dt); ptr.vt=now; ptr.ov=(ptr.ov||0)+dx; ptr.calm=true; }   /* Handy (22.10. abends, Ruben): in Ruhe gleiten die Bilder waagrecht mit dem Finger, beim Loslassen rastet das naechste Bild ein; kein Kippen, kein Vor und Zurueck */
+    else { room.sT=0; room.yawT+=dx*(touch?0.005:0.0032); clampYaw(room); room.pitchT=clamp(room.pitchT+dy*(touch?0.003:0.0022),-0.3,0.3); }
     return;
   }
   if(mode!=='look') return;
@@ -1694,7 +1702,16 @@ el.addEventListener('pointerup',endPtr); el.addEventListener('pointercancel',e=>
 el.addEventListener('wheel',e=>{
   e.preventDefault(); stopDrift();
   if(mode==='fly'){ finishFly(); return; }
-  if(mode==='proj' && room){ roomWheel(e.deltaY+e.deltaX); return; }
+  if(mode==='proj' && room){
+    if(Math.abs(e.deltaX)>Math.abs(e.deltaY) && !e.ctrlKey){   /* Trackpad waagrecht wischen (23.10., Ruben): seitlich bewegen wie beim Ziehen, nicht vor und zurueck */
+      room.idle=0; hintT=Math.min(hintT,1);
+      if(room.read||room.te<1) return;
+      if(isNear(room)){ const w=room.walls[room.f], L=panLim(w,room.s), pw=pxWorld(room.r-room.s); room.pxT=clamp(room.pxT+e.deltaX*pw,-L.x,L.x); }
+      else { room.sT=0; room.yawT-=e.deltaX*0.0032; clampYaw(room); }
+      return;
+    }
+    roomWheel(e.deltaY); return;
+  }
   if(mode!=='look') return;
   if(performance.now()-closedAt<500){ closedAt=performance.now(); return; }   // Nachlauf des Rausscrollens nicht als Weitergehen werten, erst nach einer Pause
   retT=0;
