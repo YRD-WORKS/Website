@@ -72,7 +72,15 @@
       if(bug){ L.push('Passiert: '+$('#fb-was').value.trim()); L.push('Erwartet: '+$('#fb-erw').value.trim()); L.push('Wie schlimm: '+val('prio')+' ('+P[val('prio')]+')'); L.push('Wie oft: '+val('oft')); }
       else L.push('Vorschlag: '+$('#fb-was').value.trim());
       L.push('','Technik: '+tech()); return L.join('\n'); }
-    function subj(){ var n=$('#fb-name').value.trim(); return '[Testrunde] '+val('art')+(n?' ('+n+')':'')+' · '+($('#fb-seite').value.trim()||val('ansicht')); }
+    /* Betreff = Aufgabentitel in Todoist (23.10., Ruben): "(Name) Kurzbeschreibung · Seite · Ansicht p1 @testrunde".
+       Todoist liest p1-p3 als Prioritaet und @testrunde als Etikett aus dem Betreff; im Freitext werden @, + und p1-p4 entschaerft. */
+    function kurz(t,max){ t=t.replace(/\s+/g,' ').trim(); var m=t.match(/^.{12,}?[.!?](\s|$)/); if(m) t=m[0].trim().replace(/[.!?]$/,'');
+      t=t.replace(/@/g,' at ').replace(/(^|\s)\+/g,'$1').replace(/(^|\s)p([1-4])(?=\s|$)/gi,'$1Prio $2 ').replace(/\s+/g,' ').trim();
+      if(t.length>max){ t=t.slice(0,max); var i=t.lastIndexOf(' '); if(i>max*0.6) t=t.slice(0,i); t+='…'; }
+      return t.charAt(0).toUpperCase()+t.slice(1); }
+    function subj(){ var bug=val('art')==='Fehler', n=$('#fb-name').value.trim()||'anonym', P={'kaputt, geht nicht':'p1','sieht falsch aus':'p2','Kleinigkeit':'p3'};
+      var wo=[$('#fb-seite').value.trim(), val('ansicht'), val('geraet')==='Handy'||val('geraet')==='Tablet'?val('geraet'):''].filter(Boolean).join(' · ');
+      return '('+n.replace(/[@+]/g,'')+') '+(bug?'':'Vorschlag: ')+kurz($('#fb-was').value,80)+(wo?' · '+wo:'')+(bug&&P[val('prio')]?' '+P[val('prio')]:'')+' @testrunde'; }
     function open(){ $('#fb-seite').value=seite(); var a=f.querySelector('input[name="ansicht"][value="'+ansicht()+'"]'); if(a) a.checked=true; $('#fb-tech').textContent=tech(); $('#fb-msg').textContent=''; upd(); ov.hidden=false; tab.setAttribute('aria-expanded','true'); setTimeout(function(){ ($('#fb-name').value?$('#fb-was'):$('#fb-name')).focus(); },30); }
     function shut(){ ov.hidden=true; tab.setAttribute('aria-expanded','false'); tab.focus(); }
     function keep(){ try{ localStorage.setItem('yrd-fb-name',$('#fb-name').value.trim()); }catch(e){} }
