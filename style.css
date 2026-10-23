@@ -543,3 +543,13 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
   #news .post-title{font-size:1.9rem}
   .post-row{gap:.5rem} .post-row + .post-row{margin-top:.5rem}
 }
+
+/* Menue oben rechts (Ruben 23.10.): der gewaehlte Punkt (About, News, Index, Contact) ist unterstrichen */
+body[data-ov="about"] :is(.nav .links,.head-links) :is(a[href$="about/"],a[href$="#about"]),
+body[data-ov="news"] :is(.nav .links,.head-links) :is(a[href$="news/"],a[href$="#news"]),
+body[data-ov="contact"] :is(.nav .links,.head-links) :is(a[href$="contact/"],a[href$="#contact"]),
+:is(.nav .links,.head-links) a[aria-current="page"]{text-decoration:underline; text-underline-offset:.18em; text-decoration-thickness:1px}
+
+/* Testrunde 23.10., Ruben: der Link YRD.Works oben links war so breit wie seine Rasterspalten (bis zur Mitte) und lag unter dem
+   Projekttitel oben mittig; ein Klick auf den Titel fuehrte deshalb in die Overview. Jetzt nur so breit wie das Wort */
+.nav .home,.head3 > a[data-home]{justify-self:start; width:max-content}
