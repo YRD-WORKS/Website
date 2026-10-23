@@ -557,7 +557,8 @@ body[data-ov="contact"] :is(.nav .links,.head-links) :is(a[href$="contact/"],a[h
 /* Testrunde 23.10., Ruben (iPhone, iOS 26): die Seite liegt auch unter der durchsichtigen Adressleiste; dort schaute ueber der
    Projektansicht die Uebersicht durch. Ist ein Projekt offen, blendet die Uebersicht nach dem Einblenden aus, beim Schliessen sofort ein */
 main{transition:visibility 0s}
-body[data-ov="project"] main{visibility:hidden; transition:visibility 0s linear .45s}
+body[data-ov]:not([data-ov=""]) main{visibility:hidden; transition:visibility 0s linear .85s}   /* [nur Repo 23.10.] alle Ebenen (Projekt, About, News, Contact ...), nach dem Einblenden */
+html.intro-on main{visibility:hidden}   /* [nur Repo 23.10.] Intro: unter der unteren Leiste schaute ein Foto durch; mit dem Ausblenden des Intros ist die Uebersicht sofort da */
 
 /* [nur Repo 23.10.] Geteilte Auswahl: Einleitung und Knopf zu allen Arbeiten */
 .aw-sh{margin:1.2em 0 0; max-width:42em}
