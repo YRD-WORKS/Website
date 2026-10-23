@@ -3,7 +3,7 @@
    Bildschirm werden vorbelegt. Abschalten fuer den Release: FEEDBACK=False in build.py (dann ist diese Datei leer). */
 (function(){
   if(window.__yrdFb) return; window.__yrdFb=1;
-  var MAIL='info@yrd.works';
+  var MAIL='add.task.nn87n3crx3sdbd8u@todoist.net';   /* Todoist-Projekt NEUE WEBSITE (23.10., Ruben) */
   var ua=navigator.userAgent||'', touch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
   var w=screen.width||innerWidth, h=screen.height||innerHeight, kurz=Math.min(w,h);
   function sys(){ if(/iPhone|iPod/.test(ua)) return 'iOS'; if(/iPad/.test(ua)||(/Macintosh/.test(ua)&&touch)) return 'iPadOS';
