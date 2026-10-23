@@ -558,3 +558,11 @@ body[data-ov="contact"] :is(.nav .links,.head-links) :is(a[href$="contact/"],a[h
    Projektansicht die Uebersicht durch. Ist ein Projekt offen, blendet die Uebersicht nach dem Einblenden aus, beim Schliessen sofort ein */
 main{transition:visibility 0s}
 body[data-ov="project"] main{visibility:hidden; transition:visibility 0s linear .45s}
+
+/* [nur Repo 23.10.] Geteilte Auswahl: Einleitung und Knopf zu allen Arbeiten */
+.aw-sh{margin:1.2em 0 0; max-width:42em}
+.aw-sh[hidden]{display:none}
+.aw-sh p{margin:0 0 .6em}
+.aw-sh .aw-sh-en{font-style:italic; color:var(--ink-4)}
+.aw-sh-b{display:inline-block; margin-top:.6em; padding:.45em 1em .4em; border:1px solid var(--ink); border-radius:10em; color:var(--ink)}
+@media (hover:hover) and (pointer:fine){ .aw-sh-b:hover{background:var(--ink); color:var(--bg)} }

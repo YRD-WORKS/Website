@@ -175,6 +175,15 @@
     document.getElementById('aw-n').textContent=n+(n===1?' Project':' Projects');
     document.getElementById('aw-pdf').setAttribute('href',a.shared?'portfolio/index.html?p='+a.idx.map(pdfKey).join(','):'portfolio/index.html?mappe='+encodeURIComponent(a.id));
     var tx=document.getElementById('aw-text'); tx.textContent=a.text||''; tx.hidden=!a.text;
+    /* [nur Repo 23.10.] Geteilte Auswahl (Ruben): Einleitung DE/EN und ein deutlicher Knopf zu allen Arbeiten */
+    var sh=document.getElementById('aw-sh');
+    if(!sh){ sh=document.createElement('div'); sh.id='aw-sh'; sh.className='aw-sh';
+      sh.innerHTML='<p class="aw-sh-de">Diese Auswahl hat die Person, die dir den Link geschickt hat, für dich zusammengestellt. Bei Interesse findest du unter „Alle Arbeiten“ weitere Arbeiten von YRD.Works.</p>'
+        +'<p class="aw-sh-en" lang="en">The person who sent you this link put this selection together for you. If you are interested, you will find more works by YRD.Works under “All works”.</p>'
+        +'<a class="aw-sh-b" href="./" data-home>Alle Arbeiten / All works →</a>';
+      sh.querySelector('a').addEventListener('click',function(){ try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){} });   /* Adresse ohne ?sel=, sonst kaeme beim Neuladen wieder die Auswahl */
+      hd.appendChild(sh); }
+    sh.hidden=!a.shared;
     var on=document.querySelector('.aw-list a[aria-current]'), li=on&&on.parentNode; if(li&&li.scrollWidth>li.clientWidth) li.scrollLeft=Math.max(0,on.offsetLeft-li.clientWidth/2+on.offsetWidth/2);   /* Handy: gewaehlte Auswahl in der Zeile sichtbar */
   }
   var grid=document.getElementById('grid'), frag=document.createDocumentFragment();
