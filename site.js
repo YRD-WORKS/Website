@@ -276,8 +276,11 @@
     /* DE und EN als zwei unabhaengige Spalten: keine Luecken mehr, wenn ein Absatz in einer Sprache laenger ist */
     function paras(a){ return a.filter(function(x){return String(x||'').trim();}).map(function(x){return '<p>'+esc(x)+'</p>';}).join(''); }
     if(txt.length&&en.length) rows.push('<div class="lang-sw caption"><button type="button" data-l="de">DE</button> / <button type="button" data-l="en">EN</button></div>');
+    /* Testrunde 23.10., Ruben: Fotocredits klein am Ende des Werktexts (Feld fotos aus werkverzeichnis.json, build.py) */
+    var cf=String((i>=0&&p.fotos)||'').trim().replace(/ · /g,', ');
     if(txt.length) rows.push('<div class="de">'+paras(txt)+'</div>');
     if(en.length) rows.push('<div class="en" lang="en">'+paras(en)+'</div>');
+    if(cf&&rows.length) rows.push('<p class="credit">'+esc(cf.indexOf(':')>=0?cf:'Fotos / Photos: '+cf)+'</p>');   /* eine Zeile fuer beide Sprachen, mittig */
     if(i<0) rows.push('<div class="legal-row caption"><a href="'+href('impressum')+'">Impressum</a><a href="'+href('datenschutz')+'">Datenschutz</a></div>');
     var bi=document.getElementById('proj-bi'); bi.innerHTML=rows.join(''); bi.hidden=!rows.length; bi.classList.toggle('show-en',LANG==='en');
     document.getElementById('project').classList.toggle('is-proj',i>=0);
