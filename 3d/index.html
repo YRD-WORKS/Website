@@ -4,7 +4,7 @@
 <script>window.YRD_Z=false;</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>3D, YRD.Works</title>
+<title>YRD.Works, 3D</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
 <!-- dieselben Stile wie die Galerie: Navigation, Ebenen (About, News, Contact, Impressum, Datenschutz), Intro -->
 <link rel="stylesheet" href="../style.css">
@@ -50,6 +50,7 @@ body.proj-open .nav{z-index:21}
 body.proj-open #rtop{opacity:1}
 body[data-ov]:not([data-ov=""]) #rtop{opacity:0}   /* About, News, Contact, Impressum, Datenschutz liegen darueber: dort kein Projekttitel */
 @media (max-width:700px){#rtop{padding-top:calc(.9rem + 2em + env(safe-area-inset-top,0px))}}
+@media (max-width:700px){body.reading #rtop{opacity:0}}   /* Testrunde 23.10., Nora: beim Lesen steht der Titel schon im Text, oben nicht doppelt */
 /* durchgehende weisse Leiste unten wie in 2D: dahinter stehen Ansicht, Oben / Rundgang, Jahr und Titel, im Raum Titel und Next Project */
 #fband{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink);border-radius:var(--fb-r);z-index:4;pointer-events:none;transition:opacity .6s ease}
 #fband.off{opacity:0}
@@ -415,6 +416,8 @@ catch(e){ $('#err').hidden=false; $('#err').textContent='Die Projektdaten konnte
 const P = DATA.projects, N = P.length;
 // beim Bau nachgezogene Bildstrecken (window.YRD_GAL, aus Seite-neu/Bilder): Heroshot und die Bilder nach dem ersten ersetzen
 P.forEach(p=>{ const G=(window.YRD_GAL||{})[p.slug]; if(G){ if(G.g.length) p.gallery=[p.gallery[0]].concat(G.g); if(G.tile) p.tile=G.tile; } });
+/* Testrunde 23.10., David: die uebrigen Bilder der 2D-Strecke stehen auch im Raum (window.YRD_MEHR, Adressen auf ../Bilder; als Datei per Doppelklick laedt WebGL sie nicht) */
+if(location.protocol!=='file:') P.forEach(p=>{ const M=(window.YRD_MEHR||{})[p.slug]; if(M) p.gallery=p.gallery.concat(M); });
 // Texte beim Bau aus projects.json und about.json (window.YRD_TXT); die Texte in assets.js sind ein alter Stand
 { const T=window.YRD_TXT; if(T){ P.forEach(p=>{ const t=(T.p||{})[p.title]; if(t) Object.assign(p,t); }); if(T.a&&DATA.about) Object.assign(DATA.about,T.a);
   /* Reihenfolge wie in projects.json (2D-Raster), z. B. wenn ein Jahr korrigiert wurde und das Projekt dort umgezogen ist */
@@ -454,7 +457,7 @@ const PFOV_HOCH=62; function projFov(){ FOVS.proj=(innerWidth<innerHeight && inn
 /* Handy hochkant (Ruben 22.10.): extreme Querformate (breiter als 2 : 1, z. B. Tables) stehen eingerastet nicht ganz im Bild: man steht so, als waere
    das Bild nur 1,25 : 1 breit, es wird groesser und ist links und rechts beschnitten; Wischen faehrt ueber das ganze Bild, am Rand weiter zum Nachbarbild */
 const QX=2, QCAP=1.25, hochP=()=>innerWidth<innerHeight&&innerWidth<=700;
-const fitWW=w=>(hochP()&&w.kind!=='text'&&w.ww>w.hh*QX)?w.hh*QCAP:w.ww;
+const QXD=3, fitWW=w=>(w.kind!=='text'&&w.ww>w.hh*(hochP()?QX:QXD))?w.hh*QCAP:w.ww;   /* Testrunde 23.10., David: auch am Desktop rastet ein extremes Querformat (ab 3 : 1, z. B. Tables) nah ein wie in 2D, es fuellt die Hoehe und laeuft seitlich ueber den Rand */
 const QF=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2);
 const Y=new THREE.Vector3(0,1,0);
 
@@ -1322,6 +1325,7 @@ function openProject(i, instant){ zTrack(P[i]&&P[i].slug||'');
   $('#r-title').textContent=t.p.title; updCount();
   setTimeout(()=>{ if(cur===i) prefetchRoom((i+1)%N); }, instant?1500:600);
   $('#rtop-t').textContent=t.p.title; $('#rtop-y').textContent=t.p.year;   // Titel oben mittig
+  document.title='YRD.Works, '+t.p.title;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works, dann der Projektname */
   retT=0; mode='proj'; hint.textContent=HINTS.proj; showHint(true); hintT=8;
   ['#navmode','#yearbox','#legal'].forEach(s=>$(s).classList.add('off'));
   ['#rbar','#rinfo'].forEach(s=>$(s).classList.remove('off'));
@@ -1455,7 +1459,7 @@ function stepSteer(rm,dt){
 }
 function closeProject(){
   if(mode!=='proj') return;
-  document.body.classList.remove('proj-open');
+  document.body.classList.remove('proj-open'); document.title='YRD.Works, 3D';
   // die anderen Projekte erscheinen erst wieder, wenn man zurueck im Ring steht; ihre Staffeln liegen draussen, wo man gerade noch ist
   tiles.forEach(t=>t.fadeT=t.i===cur?1:0); exitHold=true;
   if(room){ endRead(); if(room.pan){ room.pan.old.panEnd=true; room.pan=null; } room.mT=0; room.lk=room.f; room=null; }
@@ -1688,6 +1692,7 @@ function endPtr(e){
       else if(Math.abs(ov)>40){ const nr=isNear(room), k=sideWall(Math.sign(ov)); if(k>=0) goWall(k,nr); } } return; }   /* Handy (22.10.): nah am Bild weiterwischen zum naechsten Bild */
   if(mode==='proj' && room){
     if(room.te<1) return;
+    { const r=$('#rtop').getBoundingClientRect(); if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom) return; }   /* Testrunde 23.10., Ruben: Klick auf den Titel oben mittig ist kein Link, fuehrt nirgends hin */
     const w=pickWall(e.clientX,e.clientY);
     if(pickWall.exit){ closeProject(); return; }   // Pfeil zurueck
     if(w && pickWall.turn){ goWall(w.k,false); return; }   // Wendepfeil: in der Mitte bleiben, zur Nachbarflaeche drehen
