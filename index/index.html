@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>Index, YRD.Works</title>
+<meta name="description" content="Alle Arbeiten von YRD.Works als Liste: nach Arbeitsfeldern und Themen filtern, auswählen, als Link teilen oder als PDF laden.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Ansicht Index: alle Arbeiten als Liste. Oben Erklaerung DE/EN, Knoepfe Fields und Topics (klappen auf), Suche am Handy; Zeilen anwaehlbar;
+   unten in der Leiste: Link kopieren und PDF fuer die Auswahl (ohne Auswahl: fuer alles, was die Liste gerade zeigt) */
+.ix{padding-bottom:9rem}
+.ix-lead{margin:0 0 2.2rem}
+.ix-lead h1{font:inherit;margin:0 0 .4em}
+.ix-lead p{margin:0;max-width:40em}
+.ix-row .lb{flex:0 0 4.2em}
+.chips{display:flex;flex-wrap:wrap;gap:.5em .5em}
+.chip,.fld{font:inherit;color:var(--ink);background:var(--bg);border:0;cursor:pointer;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink-4);white-space:nowrap;transition:background .2s ease,color .2s ease}
+.fld{box-shadow:none;margin:0 -.4em}
+.chip[aria-pressed="true"],.fld[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none;margin:0}
+@media (hover:hover) and (pointer:fine){ .chip:not([aria-pressed="true"]):hover,.fld:not([aria-pressed="true"]):hover{background:rgba(0,0,255,.08)} }
+.ix-q{font:inherit;color:var(--ink);border:0;border-bottom:1px solid var(--ink-4);padding:.25em 0;width:min(26em,100%);background:transparent;outline:none}
+.ix-q::placeholder{color:var(--ink-4)}
+.lst{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-4)}
+.lst li{display:grid;grid-template-columns:2.2em 6.5em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--ink-2,rgba(0,0,255,.14))}
+.lst li[hidden]{display:none}
+.lst .ck{width:1.15em;height:1.15em;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);border:0;padding:0;cursor:pointer;justify-self:start}
+.lst li[aria-selected="true"] .ck{background:var(--ink)}
+.lst li[aria-selected="true"]{background:rgba(0,0,255,.05)}
+.lst img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover}
+.lst .t a{color:var(--ink)}
+@media (hover:hover) and (pointer:fine){ .lst .t a:hover{text-decoration:underline;text-underline-offset:.2em} }
+.lst .y,.lst .o,.lst .a{color:var(--ink-4)}
+.lst .y{font-variant-numeric:tabular-nums}
+.empty{margin-top:1.4rem}
+/* Leiste: links Ansicht, Mitte Auswahl, rechts Link und PDF */
+.fbar .fb-c{gap:1em}
+.ixa{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;cursor:pointer;font:inherit;border:0}
+.ixa.solid{background:var(--ink);color:var(--bg)}
+@media (hover:hover) and (pointer:fine){ .ixa:not(.solid):hover{background:rgba(0,0,255,.08)} }
+.fb-r{display:flex;gap:.6em;align-items:center}
+.vsw .seg > .on{cursor:default}
+@media (max-width:700px){
+  .ix-row{display:block}
+  .ix-row .lb{display:none}
+  .fields,#topics{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--pad));padding:0 var(--pad);scrollbar-width:none}
+  .fields::-webkit-scrollbar,#topics::-webkit-scrollbar{display:none}
+  #topics{overflow-x:auto;margin:0 calc(-1 * var(--pad)) 1rem;padding:0 var(--pad);scrollbar-width:none}
+  .fbar .fb-r{display:flex!important} #pdf{display:none} #view{display:none}   /* Handy: Link teilen ja, PDF nein (Ruben 21.10.) */
+  .ix-lead p{font-size:13px}
+  .lst li{grid-template-columns:2em 5.2em minmax(0,1fr) auto;row-gap:.15em}
+  .lst .o{display:none}
+  .lst .a{grid-column:3 / span 2}
+  .lst .ck{grid-row:span 2}
+  .lst .im{grid-row:span 2}
+  .fbar .fb-c #selinfo{display:none}
+  .fbar{font-size:15px}
+  .ixa,.vsw .seg > .on,.vsw .seg > a{padding:.45em .8em .4em}
+  .vsw .vlab{display:none}
+}
+@media (min-width:701px){ .ix-row:has(#q){display:none} }   /* Desktop: gesucht wird ueber die Lupe in der Leiste (suche.js) */
+.toast{position:fixed;left:50%;bottom:calc(5.4rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.4em .9em;border-radius:10em;opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:30}
+.toast.on{opacity:1}
+
+/* ---- Vereinfachter Index (23.10.) ---- */
+.ix-lead{margin:0 0 1.6rem}
+/* Ruben 23.10.: Fields und Topics hinter zwei Knoepfen, erst beim Aufklappen gebaut; Fields als Kacheln DE/EN; Field und Topics schliessen sich aus */
+.ix-bar{display:flex;align-items:baseline;justify-content:space-between;gap:1em;margin:0 0 .6rem;flex-wrap:wrap}
+.ix-bar .l{display:flex;align-items:baseline;gap:.6em;flex-wrap:wrap}
+.ix-bar .r{display:flex;gap:1.2em;align-items:baseline}
+.tg{font:inherit;color:var(--ink);background:none;border:0;padding:0;cursor:pointer}
+.act{display:inline-flex;align-items:baseline;gap:.35em;font:inherit;color:var(--bg);background:var(--ink);border:0;border-radius:10em;padding:.3em .55em .26em .8em;line-height:1;cursor:pointer;white-space:nowrap}
+.act span{opacity:.7}
+.pn{margin:.4rem 0 1.4rem}
+.pn[hidden]{display:none}
+@media (hover:hover) and (pointer:fine){ .fl-i:hover,.tg:hover{text-decoration:underline;text-underline-offset:.2em} }
+.ix-lead{margin:0 0 1.6rem}
+.ix{--gh:min(66vh,33vw);--hw:calc(var(--gh) * 1.5)}
+.ix-bi{margin-top:0}
+.ix-bi p + p{margin-top:0}
+@media (max-width:700px){ .ix{--hw:calc(100vw - 2 * var(--pad))} .ix-bi{row-gap:1.2em} }
+.tgs{display:flex;gap:.6em;margin:0 0 1.6rem}
+.tgb{font:inherit;color:var(--ink);background:var(--bg);border:0;cursor:pointer;line-height:1;padding:.42em 1em .38em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);white-space:nowrap;transition:background .2s ease,color .2s ease}
+.tgb::after{content:"+";display:inline-block;margin-left:.5em;width:.6em}
+.tgb[aria-expanded="true"]{background:var(--ink);color:var(--bg)}
+.tgb[aria-expanded="true"]::after{content:"\2013"}
+.tgb .k{opacity:.6;margin-left:.35em}
+@media (hover:hover) and (pointer:fine){ .tgb:not([aria-expanded="true"]):hover{background:rgba(0,0,255,.08)} .tgb:hover{text-decoration:none} }
+.pn{margin:-.6rem 0 1.8rem}
+.fl-g{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem}
+.fl-c{font:inherit;color:var(--ink);background:var(--bg);border:0;cursor:pointer;text-align:left;width:100%;height:100%;min-height:6.4em;padding:.75em .95em .8em;border-radius:.9em;box-shadow:inset 0 0 0 1px var(--ink-4);display:flex;flex-direction:column;gap:.35em;transition:background .2s ease,color .2s ease}
+.fl-c .de{line-height:1.2}
+.fl-c .en{line-height:1.25;color:var(--ink-4)}
+.fl-c .n{margin:auto 0 0;color:var(--ink-4)}
+.fl-c[aria-pressed="true"]{text-decoration:none}
+@media (hover:hover) and (pointer:fine){ .fl-c:hover{text-decoration:none} }
+.fl-c[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+.fl-c[aria-pressed="true"] .en,.fl-c[aria-pressed="true"] .n{color:var(--bg);opacity:.7}
+@media (hover:hover) and (pointer:fine){ .fl-c:not([aria-pressed="true"]):hover{background:rgba(0,0,255,.06);box-shadow:inset 0 0 0 1px var(--ink)} }
+/* alles ueber der Liste in einer Groesse, nur der deutsche Titel in den Fields kleiner (Ruben 23.10.) */
+.ix-lead p,.ix-bar,#pn-t,.ix>.ix-row,.fl-c .n{font-size:1.3rem;font-weight:550;line-height:1.22}
+.ix-lead p{color:var(--ink)}
+.ix-bar .act{font-size:inherit}
+.ix-q{font-weight:550}
+@media (max-width:1000px){ .fl-g{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:700px){ .fl-g{grid-template-columns:1fr;gap:.45rem} .fl-c{min-height:0;padding:.6em .85em .65em;gap:.2em} .tgs{margin-bottom:1.2rem} #topics{flex-wrap:wrap;overflow:visible;margin:0;padding:0} }
+</style>
+</head>
+<body data-ov="">
+<header class="nav cols" aria-label="Site">
+  <a class="home" href="./">YRD.Works</a>
+  <div class="links"><a href="about/">About</a>    <a href="news/">News</a>    <a href="index/index.html" aria-current="page">Index</a>    <a href="contact/">Contact</a></div>
+</header>
+<!-- Handy: Menue oben rechts statt der Links (Ruben 22.10.) -->
+<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="./">Projects</a><a href="about/">About</a><a href="news/">News</a><a href="index/index.html" aria-current="page">Index</a><a href="contact/">Contact</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
+<script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
+  function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
+  b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
+  l.addEventListener('click',function(e){ if(e.target.closest('a')||e.target.closest('.mm-x')) set(false); });
+  document.addEventListener('click',function(e){ if(!l.hidden&&!m.contains(e.target)) set(false); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); }); })();</script>
+
+<main class="ix">
+  <section class="ix-lead"><h1 class="sr-only">Index</h1><div class="proj-bi ix-bi"><p class="de">Alle Arbeiten von YRD.Works auf einen Blick. Fields sind kuratierte Auswahlen, die Arbeiten aus einem Arbeitsfeld zusammenfassen. Topics filtern die Liste nach Themen und Formaten, etwa Intervention, Skulptur oder Essen &amp; Trinken. Ausgewählte Arbeiten lassen sich als Link teilen oder als PDF laden.</p><p class="en">All works by YRD.Works at a glance. Fields are curated selections that bring together works from one area of practice. Topics filter the list by theme and format, such as intervention, sculpture or food &amp; drink. Selected works can be shared as a link or downloaded as a PDF.</p></div></section>
+  <div class="tgs"><button type="button" class="tgb tg" data-pn="pn-f" aria-expanded="false">Fields</button><button type="button" class="tgb tg" data-pn="pn-t" aria-expanded="false">Topics</button></div>
+  <div class="pn" id="pn-f" hidden><ul class="fl-g" id="fields"></ul></div>
+  <div class="pn caption" id="pn-t" hidden><div class="chips" id="topics"></div></div>
+  <div class="ix-bar caption"><div class="l"><span class="n" id="cnt"></span><span id="act"></span></div><div class="r"></div></div>
+  <div class="ix-row caption"><span class="lb n">Search</span><input class="ix-q" id="q" type="search" placeholder="Search, e.g. Holz, Brot, Mousonturm" aria-label="Search"></div>
+  <ol class="lst caption" id="lst"></ol>
+  <p class="empty caption n" id="empty" hidden>No work matches this combination.</p>
+</main>
+<div class="fbar caption" id="fbar">
+  <div class="fb-l"><div class="vsw"><span class="vlab">View</span><span class="seg" role="group" aria-label="View"><a href="./" id="v2d">2D</a><a href="3d/" id="v3d">3D</a></span></div></div>
+  <div class="fb-c"><span class="n" id="selinfo"></span></div>
+  <div class="fb-r"><a class="ixa" id="view" href="./">View →</a><button type="button" class="ixa" id="link">Copy link</button><a class="ixa solid" id="pdf" href="portfolio/index.html">↓ PDF</a></div>
+</div>
+<div class="toast caption" id="toast">Link copied</div>
+
+<script src="projects.js"></script>
+<script src="portfolio/tags.js"></script>
+<script src="suche.js"></script>
+<script src="feedback.js"></script>
+<script>
+(function(){
+  var FILE=location.protocol==='file:';
+  if(FILE) document.querySelectorAll('a[href]').forEach(function(a){ var h=a.getAttribute('href');
+    if(h==='./') a.setAttribute('href','index.html'); else if(h==='3d/') a.setAttribute('href','3d/index.html');
+    else if(/^[a-z0-9-]+\/$/.test(h)) a.setAttribute('href','index.html#'+h.slice(0,-1)); });
+  function $(s){ return document.querySelector(s); }
+  function esc(t){ return String(t||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function slug(t){ return String(t).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+  function wnorm(s){ return String(s||'').toLocaleLowerCase('de').replace(/[„“”‚‘’"'«»()\[\]\/–—-]/g,' ').replace(/\s+/g,' '); }
+  var RES=['index','portfolio','about','information','cv','contact-form','example-project','impressum','datenschutz','contact','news'], seen={};
+  var TG=window.TAGS||{filter:[],projekte:{}};
+  var D=(window.PROJECTS||[]).map(function(p,i){
+    var b=slug(p.title)||('projekt-'+i), s=b, n=2; while(seen[s]||RES.indexOf(s)>=0) s=b+'-'+(n++); seen[s]=1;
+    var g=p.gallery||[], key=(g[0]&&g[0][0].split('/')[1])||'', x=TG.projekte[key]||{};
+    var o={i:i,t:p.title,y:p.year,o:p.ort||'',a:p.art||'',slug:s,key:key,img:p.img||(g[0]&&g[0][0])||'',tags:x.tags||[]};
+    o.hay=' '+wnorm([p.title,p.year,p.ort,p.art,(x.tags||[]).join(' '),(x.such||[]).join(' ')].join(' '));
+    return o; });
+  var AW=window.AUSWAHL||[];
+  var st={f:'',t:[],q:'',p:[]};
+  (function(){ var u=new URLSearchParams(location.search);
+    st.f=u.get('f')||''; st.t=(u.get('t')||'').split(',').filter(Boolean); st.q=u.get('q')||''; st.p=(u.get('p')||'').split(',').filter(Boolean); })();
+  $('#q').value=st.q;
+  var cnt={}; D.forEach(function(p){ p.tags.forEach(function(t){ cnt[t]=(cnt[t]||0)+1; }); });
+  var TOP=(TG.filter||[]).filter(function(t){ return cnt[t]; }).sort(function(a,b){ return cnt[b]-cnt[a]||a.localeCompare(b,'de'); });
+  function aw(k){ return AW.filter(function(x){ return x.key===k; })[0]; }
+  /* Topics und Fields erst bauen, wenn man sie aufmacht (Ruben 23.10.) */
+  var built={};
+  function fillTopics(){ if(built.t) return; built.t=1; $('#topics').innerHTML=TOP.map(function(t){ return '<button type="button" class="chip" data-t="'+esc(t)+'">'+esc(t)+'</button>'; }).join(''); paint(); }
+  function fillFields(){ if(built.f) return; built.f=1;
+    $('#fields').innerHTML=AW.map(function(a){ var en=a.titel_en||''; return '<li><button type="button" class="fl-c fl-i" data-f="'+esc(a.key)+'">'+'<span class="de">'+esc(a.titel)+'</span>'+(en?'<span class="en caption">'+esc(en)+'</span>':'')+'<span class="n caption">'+a.idx.length+' works</span></button></li>'; }).join(''); paint(); }
+  $('#lst').innerHTML=D.map(function(p){
+    var h=FILE?'index.html#'+p.slug:p.slug+'/';
+    return '<li data-i="'+p.i+'" aria-selected="false"><button type="button" class="ck" aria-label="Auswählen / Select"></button>'+
+      '<a class="im" href="'+h+'" tabindex="-1">'+(p.img?'<img loading="lazy" alt="" src="'+encodeURI(p.img)+'">':'')+'</a>'+
+      '<span class="t"><a href="'+h+'">'+esc(p.t)+'</a></span><span class="y">'+esc(p.y)+'</span><span class="o">'+esc(p.o)+'</span><span class="a">'+esc(p.a)+'</span></li>'; }).join('');
+  function inField(p){ if(!st.f) return true; var a=aw(st.f); return !a||a.idx.indexOf(p.i)>=0; }
+  function vis(p){ return inField(p)&&(!st.t.length||p.tags.some(function(t){ return st.t.indexOf(t)>=0; }))&&(!st.q||wnorm(st.q).split(' ').filter(Boolean).every(function(w){ return p.hay.indexOf(' '+w)>=0; })); }
+  function target(){ var s=D.filter(function(p){ return st.p.indexOf(p.slug)>=0; }); return s.length?s:D.filter(vis); }
+  function shareUrl(tg){ var r=new URL(FILE?'index.html':'./',document.baseURI); r.search='?sel='+tg.map(function(p){ return p.slug; }).join(','); r.hash=''; return r.href; }
+  function paint(){
+    document.querySelectorAll('.fl-i').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.f===st.f); });
+    document.querySelectorAll('.chip').forEach(function(b){ b.setAttribute('aria-pressed',st.t.indexOf(b.dataset.t)>=0); });
+  }
+  function render(){
+    var n=0;
+    document.querySelectorAll('#lst li').forEach(function(li){ var p=D[+li.dataset.i], v=vis(p)||st.p.indexOf(p.slug)>=0; li.hidden=!v; n+=v; li.setAttribute('aria-selected',st.p.indexOf(p.slug)>=0); });
+    paint();
+    $('#empty').hidden=n>0;
+    $('#cnt').textContent=n===D.length?D.length+' works':n+' of '+D.length+' works';
+    /* aktive Filter als Pillen mit x, ein Klick nimmt sie raus */
+    var a=[]; if(st.f&&aw(st.f)) a.push('<button type="button" class="act" data-rf="1">'+esc(aw(st.f).titel)+' <span>×</span></button>');
+    st.t.forEach(function(t){ a.push('<button type="button" class="act" data-rt="'+esc(t)+'">'+esc(t)+' <span>×</span></button>'); });
+    var k=st.p.length;
+    if(k) a.push('<button type="button" class="act" data-rp="1">'+k+' selected <span>×</span></button>');
+    $('#act').innerHTML=a.join(' ');
+    var tg=target();
+    $('#selinfo').textContent=k?k+(k===1?' work selected':' works selected'):'';
+    $('#pdf').setAttribute('href','portfolio/index.html?p='+tg.map(function(p){ return p.key; }).join(','));
+    $('#pdf').textContent='↓ PDF ('+tg.length+')';
+    $('#view').setAttribute('href',shareUrl(tg)); $('#view').textContent='View '+tg.length+' →';
+    var u=new URLSearchParams(); if(st.f) u.set('f',st.f); if(st.t.length) u.set('t',st.t.join(',')); if(st.q) u.set('q',st.q); if(k) u.set('p',st.p.join(','));
+    var qs=u.toString(); try{ history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')); }catch(e){}
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.fl-i'); if(b){ st.f=(st.f===b.dataset.f)?'':b.dataset.f; if(st.f) st.t=[]; render(); return; }
+    b=e.target.closest('.chip'); if(b){ var t=b.dataset.t, k=st.t.indexOf(t); if(k<0) st.t.push(t); else st.t.splice(k,1); if(st.t.length) st.f=''; render(); return; }   /* Field und Topics schliessen sich aus (Ruben 23.10.) */
+    b=e.target.closest('.act'); if(b){ if(b.dataset.rf) st.f=''; if(b.dataset.rt) st.t.splice(st.t.indexOf(b.dataset.rt),1); if(b.dataset.rp) st.p=[]; render(); return; }
+  });
+  /* Topics / Fields klappen auf, immer nur eins */
+  document.querySelectorAll('.tg[data-pn]').forEach(function(b){ b.addEventListener('click',function(){
+    var p=document.getElementById(b.dataset.pn), o=p.hidden;
+    document.querySelectorAll('.tg[data-pn]').forEach(function(x){ x.setAttribute('aria-expanded','false'); document.getElementById(x.dataset.pn).hidden=true; });
+    if(o){ if(b.dataset.pn==='pn-t') fillTopics(); else fillFields(); p.hidden=false; b.setAttribute('aria-expanded','true'); }
+  }); });
+  if(window.YRDSearch&&window.matchMedia('(min-width:701px)').matches) YRDSearch.register(function(q){ st.q=q; $('#q').value=q; render(); return document.querySelectorAll('#lst li:not([hidden])').length; });
+  $('#q').addEventListener('input',function(e){ st.q=e.target.value.trim(); render(); });
+  $('#lst').addEventListener('click',function(e){ var c=e.target.closest('.ck'); if(!c) return; var p=D[+c.closest('li').dataset.i], k=st.p.indexOf(p.slug); if(k<0) st.p.push(p.slug); else st.p.splice(k,1); render(); });
+  $('#link').onclick=function(){
+    var u=shareUrl(target()), t=$('#toast');
+    function ok(){ t.textContent='Link copied'; t.classList.add('on'); setTimeout(function(){ t.classList.remove('on'); },1600); }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,function(){ prompt('Link',u); }); else prompt('Link',u);
+  };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+{
+ "_info": "erzeugt von mappe_pdf.py",
+ "projekte": {
+  "2026-display": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "9493f5f7ce07"
+  },
+  "2025-bingenheim": {
+   "de": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "a6e1bb457a7e"
+  },
+  "2024-transition-1-7": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "f9b4cb5088d9"
+  },
+  "2024-im-angesicht-des-todes": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "cde63bbd1251"
+  },
+  "2023-tables": {
+   "de": {
+    "seiten": 2,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 2,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "b9b703ed6e62"
+  },
+  "2023-hole-mound": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "cc34c4da6afe"
+  },
+  "2023-soups": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "645589dff2dc"
+  },
+  "2022-steady-burn": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "aa575cd91505"
+  },
+  "2022-forschungswerkstatt": {
+   "de": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "a455cd5c6b61"
+  },
+  "2022-current-tours": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "12f202fc0fde"
+  },
+  "2021-logis": {
+   "de": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "f879d6b7e4f0"
+  },
+  "2021-bread-dispenser": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "5bbd44444f23"
+  },
+  "2020-canned-99-63": {
+   "de": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "fd8a777fc7c7"
+  },
+  "2020-access": {
+   "de": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "ad1ec077c728"
+  },
+  "2019-doubles": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "51fb397243a0"
+  },
+  "2019-copy-service": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "0e6681956801"
+  },
+  "2018-white-out": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "2fc417cb8a11"
+  },
+  "2018-oper-offenbach": {
+   "de": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 7,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "bfc4c5bd2602"
+  },
+  "2018-not-not-pizza": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "dced4997029c"
+  },
+  "2018-insight-out": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "47d97b60070a"
+  },
+  "2017-offenbacher-seefestspiele": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "3901e9e00458"
+  },
+  "2017-messerschmiede": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "8ba4e26dde77"
+  },
+  "2017-eins-zu-eins": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "79807d19472b"
+  },
+  "2017-busy-sculpture": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "66414d26e6a3"
+  },
+  "2016-sirenen": {
+   "de": {
+    "seiten": 3,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 3,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "8fa6e1c16184"
+  },
+  "2016-scale-scale-scale": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "1953065bb4ea"
+  },
+  "2016-kressmann-halle": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "3a54706239f0"
+  },
+  "2015-pool": {
+   "de": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 5,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "09ce69e2f1fd"
+  },
+  "2014-hafenmeisterei": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "84765a859bb3"
+  },
+  "2014-pelican-bay": {
+   "de": {
+    "seiten": 3,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 3,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "0708dbe43743"
+  },
+  "2014-makoko": {
+   "de": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 4,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "626d01ecb0d1"
+  },
+  "2014-holzhausen": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "4144610af8b5"
+  },
+  "2012-holzhausenstrasse": {
+   "de": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "en": {
+    "seiten": 6,
+    "w": 300,
+    "h": 212,
+    "gap": 8
+   },
+   "status": "vorschlag",
+   "text": "ee0b64d4c0be"
+  }
+ },
+ "titel_de": {
+  "seiten": 2,
+  "w": 300,
+  "h": 212,
+  "gap": 8
+ },
+ "titel_en": {
+  "seiten": 2,
+  "w": 300,
+  "h": 212,
+  "gap": 8
+ },
+ "titel_text": "cf11cc3d3bb9"
+}

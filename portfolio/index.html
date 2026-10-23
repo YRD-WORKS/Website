@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PDF, YRD.Works</title>
+<meta name="description" content="Eigene Auswahl aus den Arbeiten von YRD.Works als PDF zusammenstellen.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-style:normal;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-RegularItalic.woff2") format("woff2");font-weight:300 499;font-style:italic;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-style:normal;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-MediumItalic.woff2") format("woff2");font-weight:500 900;font-style:italic;font-display:swap}
+:root{
+  --bg:#fff; --ink:#0000ff; --ink-4:rgba(0,0,255,.42); --ink-2:rgba(0,0,255,.14);
+  --pad:clamp(14px,2vw,28px); --fb-h:46px; --fb-b:14px; --fb-r:999px; --fb-in:20px;
+  --fs:clamp(15px,1.15vw,17px); --cap:13px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:420 var(--fs)/1.3 "ABC Areal",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.caption{font-size:var(--cap);line-height:1.25}
+.n{color:var(--ink-4)}
+@keyframes wiggle{0%{transform:rotate(0)}20%{transform:rotate(-3deg)}45%{transform:rotate(2.2deg)}70%{transform:rotate(-1deg)}100%{transform:rotate(0)}}
+@media (hover:hover) and (pointer:fine){.wg:hover{animation:wiggle .5s ease-in-out}}
+.wg{display:inline-block;transform-origin:50% 50%}
+
+/* Kopf */
+/* Kopf genau wie in 2D und 3D (style.css .nav): YRD.Works links, About News Contact rechts, transparent ueber dem Inhalt.
+   Masse in den Einheiten der Website (--srem = 1rem dort), weil diese Seite eigene rem-Werte hat */
+:root{--srem:clamp(10px,.88vw,22px)}
+@media (max-width:700px){:root{--srem:15px}}
+.nav{position:fixed;top:0;left:0;right:0;z-index:25;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--srem);
+  padding:calc(.9 * var(--srem) + env(safe-area-inset-top,0px)) max(16px,var(--srem)) calc(2 * var(--srem));pointer-events:none;
+  font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:calc(1.3 * var(--srem));font-weight:550;line-height:1.22}
+@media (max-width:700px){.nav{padding-left:16px;padding-right:16px}}
+.nav a{pointer-events:auto}
+.nav .home{grid-column:1 / span 6;grid-row:1}
+.nav .links{grid-column:7 / span 6;grid-row:1;text-align:right;white-space:pre}
+.nav .links a{display:inline-block;transform-origin:0 50%}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){.nav .links a:hover{animation:wiggle .5s ease-in-out}}
+@media (max-width:700px){.nav{display:flex;justify-content:space-between;align-items:baseline}.nav .links{display:flex;gap:1em;white-space:nowrap}}
+.lead{padding:calc(5.3 * var(--srem)) var(--pad) 0;max-width:46em}
+.lead h1{font-weight:420;font-size:inherit;margin:0}
+.lead p{margin:.2em 0 0}
+
+/* Filter */
+.filters{padding:2rem var(--pad) 0;display:flex;flex-wrap:wrap;gap:.45rem .5rem;align-items:center}
+.filters .lbl{margin-right:.6rem}
+.chip{border:1px solid var(--ink);border-radius:999px;padding:.32em .8em .36em;font-size:var(--cap);line-height:1.2;transition:background .15s,color .15s}
+.chip .c{color:var(--ink-4);margin-left:.4em}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.chip[aria-pressed="true"] .c{color:rgba(255,255,255,.65)}
+.search{padding:1rem var(--pad) 0;display:flex;gap:.8rem;align-items:center;flex-wrap:wrap}
+.search input{font:inherit;font-size:var(--cap);color:var(--ink);border:0;box-shadow:inset 0 0 0 1px var(--ink);border-radius:999px;background:var(--bg);padding:.42em 1em .44em;width:min(100%,22rem)}
+.search input::placeholder{color:var(--ink-4)}
+.search input:focus{outline:0;box-shadow:inset 0 0 0 2px var(--ink)}
+.tools{padding:1.1rem var(--pad) 0;display:flex;gap:1.6em;flex-wrap:wrap}
+.tools button{color:var(--ink-4)}
+.tools button:hover{color:var(--ink)}
+
+/* Raster wie auf der Seite: Kachel 3:2, Titel und Jahr darunter */
+.sec{padding:2.6rem var(--pad) 0;display:flex;gap:1rem;align-items:baseline;flex-wrap:wrap}
+.sec h2{font-size:inherit;font-weight:420;margin:0}
+/* Kuratierte Mappen: feste Auswahl, Reihenfolge und Titel (Quelle/mappen.json, aus dem Editor Portfolio-Mappe) */
+.mappen{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:1rem;padding:1.1rem var(--pad) 0}
+.mp{display:flex;flex-direction:column;gap:.55rem;text-align:left;padding:1rem 1.1rem 1.05rem;border-radius:18px;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);min-width:0;transition:background .2s,color .2s}
+.mp .t{text-wrap:balance}
+.mp .ps{color:var(--ink-4)}
+.mp .ft{display:flex;justify-content:space-between;gap:1rem;margin-top:auto;padding-top:.4rem}
+.mp .go2{white-space:nowrap}
+@media (hover:hover) and (pointer:fine){.mp:hover{background:var(--ink);color:#fff}.mp:hover .ps,.mp:hover .n{color:rgba(255,255,255,.72)}}
+#mname{margin:-.8rem 0 0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.2rem var(--pad);padding:2rem var(--pad) calc(var(--fb-h) + var(--fb-b) + 4rem)}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.tile{position:relative;display:block;text-align:left;cursor:pointer}
+.tile .im{position:relative;aspect-ratio:3/2;overflow:hidden;background:#eef0ff}
+.tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .3s}
+.tile .im::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 0 var(--ink);transition:box-shadow .2s}
+.tile[aria-pressed="true"] .im::after{box-shadow:inset 0 0 0 4px var(--ink)}
+.tile .cap{display:flex;gap:.6em;margin-top:.55em}
+.tile .art{margin-top:.1em}
+.tile .mark{position:absolute;top:10px;right:10px;min-width:30px;height:30px;padding:0 .55em;border-radius:999px;background:#fff;border:1px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;font-size:var(--cap);font-variant-numeric:tabular-nums;transition:background .15s,color .15s}
+.tile .mark::before{content:"+"}
+.tile[aria-pressed="true"] .mark{background:var(--ink);color:#fff}
+.tile[aria-pressed="true"] .mark::before{content:attr(data-n)}
+@media (hover:hover) and (pointer:fine){.tile:hover img{transform:scale(1.025)}}
+.tile[hidden]{display:none}
+.empty{grid-column:1/-1;padding:3rem 0}
+
+/* Leiste unten: wie die schwebende weisse Leiste der Seite */
+#fband{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);background:var(--bg);
+  box-shadow:inset 0 0 0 1px var(--ink);border-radius:var(--fb-r);z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 var(--fb-in);gap:1rem}
+#fband .sel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#fband .go{white-space:nowrap}
+#fband .go[disabled]{color:var(--ink-4);cursor:default;animation:none}
+
+/* Vorschau mit Einstellungen */
+#prev{position:fixed;inset:0;z-index:30;background:#f3f4ff;display:none;grid-template-columns:22rem minmax(0,1fr)}
+body.prev #prev{display:grid}
+body.prev{overflow:hidden}
+#side{background:#fff;border-right:1px solid var(--ink-2);padding:calc(.9rem + env(safe-area-inset-top,0px)) var(--pad) 1.4rem;overflow-y:auto;display:flex;flex-direction:column;gap:1.8rem}
+#side h2{font-size:inherit;font-weight:420;margin:0}
+.opt{display:flex;flex-direction:column;gap:.5rem}
+.seg{display:flex;gap:1.2em}
+.seg button{color:var(--ink-4)}
+.seg button[aria-pressed="true"]{color:var(--ink)}
+.chk{display:flex;gap:.6em;align-items:center;cursor:pointer}
+.chk input{appearance:none;width:15px;height:15px;border:1px solid var(--ink);border-radius:3px;margin:0;display:grid;place-content:center}
+.chk input:checked{background:var(--ink)}
+.chk input:checked::after{content:"";width:7px;height:4px;border:solid #fff;border-width:0 0 1.5px 1.5px;transform:translateY(-1px) rotate(-45deg)}
+#order{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-2)}
+#order li{display:grid;grid-template-columns:1.6em minmax(0,1fr) auto;gap:.5em;align-items:baseline;padding:.45em 0;border-bottom:1px solid var(--ink-2);cursor:grab;background:#fff}
+#order li.drag{opacity:.4}
+#order li .x{color:var(--ink-4);display:flex;gap:.7em}
+#order li .x button:hover{color:var(--ink)}
+.dl{margin-top:auto;display:flex;flex-direction:column;gap:.6rem}
+.btn{border:1px solid var(--ink);border-radius:999px;padding:.6em 1.1em;text-align:center}
+.btn.solid{background:var(--ink);color:#fff}
+.hint{color:var(--ink-4)}
+#pages{overflow:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.6rem}
+#pages .pgw{box-shadow:0 1px 2px rgba(0,0,40,.12),0 8px 30px rgba(0,0,60,.08);background:#fff}
+@media (max-width:800px){
+  #prev{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  #side{max-height:52vh;border-right:0;border-bottom:1px solid var(--ink-2)}
+  #pages{padding:1rem}
+}
+
+/* Vorschau: die fertigen Seiten jedes Projekts als kleine Bilder (Streifen aus mappe/<slug>_<sprache>.jpg) */
+.vg{display:flex;flex-direction:column;gap:.55rem;width:100%;max-width:64rem}
+.vg h3{font-size:var(--cap);font-weight:420;margin:0;display:flex;gap:.8em;align-items:baseline}
+.vg .row{display:flex;flex-wrap:wrap;gap:10px}
+.vg .tp{width:200px;height:141px;background-repeat:no-repeat;background-color:#fff;box-shadow:0 1px 2px rgba(0,0,40,.12),0 6px 20px rgba(0,0,60,.07)}
+.vg .miss{color:var(--ink-4);font-size:var(--cap)}
+#pages{align-items:flex-start}
+@media (max-width:800px){ .vg .tp{width:140px;height:99px} }
+/* Rahmen: blaue Haarlinie um den Arbeitsbereich unter dem Kopf. Innen ein weisser Saum (--frg), damit nichts an der Linie anliegt;
+   aussen weiss abgedeckt, damit gescrollter Inhalt nur innerhalb des Rahmens sichtbar ist */
+:root{--fr:calc(var(--pad) * .5); --frt:calc(4.1 * var(--srem)); --frr:14px; --frg:12px}
+@media (max-width:700px){:root{--fr:6px; --frg:8px}}
+body::after{content:"";position:fixed;left:var(--fr);right:var(--fr);top:var(--frt);bottom:calc(var(--fr) + env(safe-area-inset-bottom,0px));border-radius:var(--frr);
+  box-shadow:inset 0 0 0 1px var(--ink),inset 0 0 0 var(--frg) #fff,0 0 0 100vmax #fff;pointer-events:none;z-index:22}
+.lead{padding-top:calc(var(--frt) + 1.6rem)}
+#prev{top:var(--frt);left:var(--fr);right:var(--fr);bottom:calc(var(--fr) + env(safe-area-inset-bottom,0px));border-radius:var(--frr);overflow:hidden}
+#prev::after{content:"";position:absolute;inset:0;border-radius:var(--frr);box-shadow:inset 0 0 0 1px var(--ink);pointer-events:none;z-index:5}
+
+#fband{z-index:41;bottom:calc(var(--fr) + var(--frg) + env(safe-area-inset-bottom,0px));left:calc(var(--fr) + var(--frg));right:calc(var(--fr) + var(--frg))}
+/* Leiste unten wie in 2D und 3D (style.css .fbar, Masse in Website-Einheiten): links View 2D / 3D, Mitte die Auswahl, rechts Download Portfolio.
+   Gestaltungslogik der Leiste: was gerade gewaehlt ist, steht blau mit weisser Schrift (hier: Download Portfolio) */
+#fband{height:calc(3.2 * var(--srem));border-radius:calc(1.6 * var(--srem));padding:0 calc(1.3 * var(--srem));display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:var(--srem);
+  font-size:calc(1.05 * var(--srem));line-height:1.22;justify-content:initial}
+#fband .fb-l{justify-self:start}
+#fband .fb-c{justify-self:center;display:flex;gap:1.6em;align-items:center;min-width:0;max-width:100%}
+#fband .fb-r{justify-self:end}
+#fband .vsw{display:flex;align-items:center;gap:.5em;white-space:nowrap}
+#fband .vsw .seg{display:inline-flex;gap:0;line-height:1;background:var(--bg);border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink)}
+#fband .vsw .seg > a{display:block;padding:.3em .8em .26em;border-radius:10em;transition:background .2s ease,color .2s ease}
+@media (hover:hover) and (pointer:fine){#fband .vsw .seg > a:hover{background:var(--ink);color:var(--bg)}}
+#fband .dlp{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);white-space:nowrap}
+#fband .dlp.on{background:var(--ink);color:var(--bg)}
+body.prev #fband .fb-c{visibility:hidden}
+@media (max-width:700px){#fband{font-size:13px;column-gap:.6rem}#fband .lg,#fband .vlab,#fband .sel{display:none}#fband .fb-c{gap:.8em}}
+/* Vorschau endet ueber der Leiste */
+#side{padding-bottom:calc(3.2 * var(--srem) + var(--frg) + 1.2rem)}
+#pages{padding-bottom:calc(3.2 * var(--srem) + var(--frg) + 2rem)}
+.nav{z-index:40}
+#pages{clip-path:inset(var(--frg) var(--frg) var(--frg) 0)}   /* Saum auch in der Vorschau: Seitenbilder enden vor der Linie */
+/* ===== Test: Blau und Weiss vertauscht (?invert=1), 21.10.2026 ===== */
+body.inv{--bg:#0000ff;--ink:#ffffff;--ink-4:rgba(255,255,255,.62);--ink-2:rgba(255,255,255,.26)}
+html:has(body.inv){background:#0000ff}
+body.inv .chip[aria-pressed="true"],body.inv .tile[aria-pressed="true"] .mark,body.inv .btn.solid,body.inv .steps span.on b{color:#0000ff}
+body.inv .chip[aria-pressed="true"] .c{color:rgba(0,0,255,.6)}
+@media (hover:hover) and (pointer:fine){body.inv .mp:hover{color:#0000ff}body.inv .mp:hover .ps,body.inv .mp:hover .n{color:rgba(0,0,255,.65)}}
+body.inv .tile .mark{background:#0000ff}
+body.inv .tile[aria-pressed="true"] .mark{background:#fff;color:#0000ff}
+body.inv #prev{background:#0000d0}
+body.inv #side,body.inv #order li{background:#0000ff}
+body.inv .chk input:checked::after{border-color:#0000ff}
+body.inv::after{box-shadow:inset 0 0 0 1px var(--ink),inset 0 0 0 var(--frg) #0000ff,0 0 0 100vmax #0000ff}
+body.inv .nav{color:#fff}
+/* ===== Varianten fuer mehr Uebersicht (?layout=a | ?layout=c), Studie 21.10.2026 ===== */
+.tabs,.steps,.mpick,.tgl{display:none}
+/* A: zwei Reiter, Mappen als kompakte Liste, Raster 4 Spalten */
+body.lay-a .tabs{display:flex;gap:1.4rem;padding:2rem var(--pad) 0;align-items:baseline}
+.tabs button{font-size:inherit;color:var(--ink-4);padding-bottom:.25rem;border-bottom:1px solid transparent}
+.tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+body.lay-a .sec{display:none}
+body.lay-a.tab-m #filters,body.lay-a.tab-m .search,body.lay-a.tab-m .tools,body.lay-a.tab-m #grid{display:none}
+body.lay-a.tab-e #mappen{display:none}
+body.lay-a .mappen{display:block;padding-top:1.2rem;padding-bottom:calc(var(--fb-h) + var(--fb-b) + 4rem)}
+body.lay-a .mp{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) auto auto;gap:.4rem 1.6rem;align-items:baseline;width:100%;border-radius:0;box-shadow:none;border-top:1px solid var(--ink-2);padding:.85rem 0}
+body.lay-a .mp:last-child{border-bottom:1px solid var(--ink-2)}
+body.lay-a .mp .ft{display:contents}
+body.lay-a .mp .ft .n{white-space:nowrap}
+@media (hover:hover) and (pointer:fine){body.lay-a .mp:hover{background:none;color:var(--ink)}body.lay-a .mp:hover .ps{color:var(--ink-4)}body.lay-a .mp:hover .go2{text-decoration:underline;text-underline-offset:3px}}
+@media (max-width:760px){body.lay-a .mp{grid-template-columns:minmax(0,1fr) auto}body.lay-a .mp .ps{grid-column:1/-1;grid-row:2}}
+body.lay-a .grid,body.lay-c .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:1.4rem var(--pad)}
+body.lay-c .grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1100px){body.lay-c .grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:900px){body.lay-a .grid,body.lay-c .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){body.lay-a .grid,body.lay-c .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* C: Schritte, Mappen als Knoepfe, Themen einklappbar, Raster 5 Spalten */
+body.lay-c .steps{display:flex;gap:1.6rem;flex-wrap:wrap;padding:1.6rem var(--pad) 0;font-size:var(--cap)}
+.steps span{color:var(--ink-4)} .steps span.on{color:var(--ink)}
+.steps b{font-weight:420;display:inline-flex;width:1.5em;height:1.5em;border-radius:50%;box-shadow:inset 0 0 0 1px currentColor;align-items:center;justify-content:center;margin-right:.45em;font-size:.9em}
+.steps span.on b{background:var(--ink);color:#fff;box-shadow:none}
+body.lay-c .sec,body.lay-c #mappen{display:none}
+body.lay-c .mpick{display:flex;flex-wrap:wrap;gap:.45rem .5rem;align-items:center;padding:1.4rem var(--pad) 0}
+.mpick .lbl{margin-right:.6rem}
+.mpick .chip .c{white-space:nowrap}
+body.lay-c .search{padding-top:1.1rem}
+body.lay-c .search .lbl{margin-right:.2rem}
+body.lay-c .tgl{display:inline-block;font-size:var(--cap);color:var(--ink)}
+body.lay-c:not(.themen) #filters{display:none}
+body.lay-c #filters{padding-top:.9rem}
+</style>
+</head>
+<body>
+
+<header class="nav" aria-label="Site">
+  <a class="home" href="../">YRD.Works</a>
+  <div class="links"><a href="../about/">About</a>    <a href="../contact/">Contact</a></div>
+</header>
+
+<section class="lead">
+  <h1>Selected Works</h1>
+  <p class="n">Eine kuratierte Mappe wählen oder Projekte selbst zusammenstellen → Reihenfolge und Sprache festlegen → PDF laden.<br>Pick a curated selection or choose projects yourself → set order and language → download PDF.</p>
+</section>
+
+<div class="tabs" role="tablist"><button type="button" data-tab="m" aria-pressed="true">Kuratierte Mappen <span class="caption n">Curated</span></button><button type="button" data-tab="e" aria-pressed="false">Eigene Auswahl <span class="caption n">Own selection</span></button></div>
+<div class="steps"><span class="on" id="st1"><b>1</b>Auswählen</span><span id="st2"><b>2</b>Ordnen und Sprache</span><span id="st3"><b>3</b>PDF laden</span></div>
+<div class="mpick" id="mpick"><span class="lbl caption n">Mappe wählen</span></div>
+<div class="sec"><h2>Kuratierte Mappen</h2><span class="caption n">Feste Auswahl zu einem Arbeitsfeld · Curated selections</span></div>
+<div class="mappen" id="mappen"></div>
+<div class="sec"><h2>Eigene Auswahl</h2><span class="caption n">Own selection</span></div>
+<div class="filters" id="filters" role="group" aria-label="Themen" style="padding-top:1.1rem"><span class="lbl caption n">Themen</span></div>
+<div class="search"><span class="lbl caption n">oder selbst</span><input type="search" id="q" placeholder="Suchen, z. B. Holz, Brot, Mousonturm · Search" aria-label="Projekte durchsuchen"><button type="button" class="tgl wg" id="tgl" aria-expanded="false">Themen ▾</button><span class="caption n" id="qinfo"></span></div>
+<div class="tools caption">
+  <button type="button" class="wg" id="all">Alle sichtbaren auswählen</button>
+  <button type="button" class="wg" id="none">Auswahl leeren</button>
+  <button type="button" class="wg" id="reset">Filter und Suche zurücksetzen</button>
+</div>
+
+<main class="grid" id="grid"></main>
+
+<div id="fband">
+  <div class="fb-l"><div class="vsw"><span class="vlab">View</span><span class="seg" role="group" aria-label="View"><a href="../" data-v="2d">2D</a><a href="../3d/" data-v="3d">3D</a><a href="../index/index.html" data-v="ix">Index</a></span></div></div>
+  <div class="fb-c"><span class="sel" id="selinfo">Noch nichts ausgewählt</span><button type="button" class="go wg" id="go" disabled>PDF<span class="lg"> zusammenstellen</span> →</button></div>
+  <div class="fb-r"></div>
+</div>
+
+<div id="prev" aria-modal="true" role="dialog" aria-label="Vorschau der Mappe">
+  <aside id="side" class="caption">
+    <button type="button" class="wg" id="back" style="align-self:flex-start">← Zurück zur Auswahl</button>
+    <p id="mname" hidden></p>
+    <div class="opt"><h2>Sprache</h2>
+      <div class="seg" id="lang"><button type="button" data-l="de" aria-pressed="true">Deutsch</button><button type="button" data-l="en" aria-pressed="false">English</button></div></div>
+    <div class="opt"><h2>Inhalt</h2>
+      <label class="chk"><input type="checkbox" id="o-cover" checked> Titel und Einleitung</label></div>
+    <div class="opt"><h2>Reihenfolge <span class="n">(ziehen zum Ändern)</span></h2>
+      <div class="seg" id="sort"><button type="button" data-s="new">Neueste zuerst</button><button type="button" data-s="old">Älteste zuerst</button><button type="button" data-s="sel">Wie ausgewählt</button></div>
+      <ol id="order"></ol></div>
+    <div class="dl">
+      <button type="button" class="btn solid" id="print">PDF herunterladen</button>
+      <span class="hint"><span id="pcount"></span> <span id="dlmsg"></span></span>
+    </div>
+  </aside>
+  <div id="pages"></div>
+</div>
+
+<script src="../projects.js"></script>
+<script src="mappe/mappe.js"></script>
+<script src="mappen.js"></script>
+<script src="tags.js"></script>
+<script>
+/* Daten aus der Seite (projects.js, gebaut aus Quelle/projects.json): Bilder und Texte immer aktuell */
+const D=(window.PROJECTS||[]).map(p=>{ const g=p.gallery||[]; const hero=p.img||(g[0]&&g[0][0]);
+  return {t:p.title, y:p.year, j:p.jahr, o:p.ort||'', a:String(p.art||'').split('/').map(x=>x.trim()).filter(Boolean),
+    de:p.text||(p.desc?[p.desc]:[]), en:p.text_en||[], img:hero?'../'+hero:'', slug:(g[0]&&g[0][0].split('/')[1])||''}; });
+/* Doppelklick (file://): Ordneradressen gibt es dort nicht, die Seite laeuft als index.html mit #-Adressen */
+if(location.protocol==='file:') document.querySelectorAll('#fband a[data-v="3d"]').forEach(a=>a.setAttribute('href','../3d/index.html'));
+if(location.protocol==='file:') document.querySelectorAll('.nav a[href^="../"],#fband a[data-v="2d"]').forEach(a=>{ const k=a.getAttribute('href').slice(3).replace(/\/$/,''); a.setAttribute('href','../index.html'+(k?'#'+k:'')); });
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let sel=[], filt=new Set(), lang='de', sortMode='sel', preset=null;   // preset: gewaehlte kuratierte Mappe, solange die Auswahl unveraendert ist
+
+/* Filter und Suche: Tags aus Quelle/tags.json (Werkzeug Projekt-Tags). Sichtbar sind die als Filter markierten, nach Haeufigkeit;
+   die Suche findet Titel, Jahr, Ort, Art, alle Tags und die unsichtbaren Suchwoerter (nicht die Werktexte), nur am Wortanfang */
+const TG=window.TAGS||{filter:[],projekte:{}};
+const wnorm=s=>String(s||'').toLocaleLowerCase('de').replace(/[\u201e\u201c\u201d\u201a\u2018\u2019"'\u00ab\u00bb()\[\]\/\u2013\u2014-]/g,' ').replace(/\s+/g,' ');
+D.forEach(p=>{ const x=TG.projekte[p.slug]||{}; p.tags=x.tags||[]; p.such=x.such||[];
+  p.hay=' '+wnorm([p.t,p.y,p.j,p.o,p.a.join(' '),p.tags.join(' '),p.such.join(' ')].join(' ')); });   // ohne Werktexte, nur Wortanfang (Ruben 22.10.)
+const cnt={}; D.forEach(p=>p.tags.forEach(a=>cnt[a]=(cnt[a]||0)+1));
+const tags=(TG.filter||[]).filter(t=>cnt[t]).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b,'de'));
+let q='';
+$('#filters').insertAdjacentHTML('beforeend',tags.map(t=>`<button type="button" class="chip" aria-pressed="false" data-t="${esc(t)}">${esc(t)}<span class="c">${cnt[t]}</span></button>`).join(''));
+$('#filters').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; const t=b.dataset.t;
+  filt.has(t)?filt.delete(t):filt.add(t); b.setAttribute('aria-pressed',filt.has(t)); apply(); });
+
+$('#grid').innerHTML=D.map((p,i)=>`<button type="button" class="tile" data-i="${i}" aria-pressed="false">
+  <div class="im"><img loading="lazy" alt="" src="${p.img}"></div><span class="mark caption" aria-hidden="true"></span>
+  <div class="cap caption"><span>${esc(p.t)}</span><span class="n">${esc(p.y)}</span></div>
+  <div class="art caption n">${esc(p.a.join(' / '))}</div></button>`).join('')+'<p class="empty caption n" hidden>Kein Projekt in dieser Kombination.</p>';
+$('#grid').addEventListener('click',e=>{ const b=e.target.closest('.tile'); if(!b) return; const i=+b.dataset.i;
+  const k=sel.indexOf(i); k<0?sel.push(i):sel.splice(k,1); preset=null; mark(); });
+
+/* Kuratierte Mappen */
+const MP=(window.MAPPEN||[]).map(m=>({...m,idx:(m.projekte||[]).map(s=>D.findIndex(p=>p.slug===s)).filter(i=>i>=0)})).filter(m=>m.idx.length);
+const MM=window.MAPPE||{projekte:{}};
+const seitenVon=m=>m.idx.reduce((a,i)=>a+(((MM.projekte||{})[D[i].slug]||{}).de||{seiten:0}).seiten,0)+((MM.titel_de||{}).seiten||0);
+$('#mappen').innerHTML=MP.length?MP.map((m,k)=>`<button type="button" class="mp" data-k="${k}"><span class="t">${esc(m.titel)}</span>
+  ${m.beschreibung?`<span class="caption">${esc(m.beschreibung)}</span>`:''}<span class="ps caption">${esc(m.idx.map(i=>D[i].t).join(', '))}</span>
+  <span class="ft caption"><span class="n">${m.idx.length} Projekte · ${seitenVon(m)} Seiten</span><span class="go2">Ansehen →</span></span></button>`).join('')
+  :'<p class="caption n">Noch keine kuratierten Mappen.</p>';
+$('#mappen').addEventListener('click',e=>{ const b=e.target.closest('.mp'); if(!b) return; const m=MP[+b.dataset.k];
+  sel=m.idx.slice(); preset=m; mark(); sortMode='sel'; document.body.classList.add('prev'); setSort('sel'); });
+const vis=p=>(!filt.size||p.tags.some(a=>filt.has(a)))&&(!q||wnorm(q).split(' ').filter(Boolean).every(w=>p.hay.includes(' '+w)));   // mehrere Themen: oder; Suchwoerter: alle
+function apply(){ let n=0; document.querySelectorAll('.tile').forEach(b=>{ const v=vis(D[+b.dataset.i]); b.hidden=!v; n+=v; }); $('.empty').hidden=n>0;
+  $('#qinfo').textContent=(q||filt.size)?`${n} von ${D.length} Projekten`:''; }
+$('#q').addEventListener('input',e=>{ q=e.target.value.trim().toLocaleLowerCase('de'); apply(); });
+function mark(){
+  document.querySelectorAll('.tile').forEach(b=>{ const k=sel.indexOf(+b.dataset.i); b.setAttribute('aria-pressed',k>=0); b.querySelector('.mark').dataset.n=k+1; });
+  const n=sel.length;
+  $('#selinfo').innerHTML=n?`<span>${n} ${n===1?'Projekt':'Projekte'}</span> <span class="n">${esc(sel.map(i=>D[i].t).join(', '))}</span>`:'Noch nichts ausgewählt';
+  $('#go').disabled=!n;
+}
+$('#all').onclick=()=>{ D.forEach((p,i)=>{ if(vis(p)&&!sel.includes(i)) sel.push(i); }); mark(); };
+$('#none').onclick=()=>{ sel=[]; preset=null; mark(); };
+$('#reset').onclick=()=>{ filt.clear(); q=''; $('#q').value=''; document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed','false')); apply(); };
+
+/* Vorschau */
+$('#go').onclick=()=>{ document.body.classList.add('prev'); setSort(sortMode); };
+$('#back').onclick=()=>{ document.body.classList.remove('prev'); if(preset){ sel=[]; preset=null; } mark(); };
+addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('prev')) $('#back').click(); });
+$('#lang').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; lang=b.dataset.l; $('#lang').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b)); pages(); };
+$('#o-cover').onchange=pages;
+function setSort(m){ sortMode=m; const yr=i=>parseInt(D[i].y)||0;
+  if(m==='new') sel.sort((a,b)=>yr(b)-yr(a)||a-b); if(m==='old') sel.sort((a,b)=>yr(a)-yr(b)||a-b);
+  $('#sort').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.s===m)); order(); pages(); }
+$('#sort').onclick=e=>{ const b=e.target.closest('button'); if(b) setSort(b.dataset.s); };
+function order(){
+  $('#order').innerHTML=sel.map((i,k)=>`<li draggable="true" data-k="${k}"><span class="n">${k+1}</span><span>${esc(D[i].t)} <span class="n">${esc(D[i].y)}</span></span>
+    <span class="x"><button type="button" data-m="-1" aria-label="nach oben">↑</button><button type="button" data-m="1" aria-label="nach unten">↓</button><button type="button" data-m="0" aria-label="entfernen">×</button></span></li>`).join('');
+}
+$('#order').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const k=+b.closest('li').dataset.k, m=+b.dataset.m;
+  if(m===0){ sel.splice(k,1); preset=null; } else { const j=k+m; if(j<0||j>=sel.length) return; [sel[k],sel[j]]=[sel[j],sel[k]]; }
+  sortMode='sel'; $('#sort').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.s==='sel'));
+  if(!sel.length){ $('#back').click(); return; } order(); pages(); });
+let dk=-1;
+$('#order').addEventListener('dragstart',e=>{ const li=e.target.closest('li'); dk=+li.dataset.k; li.classList.add('drag'); e.dataTransfer.effectAllowed='move'; });
+$('#order').addEventListener('dragover',e=>{ e.preventDefault(); });
+$('#order').addEventListener('drop',e=>{ e.preventDefault(); const li=e.target.closest('li'); if(!li||dk<0) return; const k=+li.dataset.k;
+  const [x]=sel.splice(dk,1); sel.splice(k,0,x); dk=-1; setSort('sel'); });
+$('#order').addEventListener('dragend',()=>{ dk=-1; document.querySelectorAll('#order li').forEach(l=>l.classList.remove('drag')); });
+
+/* Mappe: je Projekt eine fertige PDF in mappe/ (erzeugt mit Quelle/portfolio/mappe_pdf.py aus dem Editor "Portfolio-Mappe").
+   Die Vorschau zeigt deren Seiten als Bilder, der Download haengt die gewaehlten PDFs aneinander (pdf-lib, liegt als pdf-lib.min.js daneben). */
+const M=window.MAPPE||{projekte:{}};
+const L={de:{sel:'Ausgewählte Arbeiten',file:'YRD.Works_Ausgewaehlte-Arbeiten',title:'Titel und Einleitung',none:'Für dieses Projekt gibt es noch keine Mappe.'},
+         en:{sel:'Selected Works',file:'YRD.Works_Selected-Works',title:'Title and introduction',none:'No portfolio pages for this project yet.'}};
+const parts=()=>{ const T=L[lang], out=[];
+  if($('#o-cover').checked&&M['titel_'+lang]) out.push({name:'titel_'+lang,label:T.title,m:M['titel_'+lang]});
+  sel.forEach(i=>{ const p=D[i], q=(M.projekte[p.slug]||{})[lang]; out.push({name:p.slug+'_'+lang,label:p.t,y:p.y,m:q||null}); });
+  return out; };
+function pages(){ const T=L[lang], P=parts(); let n=0;
+  const mn=$('#mname'); mn.hidden=!preset; if(preset) mn.innerHTML=`<span class="n">Kuratierte Mappe</span><br>${esc(preset.titel)}`;
+  $('#pages').innerHTML=P.map(x=>{ if(!x.m) return `<section class="vg"><h3><span>${esc(x.label)}</span><span class="n">${esc(x.y||'')}</span></h3><p class="miss">${T.none}</p></section>`;
+    n+=x.m.seiten; const W=200, sc=W/x.m.w, H=Math.round(x.m.h*sc), step=(x.m.w+x.m.gap)*sc, bw=Math.round((x.m.seiten*x.m.w+(x.m.seiten-1)*x.m.gap)*sc);
+    return `<section class="vg"><h3><span>${esc(x.label)}</span><span class="n">${esc(x.y||'')}</span><span class="n">${x.m.seiten} ${x.m.seiten===1?'Seite':'Seiten'}</span></h3><div class="row">${Array.from({length:x.m.seiten},(_,k)=>
+      `<div class="tp" style="background-image:url(mappe/${x.name}.jpg);background-size:${bw}px ${H}px;background-position:${-Math.round(k*step)}px 0;height:${H}px"></div>`).join('')}</div></section>`; }).join('');
+  $('#pcount').textContent=`${n} ${n===1?'Seite':'Seiten'}.`; $('#dlmsg').textContent='';
+}
+let LIB=null;
+function lib(){ return LIB||(LIB=new Promise((res,rej)=>{ if(window.PDFLib) return res(window.PDFLib); const sc=document.createElement('script'); sc.src='pdf-lib.min.js'; sc.onload=()=>res(window.PDFLib); sc.onerror=()=>{ LIB=null; rej(new Error('pdf-lib')); }; document.head.appendChild(sc); })); }
+$('#print').onclick=async()=>{ const b=$('#print'), t=b.textContent, T=L[lang], P=parts().filter(x=>x.m);
+  if(!P.length) return;
+  if(location.protocol==='file:'){ $('#dlmsg').textContent='Der Download geht nur über den Server (Vorschau starten), nicht per Doppelklick.'; return; }
+  b.disabled=true;
+  try{ b.textContent='Mappe wird zusammengestellt …'; const {PDFDocument}=await lib(); const out=await PDFDocument.create();
+    for(let k=0;k<P.length;k++){ b.textContent=`Mappe wird zusammengestellt … ${k+1}/${P.length}`;
+      const r=await fetch('mappe/'+P[k].name+'.pdf'); if(!r.ok) throw new Error(P[k].name);
+      const src=await PDFDocument.load(await r.arrayBuffer()); (await out.copyPages(src,src.getPageIndices())).forEach(pg=>out.addPage(pg)); }
+    out.setTitle('YRD.Works, '+(preset?preset.titel:T.sel)); out.setAuthor('YRD.Works'); out.setCreator('yrd.works');
+    const blob=new Blob([await out.save()],{type:'application/pdf'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+    const fn=preset?'YRD.Works_'+preset.titel.replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,''):T.file;
+    a.href=url; a.download=fn+'.pdf'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
+    $('#dlmsg').textContent=`${(blob.size/1048576).toFixed(1).replace('.',',')} MB heruntergeladen.`;
+  }catch(e){ console.warn(e); $('#dlmsg').textContent='Die Mappe konnte nicht zusammengestellt werden. Bitte später noch einmal versuchen.'; }
+  b.textContent=t; b.disabled=false; };
+/* Varianten: ?layout=a (Reiter) oder ?layout=c (Schritte); ohne Angabe die bisherige Seite */
+const LAY=(new URLSearchParams(location.search).get('layout')||'').toLowerCase();
+if(LAY==='a'||LAY==='c') document.body.classList.add('lay-'+LAY);
+if(new URLSearchParams(location.search).get('invert')==='1') document.body.classList.add('inv');
+if(LAY==='a') document.body.classList.add('tab-m');
+document.querySelector('.tabs').addEventListener('click',e=>{ const b=e.target.closest('button[data-tab]'); if(!b) return; const t=b.dataset.tab;
+  document.body.classList.toggle('tab-m',t==='m'); document.body.classList.toggle('tab-e',t==='e');
+  document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed',x===b)); });
+$('#mpick').insertAdjacentHTML('beforeend',MP.map((m,k)=>`<button type="button" class="chip" aria-pressed="false" data-k="${k}" title="${esc(m.idx.map(i=>D[i].t).join(', '))}">${esc(m.titel)}<span class="c">${m.idx.length}</span></button>`).join(''));
+$('#mpick').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; const m=MP[+b.dataset.k], on=b.getAttribute('aria-pressed')==='true';
+  document.querySelectorAll('#mpick .chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+  if(on){ sel=[]; preset=null; } else { sel=m.idx.slice(); preset=m; b.setAttribute('aria-pressed','true'); }
+  mark(); reorder(); });
+$('#none').addEventListener('click',()=>reorder());   // nur Mappen-Klick und Leeren ordnen das Raster neu, einzelne Klicks lassen die Kachel an ihrem Platz
+$('#tgl').onclick=()=>{ const o=!document.body.classList.contains('themen'); document.body.classList.toggle('themen',o); $('#tgl').setAttribute('aria-expanded',o); $('#tgl').textContent=o?'Themen ▴':'Themen ▾'; };
+/* Variante C: beim Klick auf eine Mappe ruecken ihre Projekte im Raster nach vorn (in der Reihenfolge der Auswahl), mit kurzer Bewegung */
+function reorder(){ if(LAY!=='c') return; const tiles=[...document.querySelectorAll('#grid .tile')];
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches, before=new Map(tiles.map(t=>[t,t.getBoundingClientRect()]));
+  tiles.forEach(t=>{ const i=+t.dataset.i, k=sel.indexOf(i); t.style.order=k>=0?k:100+i; });
+  if(still) return;
+  tiles.forEach(t=>{ if(t.hidden) return; const a=before.get(t), b=t.getBoundingClientRect(), dx=a.left-b.left, dy=a.top-b.top; if(!dx&&!dy) return;
+    t.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:450,easing:'cubic-bezier(.2,.7,.2,1)'}); }); }
+const _mk=mark; mark=function(){ _mk(); if(!preset) document.querySelectorAll('#mpick .chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+ };
+new MutationObserver(()=>{ const pv=document.body.classList.contains('prev'); $('#st1').classList.toggle('on',!pv); $('#st2').classList.toggle('on',pv); $('#st3').classList.toggle('on',pv); }).observe(document.body,{attributes:true,attributeFilter:['class']});
+mark(); apply();
+/* Direktlink auf eine kuratierte Mappe (?mappe=fam-1, von den Themen-Seiten der Website): gleich die Vorschau dieser Mappe */
+{ const _mq=new URLSearchParams(location.search).get('mappe'), _k=MP.findIndex(m=>m.id===_mq); if(_k>=0){ const b=document.querySelector('#mappen .mp[data-k="'+_k+'"]'); if(b) b.click(); } }
+/* Variante Index: ?p=<bildordner>,<bildordner> aus der Ansicht Index: diese Arbeiten gleich in der Vorschau; Zurueck fuehrt in den Index */
+{ const _p=(new URLSearchParams(location.search).get('p')||'').split(',').filter(Boolean), _ix=_p.map(k=>D.findIndex(d=>d.slug===k)).filter(i=>i>=0);
+  if(_ix.length){ sel=_ix; preset=null; mark(); sortMode='sel'; document.body.classList.add('prev'); setSort('sel');
+    const bk=document.getElementById('back'); bk.textContent='← Index'; bk.onclick=()=>{ if(history.length>1) history.back(); else location.href='../index/index.html'; }; } }
+</script>
+<script src="../feedback.js"></script>
+</body>
+</html>
