@@ -656,7 +656,8 @@ tiles.forEach(t=>{
     const bm=new THREE.MeshBasicMaterial({color:0xf3f4ff, transparent:true, opacity:0});
     const back=new THREE.Mesh(geo,bm); back.rotation.y=Math.PI; back.position.z=-0.012; mesh.add(back);
     scene.add(mesh); mesh.userData.tile=t; back.userData.tile=t; picks.push(mesh,back);
-    const it={mesh,m,bm,j,jz,w,h,lx:TW/2+jz*DX-w/2,src:g.src,key:g.key,crop:g.crop,cut:g.cut};
+    /* Ruben 24.10.: Hochformate (schmaler als die Kachel) stehen mittig in der Staffel, bisher buendig rechts; breite Bilder bleiben rechts buendig */
+    const it={mesh,m,bm,j,jz,w,h,lx:jz*DX+Math.min(0,(TW-w)/2),src:g.src,key:g.key,crop:g.crop,cut:g.cut};
     stackTex(it,g.src);
     return it;
   });
