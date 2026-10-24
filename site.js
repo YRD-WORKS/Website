@@ -537,8 +537,10 @@
     var dir=dy>0?1:-1, edge=dir>0?atTop():atBottom();
     if(!edge){ if(pull) clearPull(); return; }
     if(tdir!==dir&&!(atTop()&&atBottom())){ if(pull) clearPull(); return; }
-    pdir=dir; pull=Math.abs(dy)*2.2; applyPull();
+    pdir=dir; pull=Math.abs(dy)*2.2*PULL/TPULL; applyPull();   /* Anzeige erreicht ihr Ende genau an der Touch-Schwelle */
   },{passive:true});
+  /* Testrunde 24.10., Lewin: auf Touch loest das Weiterziehen etwas leichter aus (8 % weniger Weg, rund 108 statt 118 px) */
+  var TPULL=PULL*0.92;
   pov.addEventListener('touchend',function(){ if(ty!==null&&pull>=PULL) firePull(); else if(pull) clearPull(); ty=null; },{passive:true});
   /* Handy (22.10.): im Projekt von links nach rechts wischen fuehrt zurueck zur Uebersicht; nicht in der Bildstrecke und nicht am linken Rand (dort zieht Safari selbst zurueck).
      Das Projekt folgt dem Finger 1:1, der Schleier loest sich dabei auf und die Uebersicht kommt darunter hervor; beim Loslassen gleitet es mit Schwung hinaus oder federt zurueck */

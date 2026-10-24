@@ -1920,7 +1920,14 @@ function stepRoom(dt){
   const k=1-Math.exp(-dt*(retT>0?2.2:4));
   cam.pos.lerp(tgtR,k); { const d=angD(cam.yaw,rm.yawT); cam.yaw+= Math.abs(d)<0.0008 ? d : d*(1-Math.exp(-dt*5)); } cam.pitch=lerp(cam.pitch,rm.pitchT,1-Math.exp(-dt*5));
   // vor der Textflaeche angekommen: Kamera steht still, die Flaeche ist jetzt die Seite und scrollt
-  if(rm.read && !rm.reading && cam.pos.distanceTo(tgtR)<0.01 && Math.abs(angD(cam.yaw,rm.yawT))<0.003 && Math.abs(rm.s-rm.sT)<0.005){
+  /* Testrunde 24.10., David Bausch: beim Wechsel ins Lesen sprang der Text um 1 bis 2 px. Die letzten Pixel zuegig anfahren
+     und erst einrasten, wenn der Rest unter einem Viertelpixel liegt */
+  let readOk=false;
+  if(rm.read && !rm.reading){ const pxM=WH/innerHeight, kf=1-Math.exp(-dt*10);
+    if(Math.abs(rm.s-rm.sT)<8*pxM) rm.s=lerp(rm.s,rm.sT,kf);
+    if(cam.pos.distanceTo(tgtR)<8*pxM){ cam.pos.lerp(tgtR,kf); cam.pitch=lerp(cam.pitch,rm.pitchT,kf); }
+    readOk = cam.pos.distanceTo(tgtR)<0.25*pxM && Math.abs(angD(cam.yaw,rm.yawT))<0.25*pxM/Math.max(1,readS()) && Math.abs(rm.s-rm.sT)<0.25*pxM && Math.abs(cam.pitch-rm.pitchT)<0.25*pxM/Math.max(1,readS()); }
+  if(readOk){
     rm.reading=true; document.body.classList.add('reading'); const tw=textWallOf(rm); if(tw){ tw.el.classList.add('read'); tw.el.style.transform='none'; document.body.appendChild(tw.el); } }
   if(rm.reading){ cam.pos.copy(tgtR); cam.yaw=rm.yawT; cam.pitch=0; rm.s=rm.sT; }
   if(retT>0) retT-=dt;

@@ -245,6 +245,8 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
   .proj-bi:has(.lang-sw) .en{display:none}
   .proj-bi.show-en .en{display:block}
   .proj-bi.show-en .de{display:none}
+  /* Testrunde 24.10., Lewin: Bildstrecke groesser, das erste Bild fuellt rund 2/3 der Breite, das naechste schaut rechts hervor */
+  #project{--hw:calc((100vw - 2 * var(--pad)) * 2 / 3); --gh:calc(var(--hw) / 1.5)}
 }
 
 /* Intro: Woerter nacheinander, mittig, waehrend die Thumbs laden */
