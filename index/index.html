@@ -24,9 +24,10 @@
 .ix-q{font:inherit;color:var(--ink);border:0;border-bottom:1px solid var(--ink-4);padding:.25em 0;width:min(26em,100%);background:transparent;outline:none}
 .ix-q::placeholder{color:var(--ink-4)}
 .lst{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-4)}
-.lst li{display:grid;grid-template-columns:2.2em 6.5em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--ink-2,rgba(0,0,255,.14))}
+.lst li{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--ink-2,rgba(0,0,255,.14))}
 .lst li[hidden]{display:none}
-.lst .ck{width:1.15em;height:1.15em;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);border:0;padding:0;cursor:pointer;justify-self:start}
+/* Ruben 24.10. (Vorschlag Steffen): Auswahlkreis und Miniaturen groesser, vorher Kreis 1.15em, Bild 6.5em (Handy 5.2em) */
+.lst .ck{width:1.6em;height:1.6em;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);border:0;padding:0;cursor:pointer;justify-self:start}
 .lst li[aria-selected="true"] .ck{background:var(--ink)}
 /* Testrunde 24.10.: auf Touch-Geraeten eine Tippflaeche von rund 40 px um den kleinen Kreis (sichtbar bleibt er gleich gross), am Rechner unveraendert */
 @media (pointer:coarse){ .lst .ck{position:relative} .lst .ck::after{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%} }
@@ -52,7 +53,7 @@
   #topics{overflow-x:auto;margin:0 calc(-1 * var(--pad)) 1rem;padding:0 var(--pad);scrollbar-width:none}
   .fbar .fb-r{display:flex!important} #pdf{display:none} #view{display:none}   /* Handy: Link teilen ja, PDF nein (Ruben 21.10.) */
   .ix-lead p{font-size:13px}
-  .lst li{grid-template-columns:2em 5.2em minmax(0,1fr) auto;row-gap:.15em}
+  .lst li{grid-template-columns:2.4em 7.5em minmax(0,1fr) auto;row-gap:.15em}
   .lst .o{display:none}
   .lst .a{grid-column:3 / span 2}
   .lst .ck{grid-row:span 2}
