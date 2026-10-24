@@ -466,6 +466,10 @@ html:not(.g3) .lmode [data-l="list"],html.g3 .lmode [data-l="ov"]{background:var
 .ld3{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;opacity:0;animation:ld3in .25s ease forwards;pointer-events:none}   /* sofort da, dreht mindestens 2 s; gezeichnet als SVG von yrdCube (site.js, 3d/vorlage.html) */
 .ld3 svg{display:block;overflow:visible;width:48px!important;height:48px!important;max-width:none}
 @keyframes ld3in{to{opacity:1}}
+/* Testrunde 24.10., Ruben: Wuerfel mit dezenter Prozentanzeige auf weisser Flaeche (auch ueber dem Platzhalter-Raster in 3D) */
+.ldw{position:absolute;left:50%;top:50%;width:104px;height:116px;margin:-58px 0 0 -52px;background:var(--bg);border-radius:16px;pointer-events:none;z-index:3}
+.ldw .ld3{top:44%}
+.ld3p{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:12px;line-height:1;font-weight:420;color:var(--ink-4);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 #ld2{position:fixed;inset:0;z-index:45;background:var(--bg);transition:opacity .35s ease,visibility 0s linear .35s}
 #ld2.weg{opacity:0;visibility:hidden}
 html.ld2pre main{visibility:hidden}   /* bis die Ladeanzeige steht (site.js) */

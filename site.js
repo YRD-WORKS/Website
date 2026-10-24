@@ -77,6 +77,19 @@
     if(ov) return; var nav=(.9+4.4)*Math.min(22,Math.max(10,innerWidth*0.0088)), ts=[].slice.call(document.querySelectorAll('#grid .tile:not([hidden])'));
     for(var j=0;j<ts.length;j++){ if(ts[j].getBoundingClientRect().bottom>nav+20){ ts[j].click(); return; } } });
   document.addEventListener('click',function(e){ var bt=e.target.closest&&e.target.closest('.lmode button'); if(!bt) return; e.preventDefault(); cols(bt.getAttribute('data-l')==='ov'); });
+  window.yrdCube=yrdCube;   /* Testrunde 24.10., Ruben: Wuerfel auch fuer das Intro (intro.html) */
+  /* Testrunde 24.10., Ruben: am Rechner die 3D-Daten leise vorladen, sobald 2D steht (Intro vorbei, 3 s Ruhe), damit der erste Wechsel nach 3D nicht auf rund 33 MB wartet.
+     Nicht auf dem Handy, nicht im Datensparmodus, nicht per Doppelklick (file://). Die Daten landen nur im Browser-Cache, 3d/index.html holt sie von dort. */
+  (function(){
+    if(location.protocol==='file:'||!window.fetch||innerWidth<=700) return;
+    var cn=navigator.connection; if(cn&&(cn.saveData||/2g/.test(cn.effectiveType||''))) return;
+    if(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=500) return;
+    var a=document.querySelector('a[href*="3d/"]'); if(!a) return;
+    var b3=new URL(a.getAttribute('href'),location.href);
+    function lade(){ ['assets.js','daten.js'].reduce(function(pr,f){ return pr.then(function(){ return fetch(new URL(f,b3).href,{priority:'low'}).then(function(r){ if(!r.ok||!r.body) return; var rd=r.body.getReader(); return (function lies(){ return rd.read().then(function(x){ if(!x.done) return lies(); }); })(); }); }); },Promise.resolve()).catch(function(){}); }
+    function warte(){ if(document.documentElement.classList.contains('intro-on')){ setTimeout(warte,500); return; } setTimeout(function(){ (window.requestIdleCallback||setTimeout)(lade); },3000); }
+    if(document.readyState==='complete') warte(); else addEventListener('load',warte);
+  })();
   function yrdCube(box){ /* Wuerfel als SVG: zwolf Kanten gleich stark, sichtbare durchgezogen, verdeckte gestrichelt; dreht ohne Pause von Vorderansicht (2D) ueber Isometrie (3D) in die naechste Vorderansicht, 0,8 s je Vierteldrehung (22.10.: schneller, mehr Drehung) */
     var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), gH=document.createElementNS(NS,'g'), gV=document.createElementNS(NS,'g'), V=[], E=[], L=[], S=13, t0=performance.now(), i, k;
     sv.setAttribute('viewBox','-24 -24 48 48'); sv.setAttribute('width','48'); sv.setAttribute('height','48'); sv.appendChild(gH); sv.appendChild(gV); box.appendChild(sv);
