@@ -77,20 +77,9 @@
     return ok;
   }
   function waitThumbs(){ if(done) return; if(thumbsReady()||Date.now()-t0>MAXWAIT) end(); else setTimeout(waitThumbs,100); }
-  /* Testrunde 24.10., Ruben: statt der Wahl 2D / 3D dreht der Wuerfel mit Prozentanzeige, bis die Kacheln der ersten Reihen geladen sind (Handy und Rechner).
-     Am Rechner laedt site.js parallel die 3D-Daten (window.YRD_PRE): der Wuerfel zeigt dann deren Fortschritt und bleibt, bis sie da sind, hoechstens CAP ms; danach laedt 2D den Rest leise weiter. */
-  var CAP=8000;
-  function choose(){
-    w.textContent='';
-    var vh=innerHeight, vis=[].slice.call(document.querySelectorAll('#grid img')).filter(function(im){ return im.getBoundingClientRect().top<vh; });
-    if(!vis.length||!window.yrdCube){ waitThumbs(); return; }
-    var c0=Date.now(), wr=document.createElement('div'); wr.className='ldw'; wr.innerHTML='<div class="ld3"></div><div class="ld3p"></div>'; box.appendChild(wr); yrdCube(wr.firstChild);
-    var p=wr.lastChild;
-    (function up(){ if(done) return; var n=0; vis.forEach(function(im){ if(im.complete) n++; }); var v=n/vis.length, P=window.YRD_PRE, ok=v>=1;
-      if(P){ var d=P.done?1:(P.tot?Math.min(.99,P.got/P.tot):0); v=.1*v+.9*d; ok=ok&&P.done; }
-      p.textContent=Math.floor(v*100)+' %';
-      if((ok&&Date.now()-c0>900)||Date.now()-c0>(P?CAP:6000)) end(); else setTimeout(up,100); })();
-  }
+  /* Testrunde 24.10., Ruben: nach den Woertern direkt 2D, ohne Wahl 2D / 3D und ohne Ladewuerfel (der steht nur noch in 3D).
+     Waehrend der Woerter laden die ersten Kacheln (sofort, ohne lazy) und am Rechner im Hintergrund die 3D-Daten (site.js). */
+  function choose(){ w.textContent=''; waitThumbs(); }
   var k=0;
   function step(){
     if(done) return;

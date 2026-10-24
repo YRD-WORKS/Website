@@ -88,9 +88,15 @@
     var a=document.querySelector('a[href*="3d/"]'); if(!a) return;
     var b3=new URL(a.getAttribute('href'),location.href), SZ=window.YRD_3DSZ||{}, fs=['assets','daten'];
     var pre=window.YRD_PRE={got:0,tot:(SZ.assets||0)+(SZ.daten||0),done:false};
+    /* erst los, wenn die sichtbaren Kacheln geladen sind (hoechstens 3 s), sonst nehmen die 33 MB ihnen die Leitung; meist noch waehrend der Intro-Woerter */
+    var t0=Date.now();
+    function bereit(){ var ims=document.querySelectorAll('#grid img'), vh=innerHeight; for(var j=0;j<ims.length;j++){ if(ims[j].getBoundingClientRect().top>vh) break; if(!ims[j].complete) return false; } return true; }
+    (function warte(){ if(bereit()||Date.now()-t0>3000) lade(); else setTimeout(warte,100); })();
+    function lade(){
     fs.reduce(function(pr,f){ return pr.then(function(){ return fetch(new URL(f+'.js',b3).href,{priority:'low'}).then(function(r){ if(!r.ok||!r.body) return; var rd=r.body.getReader();
       return (function lies(){ return rd.read().then(function(x){ if(x.done) return; pre.got+=x.value.length; return lies(); }); })(); }); }); },Promise.resolve())
     .then(function(){ pre.done=true; try{ sessionStorage.setItem('yrd3dpre','1'); }catch(e){} },function(){ pre.done=true; });   /* yrd3dpre: 3D zeigt den Wuerfel dann erst spaet (vorlage.html) */
+    }
   })();
   function yrdCube(box){ /* Wuerfel als SVG: zwolf Kanten gleich stark, sichtbare durchgezogen, verdeckte gestrichelt; dreht ohne Pause von Vorderansicht (2D) ueber Isometrie (3D) in die naechste Vorderansicht, 0,8 s je Vierteldrehung (22.10.: schneller, mehr Drehung) */
     var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), gH=document.createElementNS(NS,'g'), gV=document.createElementNS(NS,'g'), V=[], E=[], L=[], S=13, t0=performance.now(), i, k;
