@@ -237,7 +237,8 @@ html.gate-on #intro{display:none}
     var wr=document.createElement('div'); wr.className='ldw'; wr.innerHTML='<div class="ld3"></div><div class="ld3p"></div>'; b.appendChild(wr); yrdCube(wr.firstChild); var p=wr.lastChild;
     (function up(){ if(!b.isConnected||b.classList.contains('gone')) return; if(window.YRD_GO&&!fg){ wr.parentNode&&wr.parentNode.removeChild(wr); return; }
       var v=window.YRD_PROG; p.textContent=(v==null)?'':Math.floor(Math.min(v,1)*100)+' %'; setTimeout(up,120); })(); }
-  if(mob&&fg) go(); else setTimeout(go,250);
+  var warm=false; try{ warm=sessionStorage.getItem('yrd3dpre')==='1'; }catch(e){}   /* 2D hat die Daten schon vorgeladen (site.js): Wuerfel erst nach 1,5 s, meist gar nicht */
+  if(mob&&fg) go(); else setTimeout(go,warm?1500:250);
 })();</script>
 
 <header class="nav cols" aria-label="Site">
@@ -377,9 +378,9 @@ html.gate-on #intro{display:none}
 (function(){ var L=innerWidth<=700||(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=500), ok=true;   /* Hinweis zur Datenmenge abgeschaltet (Ruben 21.10.: rund 10 MB sind zumutbar); #gate bleibt fuer den Fall, dass er zurueck soll */
   window.YRD_LITE=L; try{ if(sessionStorage.getItem('yrd3dok')) ok=true; }catch(e){}
   if(ok){ /* (22.10.) nicht mehr per document.write: die Seite zeichnet sofort (Platzhalter-Raster), das Modul wartet auf window.YRD_LOAD */
-    /* Testrunde 24.10., Ruben: online per fetch mit Fortschritt (window.YRD_PROG 0..1 fuer den Ladewuerfel), Groessen der ungepackten Dateien setzt build_3d.py ein ({"assets": 15616295, "daten": 17550112, "assets-lite": 6690586, "daten-lite": 5495913});
+    /* Testrunde 24.10., Ruben: online per fetch mit Fortschritt (window.YRD_PROG 0..1 fuer den Ladewuerfel), Groessen der ungepackten Dateien setzt build_3d.py ein ({"assets": 15616295, "daten": 19098682, "assets-lite": 6690586, "daten-lite": 6174091});
        per Doppelklick (file://) oder wenn fetch scheitert wie bisher als Script-Tags, dann ohne Prozent. Am Rechner hat 2D die Dateien meist schon vorgeladen (site.js). */
-    var F=location.protocol==='file:', SZ={"assets": 15616295, "daten": 17550112, "assets-lite": 6690586, "daten-lite": 5495913}; window.YRD_PROG=F?null:0;
+    var F=location.protocol==='file:', SZ={"assets": 15616295, "daten": 19098682, "assets-lite": 6690586, "daten-lite": 6174091}; window.YRD_PROG=F?null:0;
     window.YRD_LOAD=new Promise(function(res){ var ks=['assets','daten'].map(function(k){ return k+(L?'-lite':''); });
       function tags(){ window.YRD_PROG=null; var n=0, all=ks.concat(F?['vorschau']:[]); all.forEach(function(k){ var sc=document.createElement('script'); sc.src=k+'.js'; sc.async=false; sc.onload=sc.onerror=function(){ if(++n===all.length){ window.YRD_PROG=1; res(); } }; document.head.appendChild(sc); }); }   /* vorschau.js nur per Doppelklick (file://): Bilder ab 6 eingebettet */
       if(F||!window.fetch||!window.ReadableStream){ tags(); return; }
@@ -619,7 +620,7 @@ function cropFrac(c,w,h){   // [x,y,b,h] als Anteile oder [a,b] Seitenverhaeltni
 function staffelList(t){
   const p=t.p, WB=(window.YRD_WOLKE||{})[p.slug], S=STAFFEL[p.slug];
   const wl=WB?WB.bilder.map((b,k)=>['w'+k,{src:b[0],w:+b[1],h:+b[2]}]):[], gl=p.gallery.map((g,k)=>['g'+k,{src:g[3]||g[0],w:+g[1],h:+g[2]}]);
-  if(!S) return (WB?wl:gl.slice(1,5)).map(([key,b])=>({key,...b}));   // ohne Eintrag: Staffel aus den ersten 4 Bildern, der Raum zeigt die ganze Strecke
+  if(!S) return (WB?wl:gl.slice(1)).map(([key,b])=>({key,...b}));   // ohne Eintrag: Staffel aus allen Bildern des Raums (Testrunde 24.10., Ruben; vorher nur die ersten 4), Bilder ab 6 als eingebettete Vorschau (g[3])
   const by=Object.fromEntries(wl.concat(gl));
   return S.map(e=>{ const b=by[e.k]; if(!b){ console.warn('Staffel: Bild fehlt',p.slug,e.k); return null; }
     const cf=cropFrac(e.crop,b.w,b.h), w=cf?b.w*cf[2]:b.w, h=cf?b.h*cf[3]:b.h;
@@ -650,15 +651,16 @@ function gridStack(t,bilder){
 tiles.forEach(t=>{
   const L=staffelList(t);
   if((window.YRD_WOLKE||{})[t.p.slug]){ t.stack=gridStack(t,L); t.grid=true; return; }
+  const kz=Math.min(1,4/Math.max(1,L.length));   /* Testrunde 24.10.: lange Staffeln ruecken dichter zusammen, so tief und breit wie eine mit 4 Bildern */
   t.stack=L.map((g,k)=>{
-    const j=k+1, asp=g.w/g.h; let w=TH*asp, h=TH; if(w>GMAXW){ w=GMAXW; h=w/asp; }
+    const j=k+1, jz=j*kz, asp=g.w/g.h; let w=TH*asp, h=TH; if(w>GMAXW){ w=GMAXW; h=w/asp; }
     const geo=new THREE.PlaneGeometry(w,h);
     const m=new THREE.MeshBasicMaterial({color:0xeef0ff, transparent:true, opacity:0});
     const mesh=new THREE.Mesh(geo,m); mesh.quaternion.copy(t.qR); mesh.renderOrder=-j;
     const bm=new THREE.MeshBasicMaterial({color:0xf3f4ff, transparent:true, opacity:0});
     const back=new THREE.Mesh(geo,bm); back.rotation.y=Math.PI; back.position.z=-0.012; mesh.add(back);
     scene.add(mesh); mesh.userData.tile=t; back.userData.tile=t; picks.push(mesh,back);
-    const it={mesh,m,bm,j,w,h,lx:TW/2+j*DX-w/2,src:g.src,key:g.key,crop:g.crop,cut:g.cut};
+    const it={mesh,m,bm,j,jz,w,h,lx:TW/2+jz*DX-w/2,src:g.src,key:g.key,crop:g.crop,cut:g.cut};
     stackTex(it,g.src);
     return it;
   });
@@ -675,8 +677,9 @@ function poseStack(t){
   if(roomOf(t.i)){ t.stack.forEach(it=>{ it.mesh.visible=false; }); return; }   // die Staffelbilder sind jetzt Flaechen des Raums
   t.stack.forEach(it=>{
     // Lage relativ zur Kachel: in die Tiefe (wie im Ring) oder flach darunter versetzt wie ein Kartenstapel
-    stL.set(it.lx*e, IMGC+(it.j*DY+(it.ly||0))*e, -it.j*DZ*e);
-    if(sf<1){ stF.set(it.lx*0.45*e, IMGC+(it.j*0.55+(it.ly||0)*0.6)*e, -it.j*0.012); stL.lerpVectors(stF,stL,sf); }
+    const jz=it.jz??it.j;
+    stL.set(it.lx*e, IMGC+(jz*DY+(it.ly||0))*e, -jz*DZ*e);
+    if(sf<1){ stF.set(it.lx*0.45*e, IMGC+(jz*0.55+(it.ly||0)*0.6)*e, -jz*0.012); stL.lerpVectors(stF,stL,sf); }
     const pos=it.mesh.position.copy(stL.applyQuaternion(t.grp.quaternion)).add(t.grp.position);
     it.mesh.quaternion.copy(t.grp.quaternion);
     let o=e*t.fade*(t.i===cur?1:stackK*(t.sv??1));   // fremde Staffeln erst, wenn kein Raum mehr steht: sie reichen weit nach draussen, zwischen die Bilder des Raums
@@ -1030,7 +1033,7 @@ const rooms=[]; let room=null;
 const roomOf=i=>rooms.find(r=>r.i===i);
 let arrowHover=null, turnHover=0, exitHover=false;
 const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]):[];
-function stackPose(t,it){ const p=t.up.clone().setY(TILEY).addScaledVector(t.right,it.lx).addScaledVector(t.nrm,-it.j*DZ); p.y+=it.j*DY+(it.ly||0); return p; }
+function stackPose(t,it){ const jz=it.jz??it.j, p=t.up.clone().setY(TILEY).addScaledVector(t.right,it.lx).addScaledVector(t.nrm,-jz*DZ); p.y+=jz*DY+(it.ly||0); return p; }
 /* Aufteilung des Raums. Reihe: im Bogen von links nach rechts Heroshot, die Staffelbilder, Text; das mittlere Bild steht geradeaus.
    Beim Betreten faechert sich die Staffel hinter dem Heroshot zur Reihe auf, die mit der Fahrt waechst und sich zum Bogen biegt */
 function layout(t){

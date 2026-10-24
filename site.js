@@ -78,17 +78,19 @@
     for(var j=0;j<ts.length;j++){ if(ts[j].getBoundingClientRect().bottom>nav+20){ ts[j].click(); return; } } });
   document.addEventListener('click',function(e){ var bt=e.target.closest&&e.target.closest('.lmode button'); if(!bt) return; e.preventDefault(); cols(bt.getAttribute('data-l')==='ov'); });
   window.yrdCube=yrdCube;   /* Testrunde 24.10., Ruben: Wuerfel auch fuer das Intro (intro.html) */
-  /* Testrunde 24.10., Ruben: am Rechner die 3D-Daten leise vorladen, sobald 2D steht (Intro vorbei, 3 s Ruhe), damit der erste Wechsel nach 3D nicht auf rund 33 MB wartet.
-     Nicht auf dem Handy, nicht im Datensparmodus, nicht per Doppelklick (file://). Die Daten landen nur im Browser-Cache, 3d/index.html holt sie von dort. */
+  /* Testrunde 24.10., Ruben: am Rechner die 3D-Daten (rund 33 MB) gleich beim Aufruf vorladen: waehrend der Intro-Woerter und des Wuerfels (intro.html zeigt den Fortschritt), danach weiter leise in 2D,
+     damit der Wechsel nach 3D ohne Wuerfel auskommt. Nicht auf dem Handy, nicht im Datensparmodus, nicht per Doppelklick (file://). Die Daten landen nur im Browser-Cache, 3d/index.html holt sie von dort.
+     window.YRD_PRE = {got, tot, done}; ungepackte Groessen aus projects.js (YRD_3DSZ, setzt build.py nach dem 3D-Bau). */
   (function(){
     if(location.protocol==='file:'||!window.fetch||innerWidth<=700) return;
     var cn=navigator.connection; if(cn&&(cn.saveData||/2g/.test(cn.effectiveType||''))) return;
     if(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=500) return;
     var a=document.querySelector('a[href*="3d/"]'); if(!a) return;
-    var b3=new URL(a.getAttribute('href'),location.href);
-    function lade(){ ['assets.js','daten.js'].reduce(function(pr,f){ return pr.then(function(){ return fetch(new URL(f,b3).href,{priority:'low'}).then(function(r){ if(!r.ok||!r.body) return; var rd=r.body.getReader(); return (function lies(){ return rd.read().then(function(x){ if(!x.done) return lies(); }); })(); }); }); },Promise.resolve()).catch(function(){}); }
-    function warte(){ if(document.documentElement.classList.contains('intro-on')){ setTimeout(warte,500); return; } setTimeout(function(){ (window.requestIdleCallback||setTimeout)(lade); },3000); }
-    if(document.readyState==='complete') warte(); else addEventListener('load',warte);
+    var b3=new URL(a.getAttribute('href'),location.href), SZ=window.YRD_3DSZ||{}, fs=['assets','daten'];
+    var pre=window.YRD_PRE={got:0,tot:(SZ.assets||0)+(SZ.daten||0),done:false};
+    fs.reduce(function(pr,f){ return pr.then(function(){ return fetch(new URL(f+'.js',b3).href,{priority:'low'}).then(function(r){ if(!r.ok||!r.body) return; var rd=r.body.getReader();
+      return (function lies(){ return rd.read().then(function(x){ if(x.done) return; pre.got+=x.value.length; return lies(); }); })(); }); }); },Promise.resolve())
+    .then(function(){ pre.done=true; try{ sessionStorage.setItem('yrd3dpre','1'); }catch(e){} },function(){ pre.done=true; });   /* yrd3dpre: 3D zeigt den Wuerfel dann erst spaet (vorlage.html) */
   })();
   function yrdCube(box){ /* Wuerfel als SVG: zwolf Kanten gleich stark, sichtbare durchgezogen, verdeckte gestrichelt; dreht ohne Pause von Vorderansicht (2D) ueber Isometrie (3D) in die naechste Vorderansicht, 0,8 s je Vierteldrehung (22.10.: schneller, mehr Drehung) */
     var NS='http://www.w3.org/2000/svg', sv=document.createElementNS(NS,'svg'), gH=document.createElementNS(NS,'g'), gV=document.createElementNS(NS,'g'), V=[], E=[], L=[], S=13, t0=performance.now(), i, k;
