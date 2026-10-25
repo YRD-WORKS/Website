@@ -575,7 +575,7 @@
   /* Handy (22.10.): im Projekt von links nach rechts wischen fuehrt zurueck zur Uebersicht; nicht in der Bildstrecke und nicht am linken Rand (dort zieht Safari selbst zurueck).
      Das Projekt folgt dem Finger 1:1, der Schleier loest sich dabei auf und die Uebersicht kommt darunter hervor; beim Loslassen gleitet es mit Schwung hinaus oder federt zurueck */
   /* Testrunde 25.10., Ruben: dieselbe Geste fuehrt auch aus den Menuepunkten heraus (About ueber dieselbe Ebene wie die Projekte, News, Contact, Impressum, Datenschutz als eigene Ebenen) */
-  function swipeBack(pov,ok){ var pan=pov.querySelector('.panel'), sx=null, sy=0, dx=0, on=false, lx=0, lt=0, v=0, W=1, EZ='cubic-bezier(.2,.7,.2,1)';
+  function swipeBack(pov,ok){ var pan=pov.querySelector('.panel'), sx=null, sy=0, dx=0, on=false, lx=0, lt=0, v=0, W=1, EZ='cubic-bezier(.25,.6,.3,1)';
     if(!pan) return;
     function setX(x){ pan.style.transform=x?'translate3d('+x+'px,0,0)':''; pov.style.setProperty('--va',(.95*(1-Math.min(1,x/W))).toFixed(3)); }
     pov.addEventListener('touchstart',function(e){ sx=null; on=false; dx=0; v=0;
@@ -589,14 +589,14 @@
       dx=Math.max(0,x); setX(dx); },{passive:false});
     function end(){ if(sx===null) return; sx=null; if(!on) return; on=false;
       if(dx>W*.33||(v>.45&&dx>30)){
-        var ms=Math.round(Math.max(160,Math.min(320,(W-dx)/Math.max(v,1.2)*1.6)));
+        var ms=Math.round(Math.max(420,Math.min(700,(W-dx)/Math.max(v,1.2)*3)));   /* Ruben 25.10.: ruhiger hinaus, vorher 160 bis 320 ms */
         pan.style.transition='transform '+ms+'ms '+EZ; pov.style.transition='background-color '+ms+'ms ease'; setX(W);
         setTimeout(function(){ pov.style.transition='none'; close(); requestAnimationFrame(function(){ requestAnimationFrame(function(){
           pan.style.transition='none'; setX(0); pov.style.removeProperty('--va'); pan.style.willChange='';
           requestAnimationFrame(function(){ pan.style.transition=''; pov.style.transition=''; }); }); }); },ms);
       } else {
-        pan.style.transition='transform .3s '+EZ; setX(0); pov.style.removeProperty('--va');
-        setTimeout(function(){ pan.style.transition=''; pan.style.willChange=''; },320); } }
+        pan.style.transition='transform .45s '+EZ; setX(0); pov.style.removeProperty('--va');
+        setTimeout(function(){ pan.style.transition=''; pan.style.willChange=''; },470); } }
     pov.addEventListener('touchend',end,{passive:true}); pov.addEventListener('touchcancel',end,{passive:true});
   }
   swipeBack(pov,function(){ var o=document.body.getAttribute('data-ov'); return o==='project'||o==='about'||o==='information'; });
