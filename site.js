@@ -275,10 +275,14 @@
   function setCount(){
     var g=document.getElementById('proj-gal'), c=document.getElementById('proj-count'), im=g.children, n=im.length;
     if(n<2){ c.textContent=''; return; }
-    var gl=g.getBoundingClientRect().left, k=0;
+    var gl=g.getBoundingClientRect().left, k=0, end=g.scrollLeft>=g.scrollWidth-g.clientWidth-2;
     for(var j=0;j<n;j++){ var r=im[j].getBoundingClientRect(); if(r.left-gl<=r.width/2) k=j; }
-    if(g.scrollLeft>=g.scrollWidth-g.clientWidth-2) k=n-1;
-    c.textContent=(k+1)+' / '+n;
+    if(end) k=n-1;
+    /* Ruben 25.10.: Pfeile links und rechts der Zahl blaettern die Strecke (wie Klick aufs Bild und Pfeiltasten), am Anfang bzw. Ende blass */
+    if(!c.querySelector('.gp')) c.innerHTML='<button type="button" class="gp" data-d="-1" aria-label="Previous image">\u2190</button><span class="gn"></span><button type="button" class="gp" data-d="1" aria-label="Next image">\u2192</button>';
+    c.querySelector('.gn').textContent=(k+1)+' / '+n;
+    c.querySelector('[data-d="-1"]').disabled=g.scrollLeft<=2;
+    c.querySelector('[data-d="1"]').disabled=end;
   }
   var cntRaf=0;
   document.getElementById('proj-gal').addEventListener('scroll',function(){ if(!cntRaf) cntRaf=requestAnimationFrame(function(){ cntRaf=0; setCount(); }); },{passive:true});
@@ -447,6 +451,32 @@
     }
   });
 
+  /* Ruben 25.10.: mit der Maus liess sich die Bildstrecke kaum blaettern (Mausrad nur senkrecht, Trackpad wischt seitlich).
+     Am Rechner (feiner Zeiger mit Hover) fuehrt ein Klick auf die rechte Haelfte der Strecke zum naechsten Bild, links zum vorigen;
+     der Zeiger zeigt dabei einen Pfeil, am Anfang bzw. Ende der Strecke den normalen Zeiger. Touch bleibt beim Wischen, Pfeiltasten wie bisher */
+  (function(){
+    var fine=window.matchMedia('(hover:hover) and (pointer:fine)'), g=document.getElementById('proj-gal'); if(!g) return;
+    function cur(d){ return 'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d>0?'e-resize':'w-resize'); }
+    var CR=cur(1), CL=cur(-1);
+    function side(e){ var r=g.getBoundingClientRect(); return e.clientX-r.left>r.width/2?1:-1; }
+    function canGo(d){ var imgs=galImgs(), i=galIndex(g,imgs), atEnd=g.scrollLeft>=g.scrollWidth-g.clientWidth-2; return d>0?(i<imgs.length-1&&!atEnd):(i>0||g.scrollLeft>2); }
+    g.addEventListener('mousemove',function(e){ if(!fine.matches||galImgs().length<2){ g.style.cursor=''; return; } var d=side(e); g.style.cursor=canGo(d)?(d>0?CR:CL):''; });
+    g.addEventListener('mouseleave',function(){ g.style.cursor=''; });
+    function galStep(d){
+      var imgs=galImgs(); if(imgs.length<2||!canGo(d)) return;
+      /* Ziel: das naechste Bild, das rechts bzw. links vom heutigen Anfang der Strecke beginnt (am Ende der Strecke nicht zwei zurueck) */
+      var gl=g.getBoundingClientRect().left, base=Date.now()-kTime<450?imgs[kIdx].getBoundingClientRect().left-gl:0, k=-1;
+      imgs.forEach(function(im,j){ var x=im.getBoundingClientRect().left-gl-base; if(d>0){ if(x>4&&k<0) k=j; } else if(x<-4) k=j; });
+      if(k<0) return; galTo(g,imgs,k);
+    }
+    g.addEventListener('click',function(e){
+      if(!fine.matches||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+      if(e.target.closest('a,button')) return;
+      var d=side(e); galStep(d); g.style.cursor=canGo(d)?(d>0?CR:CL):'';
+    });
+    document.getElementById('proj-count').addEventListener('click',function(e){ var b=e.target.closest('.gp'); if(!b||b.disabled) return; galStep(+b.dataset.d); });
+  })();
+
   /* ---------- Weiterziehen: unten am Seitenende ins naechste Projekt (About: zur Startseite), oben zur Gesamtansicht ---------- */
   var leaving=false, pov=document.getElementById('project'), panel=pov.querySelector('.panel');
   var lastAbs=0, rises=0, lockUntil=0, lockStart=0, PULL=260, pull=0, pdir=0, pulling=false, lastW=0, pullT=0, ty=null, tx=0, tdir=0;
@@ -544,10 +574,12 @@
   pov.addEventListener('touchend',function(){ if(ty!==null&&pull>=PULL) firePull(); else if(pull) clearPull(); ty=null; },{passive:true});
   /* Handy (22.10.): im Projekt von links nach rechts wischen fuehrt zurueck zur Uebersicht; nicht in der Bildstrecke und nicht am linken Rand (dort zieht Safari selbst zurueck).
      Das Projekt folgt dem Finger 1:1, der Schleier loest sich dabei auf und die Uebersicht kommt darunter hervor; beim Loslassen gleitet es mit Schwung hinaus oder federt zurueck */
-  (function(){ var pan=pov.querySelector('.panel'), sx=null, sy=0, dx=0, on=false, lx=0, lt=0, v=0, W=1, EZ='cubic-bezier(.2,.7,.2,1)';
+  /* Testrunde 25.10., Ruben: dieselbe Geste fuehrt auch aus den Menuepunkten heraus (About ueber dieselbe Ebene wie die Projekte, News, Contact, Impressum, Datenschutz als eigene Ebenen) */
+  function swipeBack(pov,ok){ var pan=pov.querySelector('.panel'), sx=null, sy=0, dx=0, on=false, lx=0, lt=0, v=0, W=1, EZ='cubic-bezier(.2,.7,.2,1)';
+    if(!pan) return;
     function setX(x){ pan.style.transform=x?'translate3d('+x+'px,0,0)':''; pov.style.setProperty('--va',(.95*(1-Math.min(1,x/W))).toFixed(3)); }
     pov.addEventListener('touchstart',function(e){ sx=null; on=false; dx=0; v=0;
-      if(e.touches.length!==1||document.body.getAttribute('data-ov')!=='project'||e.target.closest('.proj-gal')||pov.style.overflowY==='hidden') return;
+      if(e.touches.length!==1||!ok()||e.target.closest('.proj-gal')||pov.style.overflowY==='hidden') return;
       var t=e.touches[0]; if(t.clientX<24) return; sx=t.clientX; sy=t.clientY; lx=sx; lt=e.timeStamp; W=innerWidth; },{passive:true});
     pov.addEventListener('touchmove',function(e){ if(sx===null) return;
       var t=e.touches[0], x=t.clientX-sx, y=t.clientY-sy;
@@ -566,7 +598,9 @@
         pan.style.transition='transform .3s '+EZ; setX(0); pov.style.removeProperty('--va');
         setTimeout(function(){ pan.style.transition=''; pan.style.willChange=''; },320); } }
     pov.addEventListener('touchend',end,{passive:true}); pov.addEventListener('touchcancel',end,{passive:true});
-  })();
+  }
+  swipeBack(pov,function(){ var o=document.body.getAttribute('data-ov'); return o==='project'||o==='about'||o==='information'; });
+  Array.prototype.forEach.call(document.querySelectorAll('.overlay.legal'),function(ov){ swipeBack(ov,function(){ return ov.classList.contains('open'); }); });
   window.addEventListener('popstate',route);
   route();
 

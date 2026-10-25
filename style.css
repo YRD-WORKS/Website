@@ -217,6 +217,13 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .swap-old .panel{background:var(--bg)}
 /* Bildzaehler, Next-Link, Sprachumschalter */
 .proj-count{margin-top:.6em; min-height:1.22em; color:var(--ink-4); font-variant-numeric:tabular-nums}
+/* Ruben 25.10.: Pfeile am Bildzaehler, blau wenn es weitergeht, blass am Anfang und Ende */
+.proj-count{display:flex; align-items:baseline}
+.proj-count .gp{font:inherit; color:var(--ink); background:none; border:0; padding:.15em .45em; margin:-.15em 0; cursor:pointer; line-height:inherit}
+.proj-count .gp:first-child{padding-left:0}
+.proj-count .gp:disabled{color:var(--ink-4); opacity:.5; cursor:default}
+@media (hover:hover) and (pointer:fine){ .proj-count .gp:not(:disabled):hover{animation:wiggle .5s ease-in-out} }
+@media (prefers-reduced-motion:reduce){ .proj-count .gp:hover{animation:none} }
 .proj-intro{margin-top:1.8em}
 .lang-sw{display:none}
 .lang-sw button{font:inherit; color:var(--ink-4); background:none; border:0; padding:0; cursor:pointer}
