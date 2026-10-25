@@ -105,6 +105,30 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .proj-specs div{min-width:0}
 .proj-specs dt{color:var(--ink-4)}
 .proj-specs dd{margin:0}
+/* Ruben 25.10.: Titel und Angaben sitzen auf einer Grundlinie, die drei Angaben stehen mit gleichen Abstaenden nebeneinander, buendig mit der rechten Bildkante.
+   Ab 701 px ein Raster: Spalte 1 der Titel, dann Year, Location, Type je so breit wie ihr Inhalt; Zeile 1 die Bezeichnungen, Zeile 2 Titel und Werte auf derselben Grundlinie.
+   Wird es eng, brechen die Werte um (statt die Abstaende zu stauchen) */
+@media (min-width:701px){
+  .proj-intro{display:grid; grid-template-columns:minmax(max-content,1fr) repeat(3,minmax(0,max-content)); grid-template-rows:auto auto; column-gap:2.6em; row-gap:0; align-items:baseline; justify-content:stretch}
+  .proj-intro .proj-name{grid-column:1; grid-row:2; margin-top:0; align-self:baseline; max-width:16em}   /* kurze Titel brechen nicht um, lange ab 16em; vorher machen die Werte Platz */
+  .proj-intro .proj-specs, .proj-intro .proj-specs div{display:contents}
+  .proj-intro .proj-specs dt{grid-row:1}
+  .proj-intro .proj-specs dd{grid-row:2}
+  .proj-intro .proj-specs div:nth-child(1) > *{grid-column:2}
+  .proj-intro .proj-specs div:nth-child(2) > *{grid-column:3}
+  .proj-intro .proj-specs div:nth-child(3) > *{grid-column:4}
+  .proj-intro .proj-specs dt, .proj-intro .proj-specs dd{line-height:1.5rem}
+}
+/* Schmales Rechnerfenster (Bildstrecke dort nur rund halb so breit wie das Fenster): Titel in eigener Zeile darueber, die drei Angaben darunter mit gleichen Abstaenden */
+@media (min-width:701px) and (max-width:1130px) and (hover:hover) and (pointer:fine){
+  .proj-intro{grid-template-columns:repeat(3,minmax(0,max-content)); grid-template-rows:auto auto auto; row-gap:0}
+  .proj-intro .proj-name{grid-column:1 / -1; grid-row:1; max-width:none; margin-bottom:.9em}
+  .proj-intro .proj-specs dt{grid-row:2}
+  .proj-intro .proj-specs dd{grid-row:3}
+  .proj-intro .proj-specs div:nth-child(1) > *{grid-column:1}
+  .proj-intro .proj-specs div:nth-child(2) > *{grid-column:2}
+  .proj-intro .proj-specs div:nth-child(3) > *{grid-column:3}
+}
 /* Ueberscrollen: unter der Seite liegt eine transparente Zone, der Schleier loest sich auf */
 #project{--exit:0px; background:rgba(255,255,255,var(--va,.95))}
 #project .panel{background:linear-gradient(var(--bg),var(--bg)) top / 100% calc(100% - var(--exit)) no-repeat}
