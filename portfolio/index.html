@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>YRD.Works, PDF</title>
+<title>YRD.Works / PDF</title>
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="YRD.Works">
-<meta property="og:title" content="Portfolio als PDF">
+<meta property="og:title" content="YRD.Works / PDF">
 <meta property="og:description" content="Arbeiten von YRD.Works auswählen und als PDF laden.">
 <meta property="og:url" content="https://yrd-works.github.io/Website/portfolio/">
 <meta property="og:image" content="https://yrd-works.github.io/Website/Bilder/og.jpg">
@@ -394,7 +393,7 @@ $('#print').onclick=async()=>{ const b=$('#print'), t=b.textContent, T=L[lang], 
     for(let k=0;k<P.length;k++){ b.textContent=`Mappe wird zusammengestellt … ${k+1}/${P.length}`;
       const r=await fetch('mappe/'+P[k].name+'.pdf'); if(!r.ok) throw new Error(P[k].name);
       const src=await PDFDocument.load(await r.arrayBuffer()); (await out.copyPages(src,src.getPageIndices())).forEach(pg=>out.addPage(pg)); }
-    out.setTitle('YRD.Works, '+(preset?preset.titel:T.sel)); out.setAuthor('YRD.Works'); out.setCreator('yrd.works');
+    out.setTitle('YRD.Works / '+(preset?preset.titel:T.sel)); out.setAuthor('YRD.Works'); out.setCreator('yrd.works');
     const blob=new Blob([await out.save()],{type:'application/pdf'}), url=URL.createObjectURL(blob), a=document.createElement('a');
     const fn=preset?'YRD.Works_'+preset.titel.replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,''):T.file;
     a.href=url; a.download=fn+'.pdf'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);

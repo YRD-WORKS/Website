@@ -392,7 +392,7 @@
     /* About laeuft ueber dieselbe Ebene wie die Projekte: fuer die untere Leiste zaehlt, was geoeffnet ist, nicht die Ebene */
     document.body.setAttribute('data-ov', !id?'':(SLUG_IDX.hasOwnProperty(h)?'project':(h==='information'?'about':h)));
     if(/^r\d+(\.\d+)?$/.test(h)) h='';
-    document.title=h?'YRD.Works, '+(SLUG_IDX.hasOwnProperty(h)?PROJECTS[SLUG_IDX[h]].title:(AWK.hasOwnProperty(h)?AWK[h].titel:(TITLES[h]||h))):TITLE0;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works, dann der Projektname */
+    document.title=h?'YRD.Works / '+(SLUG_IDX.hasOwnProperty(h)?PROJECTS[SLUG_IDX[h]].title:(AWK.hasOwnProperty(h)?AWK[h].titel:(TITLES[h]||h))):TITLE0;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works / dann der Projektname */
     track(h);
   }
   grid.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(t) fillProject(+t.dataset.i); });
@@ -433,7 +433,7 @@
     if(current<0) return;                               /* About: kein Blaettern */
     var n=nb(current,d);
     if(d>0){ kIdx=0; kTime=0; pushTo(n,0); return; }
-    fillProject(n); pov.scrollTop=0; kIdx=0; kTime=0; try{ history.replaceState(null,'',abs(PROJECTS[n].slug)); }catch(err){} document.title='YRD.Works, '+PROJECTS[n].title;
+    fillProject(n); pov.scrollTop=0; kIdx=0; kTime=0; try{ history.replaceState(null,'',abs(PROJECTS[n].slug)); }catch(err){} document.title='YRD.Works / '+PROJECTS[n].title;
     if(d<0){ var g=document.getElementById('proj-gal'); g.scrollLeft=g.scrollWidth; kIdx=galImgs().length-1; }
   }
   document.addEventListener('keydown',function(e){
@@ -522,7 +522,7 @@
     var cl=panel.cloneNode(true); cl.querySelectorAll('[id]').forEach(function(x){ x.removeAttribute('id'); });
     cl.style.transition='none'; cl.style.opacity=''; cl.style.transform='translateY('+(-st)+'px)';
     old.appendChild(cl); document.body.appendChild(old);
-    fillProject(n); pov.scrollTop=0; try{ history.replaceState(null,'',abs(sl)); }catch(err){} document.title='YRD.Works, '+PROJECTS[n].title;   /* (22.10.) ersetzt statt neuer Eintrag: Zurueck (auch Safaris Wischgeste) fuehrt zur Uebersicht, nicht zum vorigen Projekt */
+    fillProject(n); pov.scrollTop=0; try{ history.replaceState(null,'',abs(sl)); }catch(err){} document.title='YRD.Works / '+PROJECTS[n].title;   /* (22.10.) ersetzt statt neuer Eintrag: Zurueck (auch Safaris Wischgeste) fuehrt zur Uebersicht, nicht zum vorigen Projekt */
     var ease='cubic-bezier(.65,0,.35,1)', dur=DUR;   /* gleichmaessig an- und auslaufend */
     old.animate([{transform:'translateY('+off+'px)'},{transform:'translateY('+(-dir*vh)+'px)'}],{duration:dur,easing:ease,fill:'forwards'}).onfinish=function(){ old.remove(); };
     panel.animate([{transform:'translateY('+(dir*vh+off)+'px)'},{transform:'translateY(0)'}],{duration:dur,easing:ease});

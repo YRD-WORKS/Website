@@ -4,10 +4,9 @@
 <script>window.YRD_Z=false;</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>YRD.Works, 3D</title>
+<title>YRD.Works / 3D</title>
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="YRD.Works">
-<meta property="og:title" content="3D">
+<meta property="og:title" content="YRD.Works / 3D">
 <meta property="og:description" content="Alle Arbeiten von YRD.Works als begehbarer Raum.">
 <meta property="og:url" content="https://yrd-works.github.io/Website/3d/">
 <meta property="og:image" content="https://yrd-works.github.io/Website/Bilder/og.jpg">
@@ -1362,7 +1361,7 @@ function openProject(i, instant){ zTrack(P[i]&&P[i].slug||'');
   $('#r-title').textContent=t.p.title; updCount();
   setTimeout(()=>{ if(cur===i) prefetchRoom((i+1)%N); }, instant?1500:600);
   $('#rtop-t').textContent=t.p.title; $('#rtop-y').textContent=t.p.year;   // Titel oben mittig
-  document.title='YRD.Works, '+t.p.title;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works, dann der Projektname */
+  document.title='YRD.Works / '+t.p.title;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works / dann der Projektname */
   retT=0; mode='proj'; hint.textContent=HINTS.proj; showHint(true); hintT=8;
   ['#navmode','#yearbox','#legal'].forEach(s=>$(s).classList.add('off'));
   ['#rbar','#rinfo'].forEach(s=>$(s).classList.remove('off'));
@@ -1523,7 +1522,7 @@ function stepSteer(rm,dt){
 }
 function closeProject(){
   if(mode!=='proj') return;
-  document.body.classList.remove('proj-open'); document.title='YRD.Works, 3D';
+  document.body.classList.remove('proj-open'); document.title='YRD.Works / 3D';
   // die anderen Projekte erscheinen erst wieder, wenn man zurueck im Ring steht; ihre Staffeln liegen draussen, wo man gerade noch ist
   tiles.forEach(t=>t.fadeT=t.i===cur?1:0); exitHold=true;
   if(room){ endRead(); if(room.pan){ room.pan.old.panEnd=true; room.pan=null; } room.mT=0; room.lk=room.f; room=null; }
