@@ -91,7 +91,7 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
 
 /* Handy (21.10. abends): Leiste wie in 2D reduziert: links die Ansicht, rechts Overview / Walk bzw. im Raum All und Next Project; kein Download, kein Previous, Pillen groesser */
 @media (max-width:700px){#vswbar,#navmode,#abbar,#rbar,#ovlegal{font-size:15px!important}#dlbar,#abbar .fst{display:none!important}#navmode,#rbar{left:auto!important;right:0!important;transform:none!important;padding-right:calc(var(--pad) + var(--fb-in))}#abbar{left:auto!important;right:0!important;transform:none!important;padding-right:calc(var(--pad) + var(--fb-in))}#navmode button,#rbar a,#abbar .arw,#ovlegal a{padding:.45em .95em .4em!important}#rbar{gap:.5em!important}}
-/* Handy (22.10.): Leiste im Raum: links neben der Ansicht „← Walk“ als Ausgang, rechts ← und → fuer voriges und naechstes Projekt */
+/* Handy (22.10.): Leiste im Raum: links neben der Ansicht „Back“ (bis 26.10. „← Walk“) als Ausgang, rechts ← und → fuer voriges und naechstes Projekt */
 #r-close .mb{display:none}
 @media (max-width:700px){#navmode .seg{display:inline-flex}#navmode button[data-nav="rund"]{order:-1}#navmode button[data-nav="proj"]{display:none}}   /* Handy (22.10.): Walk zuerst, Overview danach */
 /* Desktop (22.10.): wie in 2D: rechts in der Leiste „Walk | Overview“ (Walk zuerst), die Mitte bleibt zum Navigieren; im Projektraum steht der Schalter ebenfalls rechts, ohne Auswahl, und fuehrt in Walk oder Overview; All entfaellt dort */
@@ -106,7 +106,7 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
   #r-close{display:none!important}
 }
 @media (max-width:700px){#r-close .dk{display:none}#r-close .mb{display:inline}#r-close{order:-1;margin-right:.5em}#r-prev .lg,#r-next .lg{display:none!important}}
-@media (min-width:701px) and (max-width:1024px) and (pointer:coarse){#r-prev .lg,#r-next .lg{display:none!important}}   /* Testrunde 24.10., Lewin: Tablet hoch mit groesserer Schrift, nur Pfeile, sonst laeuft Next Project in Project / Walk / Overview */
+@media (min-width:701px) and (max-width:1024px) and (pointer:coarse){#r-prev .pj,#r-next .pj{display:none!important}}   /* Testrunde 24.10., Lewin: Tablet hoch mit groesserer Schrift, sonst laeuft Next Project in Project / Walk / Overview; Ruben 26.10.: statt nur Pfeilen „← Previous“ und „Next →“, mittig in der Luecke (placeNav) */
 @media (max-width:700px){#r-back{left:auto!important;right:0!important;transform:none!important;margin-right:calc(var(--pad) + var(--fb-in));font-size:15px!important;line-height:1;padding:.45em .95em .4em!important;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px) + (var(--fb-h) - 1.85em) / 2)!important;height:auto!important}}   /* Handy: Back als Pille rechts wie Next Project */
 @media (max-width:700px){body[data-ov="impressum"] #ovlegal a[data-for="impressum"],body[data-ov="datenschutz"] #ovlegal a[data-for="datenschutz"]{display:none}}
 /* Handy (22.10.): rechts die offene Seite als blau gefuellte Pille (wie Overview / Walk), ohne All und ohne die Rechtspillen */
@@ -276,7 +276,7 @@ html.gate-on #intro{display:none}
 <div id="dlbar" class="foot caption off"><a class="dlp" href="../portfolio/" title="Eigene Auswahl als PDF / Your own selection as PDF">↓ Download<span class="lg"> Portfolio</span></a></div>
 <div id="ovlegal" class="foot caption"><a href="impressum/" data-for="impressum">Impressum</a>    <a href="datenschutz/" data-for="datenschutz">Datenschutz</a></div>
 
-<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous Project</span></a><a href="#" id="r-close" class="arw"><span class="dk">All<span class="lg"> Projects</span></span><span class="mb">← Walk</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next Project </span>→</a></div>
+<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw"><span class="dk">All<span class="lg"> Projects</span></span><span class="mb">Back</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
 <div id="rinfo" class="foot caption off"><span class="rt" id="r-title"></span><span class="n" id="r-count"></span></div>
 <a href="#" id="r-back" class="foot caption">← Back</a>
 
@@ -715,6 +715,8 @@ function eyeRund(){
 }
 /* Handy: Mitte der Leiste (Overview / Walk, im Projektraum ← All →) mittig zwischen View und Download statt in der Fenstermitte, sonst stoesst sie an Download */
 function placeNav(){ const ms=[$('#navmode'),$('#rbar')].filter(Boolean), v=$('#vswbar .vsw'), d=$('#dlbar .dlp'); ms.forEach(m=>m.style.left='');
+  /* Ruben 26.10.: Tablet (Touch, 701 bis 1024 px): „← Previous“ / „Next →“ mittig zwischen Ansicht-Gruppe und Project / Walk / Overview, sonst stossen sie bei 744 px an */
+  { const rb=$('#rbar'), vb=$('#vswbar'), sg=$('#navmode .seg'); if(rb&&vb&&sg&&innerWidth>700&&innerWidth<=1024&&matchMedia('(pointer:coarse)').matches){ const a=vb.getBoundingClientRect().right, b=sg.getBoundingClientRect().left; if(b>a) rb.style.left=((a+b)/2)+'px'; } }
   if(innerWidth>700||!v||!d) return; const a=v.getBoundingClientRect().right, b=d.getBoundingClientRect().left; if(b>a) ms.forEach(m=>m.style.left=((a+b)/2)+'px'); }
 function resize(){ renderer.setSize(innerWidth, innerHeight, false); applyView(); eyeRund(); placeNav(); }
 addEventListener('resize', resize); resize();
@@ -1340,7 +1342,7 @@ function openProject(i, instant){ zTrack(P[i]&&P[i].slug||'');
   if(room){ endRead(); room.mT=0; room.lk=room.f; room.fast=true; room.panOld=panNext||panPrev;
     // der bisherige Raum bleibt stehen, bis der neue ganz da ist; der neue zeichnet sich darueber (kein Weiss dazwischen)
     if(fromRoom) room.walls.forEach(w=>{ if(w.m) w.m.depthWrite=false; w.mesh.renderOrder-=1000; }); }
-  document.body.classList.add('proj-open'); cur=i; faceTile(i,false); walker.goto=null; walker.vel.set(0,0,0);
+  document.body.classList.add('proj-open'); requestAnimationFrame(placeNav); cur=i; faceTile(i,false); walker.goto=null; walker.vel.set(0,0,0);
   if(nav==='frei'){ const t=tiles[i]; walker.pos.copy(t.up).addScaledVector(t.nrm,4.6).setY(EYE); walker.yaw=-t.th; walker.pitch=0; }
   const fromLook=!room && !instant && mode==='look';   // aus dem Ring (Oben, Rundgang, frei): auf das Projekt zusteuern, die anderen bleiben bis kurz vor dem Heroshot stehen
   tiles.forEach(t=>t.fadeT=(t.i===i||fromLook)?1:0); exitHold=false;
