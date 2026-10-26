@@ -1754,7 +1754,11 @@ el.addEventListener('pointermove',e=>{
    dann rastet das naechste Projekt ein; ein kurzer Wisch (ueber 30 px) reicht fuer einen Schritt. Weil der Heroshot einrastet, ueberdreht nichts */
 function rundIdx(a){ a=((a)%TAU+TAU)%TAU; let i=Math.round(a/STEP); if(i>=N) i=Math.abs(angD(a,0))<Math.abs(angD(a,(N-1)*STEP))?0:N-1; return i; }
 function rundFling(r){
-  const go=clamp(r.v*350,-4*STEP,4*STEP); let i=rundIdx(look.sT+go); const i0=rundIdx(r.s0??look.sT);
+  /* Walk-Probe 27.10., Ruben: normal gewischt rastet das naechste Bild ein (ein Wisch = ein Projekt, wie im Projektraum);
+     nur ein kraeftiger Schwung (Finger schneller als rund 2,5 px/ms) rollt weiter, hoechstens 4 Projekte */
+  const strong=Math.abs(r.v)/0.0012>2.5;
+  const go=strong?clamp(r.v*350,-4*STEP,4*STEP):0; let i=rundIdx(look.sT+go); const i0=rundIdx(r.s0??look.sT);
+  if(!strong){ const d=((i-i0)%N+N+Math.floor(N/2))%N-Math.floor(N/2); if(Math.abs(d)>1) i=((i0+Math.sign(d))%N+N)%N; }
   if(i===i0 && Math.abs(r.ov)>30) i=((i0+(r.ov<0?1:-1))%N+N)%N;
   look.sT+=angD(look.sT,i*STEP); look.idle=0.7;
 }
