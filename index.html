@@ -59,9 +59,9 @@
       t.style.transformOrigin='0 0'; t.style.transition='none';
       t.style.transform='translate('+(a[i].left-b[i].left)+'px,'+(a[i].top-b[i].top)+'px) scale('+(a[i].width/b[i].width)+')'; });
     g.offsetWidth;
-    requestAnimationFrame(function(){ on.forEach(function(t){ t.style.transition='transform 1.1s cubic-bezier(.55,0,.15,1)'; t.style.transform=''; }); });
+    requestAnimationFrame(function(){ on.forEach(function(t,k){ t.style.transition='transform .9s cubic-bezier(.55,0,.15,1) '+Math.min(k,9)*35+'ms'; t.style.transform=''; }); });   /* Motion-Probe 26.10.: kuerzer (vorher 1,1 s) und gestaffelt, 35 ms je Kachel */
     setTimeout(function(){ root.classList.remove('g3m'); },900);
-    setTimeout(function(){ on.forEach(function(t){ t.style.transition=''; t.style.transformOrigin=''; }); },1300);
+    setTimeout(function(){ on.forEach(function(t){ t.style.transition=''; t.style.transformOrigin=''; }); },1450);
   }
   var done=false, seqDone=false, t0=Date.now(), timer=0;
   function end(){
@@ -92,7 +92,10 @@
   else step();
   /* Klick, Taste oder Wischen ueberspringt */
   box.addEventListener('click',end);
-  box.addEventListener('touchstart',end,{passive:true});
+  /* Motion-Probe 26.10.: Tippen zum Ueberspringen oeffnete am Handy das Projekt unter dem Finger (der Klick fiel durch das ausblendende Intro). Der Klick direkt nach dem Tippen wird jetzt geschluckt */
+  var skipT=0;
+  box.addEventListener('touchstart',function(){ skipT=Date.now(); end(); },{passive:true});
+  document.addEventListener('click',function(e){ if(Date.now()-skipT<700){ e.preventDefault(); e.stopPropagation(); } },true);
   window.addEventListener('keydown',function(){ end(); },{once:true});
 })();
 </script>
