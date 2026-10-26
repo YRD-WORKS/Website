@@ -64,16 +64,16 @@
         t.style.transformOrigin='0 0'; t.style.transition='none';
         t.style.transform='translate('+(a[i].left-b[i].left)+'px,'+(a[i].top-b[i].top)+'px) scale('+(a[i].width/b[i].width)+')'; });
       g.offsetWidth;
-      requestAnimationFrame(function(){ on.forEach(function(t){ t.style.transition='transform .9s cubic-bezier(.55,0,.15,1)'; t.style.transform=''; }); });
+      requestAnimationFrame(function(){ on.forEach(function(t,k){ t.style.transition='transform .8s cubic-bezier(.55,0,.15,1) '+Math.min(k,9)*35+'ms'; t.style.transform=''; }); });   /* Motion-Probe 26.10.: gestaffelt, 35 ms je Kachel (hoechstens 9 Stufen) */
       setTimeout(function(){ R.classList.remove('g3m'); },three?0:750);
-      setTimeout(function(){ on.forEach(function(t){ t.style.transition=''; t.style.transformOrigin=''; }); },1100); }
+      setTimeout(function(){ on.forEach(function(t){ t.style.transition=''; t.style.transformOrigin=''; }); },1450); }
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){ R.classList.toggle('g3',three); return; }
     if(three){ R.classList.add('g3m'); setTimeout(go,180); } else go();
   }
   /* Desktop (22.10.): rechts in der Leiste Project | Overview: Project oeffnet das oberste sichtbare Projekt, Overview fuehrt zurueck */
   document.addEventListener('click',function(e){ var bt=e.target.closest&&e.target.closest('.pmode button'); if(!bt) return; e.preventDefault();
     var ov=document.body.getAttribute('data-ov')||'';
-    if(bt.getAttribute('data-p')==='ov'){ if(ov==='project') close(); return; }
+    if(bt.getAttribute('data-p')==='ov'){ if(ov==='project') closeVT(); return; }
     if(ov) return; var nav=(.9+4.4)*Math.min(22,Math.max(10,innerWidth*0.0088)), ts=[].slice.call(document.querySelectorAll('#grid .tile:not([hidden])'));
     for(var j=0;j<ts.length;j++){ if(ts[j].getBoundingClientRect().bottom>nav+20){ ts[j].click(); return; } } });
   document.addEventListener('click',function(e){ var bt=e.target.closest&&e.target.closest('.lmode button'); if(!bt) return; e.preventDefault(); cols(bt.getAttribute('data-l')==='ov'); });
@@ -396,16 +396,50 @@
     if(/^r\d+(\.\d+)?$/.test(h)) h='';
     document.title=h?'YRD.Works / '+(SLUG_IDX.hasOwnProperty(h)?PROJECTS[SLUG_IDX[h]].title:(AWK.hasOwnProperty(h)?AWK[h].titel:(TITLES[h]||h))):TITLE0;   /* Testrunde 23.10., Ruben: im Tab zuerst YRD.Works / dann der Projektname */
     track(h);
+    if(typeof hintBack==='function'&&document.body.getAttribute('data-ov')==='project') hintBack();
   }
   grid.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(t) fillProject(+t.dataset.i); });
   function close(){ var ov=document.body.getAttribute('data-ov'), t=(awCur&&ov)?awCur.key:''; if(!t&&awCur&&!(awCur.shared&&ov)){ awCur=null; SHQ=null; applyAw(); } if(curKey()!==t||(!t&&location.hash)) go(t); else route(); }   /* aus einem Projekt zurueck in die Auswahl, aus der Auswahl (All Projects, Esc) zu allen */
+
+  /* ---------- Motion-Probe 26.10.: Kachel -> Projekt als gemeinsames Bild (View Transitions) ----------
+     Das Vorschaubild waechst zum ersten Bild der Strecke, beim Schliessen schrumpft es zurueck an seinen Platz im Raster.
+     Nur wo der Browser es kann (Chrome, Edge, Safari 18), nicht bei reduzierter Bewegung; sonst wie bisher Einblenden.
+     Schliessen per Wischen behaelt seine eigene Bewegung */
+  function vtOK(){ return !!document.startViewTransition&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  function inView(el){ var r=el.getBoundingClientRect(); return r.bottom>0&&r.top<innerHeight&&r.width>0; }
+  function decoded(im){ return im&&im.decode?Promise.race([im.decode().catch(function(){}),new Promise(function(res){ setTimeout(res,250); })]):null; }
+  function openVT(tile,k){
+    var ti=tile.querySelector('img'), H=document.documentElement;
+    if(!vtOK()||!ti||!inView(ti)){ go(k); return; }
+    ti.style.viewTransitionName='yrd-hero'; H.classList.add('vt-on');
+    var vt=document.startViewTransition(function(){
+      ti.style.viewTransitionName=''; go(k);
+      var f=document.getElementById('proj-gal').firstElementChild; if(!f) return;
+      f.style.viewTransitionName='yrd-hero'; return decoded(f);
+    });
+    vt.finished.catch(function(){}).then(function(){ H.classList.remove('vt-on'); var f=document.getElementById('proj-gal').firstElementChild; if(f) f.style.viewTransitionName=''; });
+  }
+  function closeVT(){
+    var H=document.documentElement, g=document.getElementById('proj-gal'), f=g&&g.firstElementChild;
+    if(document.body.getAttribute('data-ov')!=='project'||current<0||!vtOK()||!f||g.scrollLeft>4||!inView(f)){ close(); return; }
+    var tile=grid.querySelector('.tile[data-i="'+current+'"]'), ti=tile&&!tile.hidden&&tile.querySelector('img');
+    f.style.viewTransitionName='yrd-hero'; H.classList.add('vt-on','vt-zu');
+    var vt=document.startViewTransition(function(){
+      f.style.viewTransitionName=''; close();
+      if(!ti) return;
+      /* liegt die Kachel ausserhalb (nach Next / Previous), dorthin scrollen, damit man sieht, wo das Projekt im Raster steht */
+      if(!inView(ti)){ var nav=(.9+4.4)*parseFloat(getComputedStyle(document.documentElement).fontSize); window.scrollTo(0,Math.max(0,tile.getBoundingClientRect().top+scrollY-nav)); }
+      ti.loading='eager'; ti.style.viewTransitionName='yrd-hero'; return decoded(ti);
+    });
+    vt.finished.catch(function(){}).then(function(){ H.classList.remove('vt-on','vt-zu'); if(ti) ti.style.viewTransitionName=''; });
+  }
   document.addEventListener('click',function(e){
     if(e.target.closest('[data-home]')){ e.preventDefault(); awCur=null; SHQ=null; applyAw(); if(curKey()||location.hash) go(''); else route(); return; }   /* YRD.Works: immer alle Projekte */
-    if(e.target.closest('[data-close]')){ e.preventDefault(); close(); return; }
+    if(e.target.closest('[data-close]')){ e.preventDefault(); closeVT(); return; }
     // click-out: a click on the veil itself (outside the white panel) closes the project overlay
-    if(e.target.id==='project') close();
+    if(e.target.id==='project') closeVT();
   });
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeVT(); });
   /* interne Links abfangen: kein Neuladen, nur die Ebene wechselt */
   document.addEventListener('click',function(e){
     if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
@@ -414,7 +448,9 @@
     var k=FILE?(u.pathname===HOME.pathname?decodeURIComponent(u.hash.slice(1)):null):decodeURIComponent(u.pathname.slice(ROOT.pathname.length).replace(/index\.html$/,'').replace(/\/$/,''));
     if(k===null) return;
     if(!known(k)) return;
-    e.preventDefault(); if(a.classList.contains('aw-all')&&awCur){ awCur=null; SHQ=null; applyAw(); } go(k);
+    e.preventDefault(); if(a.classList.contains('aw-all')&&awCur){ awCur=null; SHQ=null; applyAw(); }
+    if(a.classList.contains('tile')&&SLUG_IDX.hasOwnProperty(k)&&!document.body.getAttribute('data-ov')){ openVT(a,k); return; }   /* Motion-Probe: Kachel waechst ins Projekt */
+    go(k);
   });
 
   /* ---------- Pfeiltasten auf der Projektseite: Bild fuer Bild, am Ende der Strecke weiter zum naechsten Projekt ---------- */
@@ -507,14 +543,16 @@
     var t0=Date.now(); pov.style.overflowY='hidden';
     (function wait(){
       var now=Date.now();
-      if(now-t0<minMs||(now-lastW<250&&now-t0<4000)){ pov.scrollTop=0; setTimeout(wait,60); return; }
+      if(now-t0<minMs||(now-lastW<250&&now-t0<minMs+700)){   /* Motion-Probe: Nachschwung hoechstens 0,7 s nach dem Wechsel abfangen (vorher bis 4 s) */ pov.scrollTop=0; setTimeout(wait,60); return; }
       pov.scrollTop=0; pov.style.overflowY='';
     })();
   }
   /* Projektwechsel (Next, Previous, Scrollen am Rand): alte Seite wird weggeschoben, die neue kommt nach, 1,2 s.
      Am 21.10. kurz durch ein Ueberblenden ersetzt (Missverstaendnis, die Korrektur galt dem 3D-Raumwechsel), wiederhergestellt */
-  var DUR=1200;   /* Dauer des Hochschiebens in ms */
+  var DUR=800;   /* Dauer des Hochschiebens in ms (Motion-Probe 26.10.: vorher 1200, entspricht --t-move) */
+  var running=[];   /* laufende Wechsel-Animationen: ein neuer Wechsel beendet sie sofort (unterbrechbar) */
   function pushTo(n,off,dir){
+    running.forEach(function(a){ try{ a.finish(); }catch(e){} }); running=[];   /* Motion-Probe: laeuft noch ein Wechsel, springt er ans Ende, der neue beginnt sofort */
     off=off||0; dir=dir||1; var sl=PROJECTS[n].slug;   /* dir 1: neue Seite von unten (naechstes), -1: von oben (voriges) */
     var st=pov.scrollTop, vh=pov.clientHeight, cs=getComputedStyle(pov);   /* Scrollposition VOR dem Sperren merken, sonst zeigt die Momentaufnahme den Seitenanfang */
     holdTop(RM.matches||!panel.animate?0:DUR);
@@ -526,8 +564,9 @@
     old.appendChild(cl); document.body.appendChild(old);
     fillProject(n); pov.scrollTop=0; try{ history.replaceState(null,'',abs(sl)); }catch(err){} document.title='YRD.Works / '+PROJECTS[n].title;   /* (22.10.) ersetzt statt neuer Eintrag: Zurueck (auch Safaris Wischgeste) fuehrt zur Uebersicht, nicht zum vorigen Projekt */
     var ease='cubic-bezier(.65,0,.35,1)', dur=DUR;   /* gleichmaessig an- und auslaufend */
-    old.animate([{transform:'translateY('+off+'px)'},{transform:'translateY('+(-dir*vh)+'px)'}],{duration:dur,easing:ease,fill:'forwards'}).onfinish=function(){ old.remove(); };
-    panel.animate([{transform:'translateY('+(dir*vh+off)+'px)'},{transform:'translateY(0)'}],{duration:dur,easing:ease});
+    var a1=old.animate([{transform:'translateY('+off+'px)'},{transform:'translateY('+(-dir*vh)+'px)'}],{duration:dur,easing:ease,fill:'forwards'}); a1.onfinish=function(){ old.remove(); };
+    var a2=panel.animate([{transform:'translateY('+(dir*vh+off)+'px)'},{transform:'translateY(0)'}],{duration:dur,easing:ease});
+    running=[a1,a2];
   }
   document.getElementById('proj-next').addEventListener('click',function(e){
     if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
@@ -603,6 +642,23 @@
   }
   swipeBack(pov,function(){ var o=document.body.getAttribute('data-ov'); return o==='project'||o==='about'||o==='information'; });
   Array.prototype.forEach.call(document.querySelectorAll('.overlay.legal'),function(ov){ swipeBack(ov,function(){ return ov.classList.contains('open'); }); });
+
+  /* ---------- Motion-Probe 26.10.: Hinweis auf die Gesten (nur Touch, je einmal pro Browser) ----------
+     Beim ersten geoeffneten Projekt federt die Seite kurz nach rechts (zurueck wischen fuehrt zur Uebersicht);
+     wer zum ersten Mal unten ankommt, sieht die Seite kurz nach oben anfedern (weiterziehen fuehrt ins naechste Projekt).
+     Jede Beruehrung bricht den Hinweis ab. Zum erneuten Testen: localStorage yrd-hint-back / yrd-hint-pull loeschen */
+  var hintA=null, hintMem={};
+  function hintSeen(k){ try{ return !!localStorage.getItem(k); }catch(e){ return !!hintMem[k]; } }
+  function hintMark(k){ hintMem[k]=1; try{ localStorage.setItem(k,'1'); }catch(e){} }
+  function hintOK(){ return window.matchMedia&&matchMedia('(pointer:coarse)').matches&&!RM.matches&&!!panel.animate&&document.body.getAttribute('data-ov')==='project'; }
+  function nudge(k,frames){ if(!hintOK()||hintSeen(k)||hintA||pull||ty!==null||pov.style.overflowY==='hidden') return; hintMark(k);
+    hintA=panel.animate(frames,{duration:1100,easing:'cubic-bezier(.3,.7,.3,1)'}); hintA.onfinish=hintA.oncancel=function(){ hintA=null; }; }
+  pov.addEventListener('touchstart',function(){ if(hintA){ hintA.cancel(); hintA=null; } },{passive:true,capture:true});
+  var hintT=0;
+  function hintBack(){ clearTimeout(hintT); if(!hintOK()||hintSeen('yrd-hint-back')) return;
+    hintT=setTimeout(function(){ if(pov.scrollTop<40) nudge('yrd-hint-back',[{transform:'translateX(0)'},{transform:'translateX(38px)',offset:.35},{transform:'translateX(0)'}]); },1500); }
+  pov.addEventListener('scroll',function(){ if(!hintOK()||hintSeen('yrd-hint-pull')||!atBottom()||pov.scrollHeight<pov.clientHeight+80) return;
+    clearTimeout(hintT); hintT=setTimeout(function(){ if(atBottom()) nudge('yrd-hint-pull',[{transform:'translateY(0)'},{transform:'translateY(-56px)',offset:.35},{transform:'translateY(0)'}]); },450); },{passive:true});
   window.addEventListener('popstate',route);
   route();
 

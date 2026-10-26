@@ -1741,8 +1741,8 @@ el.addEventListener('pointermove',e=>{
   if(mode!=='look') return;
   retT=0;
   if(nav==='mitte'){ look.yawT+=dx*(touch?0.005:0.0032); look.pitchT=clamp(look.pitchT+dy*(touch?0:0.0022),-0.35,0.35); }
-  else if(nav==='rund'){ look.sT-=dx*(touch?0.0012:0.0008); look.idle=0;
-    if(touch){ const now=performance.now(), dtv=Math.max(8,now-(ptr.vt||now-16)); if(ptr.s0==null) ptr.s0=look.sT+dx*0.0012; ptr.v=0.6*(ptr.v||0)+0.4*(-dx*0.0012/dtv); ptr.vt=now; ptr.ov=(ptr.ov||0)+dx; ptr.rund=true; } }   /* Testrunde 23.10., Ruben: Wischen im Walk mit Schwung, siehe endPtr */
+  else if(nav==='rund'){ look.sT-=dx*(touch?0.0012:0.0008); look.idle=0; if(touch) look.s=look.sT;   /* Walk-Probe 27.10.: am Handy folgt der Ring dem Finger direkt */
+    if(touch){ const now=performance.now(), dtv=Math.max(8,now-(ptr.vt||now-16)); if(ptr.s0==null){ ptr.s0=look.sT+dx*0.0012; ptr.t0=now; } ptr.v=0.6*(ptr.v||0)+0.4*(-dx*0.0012/dtv); ptr.vt=now; ptr.ov=(ptr.ov||0)+dx; ptr.rund=true; } }   /* Testrunde 23.10., Ruben: Wischen im Walk mit Schwung, siehe endPtr */
   else if(nav==='oben'){ look.azT+=(ptr.hinten?1:-1)*dx*0.004; look.elT=clamp(look.elT+dy*0.003,0.3,1.5); }   /* Ruben 22.10.: der Ring dreht in Wischrichtung: die Seite unter dem Finger folgt ihm, vorn wie hinten */
   else {
     walker.goto=null;
@@ -1754,14 +1754,17 @@ el.addEventListener('pointermove',e=>{
    dann rastet das naechste Projekt ein; ein kurzer Wisch (ueber 30 px) reicht fuer einen Schritt. Weil der Heroshot einrastet, ueberdreht nichts */
 function rundIdx(a){ a=((a)%TAU+TAU)%TAU; let i=Math.round(a/STEP); if(i>=N) i=Math.abs(angD(a,0))<Math.abs(angD(a,(N-1)*STEP))?0:N-1; return i; }
 function rundFling(r){
-  const go=clamp(r.v*350,-4*STEP,4*STEP); let i=rundIdx(look.sT+go); const i0=rundIdx(r.s0??look.sT);
-  if(i===i0 && Math.abs(r.ov)>30) i=((i0+(r.ov<0?1:-1))%N+N)%N;
-  look.sT+=angD(look.sT,i*STEP); look.idle=0.7;
+  /* Walk-Probe 27.10., Ruben: wie ein Instagram-Karussell. Ein Wisch geht hoechstens ein Projekt weiter, auch bei Schwung.
+     Weiter geht es, wenn der Finger mehr als knapp ein Drittel der Breite gefahren ist oder kurz geschnippt hat (ueber 0,3 px/ms);
+     sonst federt der Ring zurueck. Danach rastet er schnell ein (rund 0,3 s) */
+  const i0=rundIdx(r.s0??look.sT), ov=r.ov||0, sp=Math.max(Math.abs(r.v)/0.0012, r.t0?Math.abs(ov)/Math.max(16,performance.now()-r.t0):0);   /* Tempo: letzter Fingerschwung oder Schnitt ueber den ganzen Wisch */
+  let i=i0; if(Math.abs(ov)>innerWidth*0.3||(sp>0.3&&Math.abs(ov)>12)) i=((i0+(ov<0?1:-1))%N+N)%N;
+  look.sT+=angD(look.sT,i*STEP); look.idle=0.7; look.snapT=performance.now()+600;
 }
 function endPtr(e){
   pts.delete(e.pointerId); if(pinch){ if(pts.size<2) pinch=pts.size?pinch:null; ptr=null; if(!pts.size) pinch=null; return; }
   if(!ptr||e.pointerId!==ptr.id) return;
-  const rundP=ptr.rund?{v:(performance.now()-(ptr.vt||0)<90)?(ptr.v||0):0, ov:ptr.ov||0, s0:ptr.s0}:null, wasDrag=ptr.drag, ov=ptr.ov||0, calm=!!ptr.calm, fling=(performance.now()-(ptr.vt||0)<90)?(ptr.v||0)*220:0; ptr=null; stage.classList.remove('drag');
+  const rundP=ptr.rund?{v:(performance.now()-(ptr.vt||0)<90)?(ptr.v||0):0, ov:ptr.ov||0, s0:ptr.s0, t0:ptr.t0}:null, wasDrag=ptr.drag, ov=ptr.ov||0, calm=!!ptr.calm, fling=(performance.now()-(ptr.vt||0)<90)?(ptr.v||0)*220:0; ptr=null; stage.classList.remove('drag');
   if(wasDrag && ptr===null && rundP && mode==='look' && nav==='rund'){ rundFling(rundP); return; }
   if(wasDrag){ if(mode==='proj' && room && !room.read){
       if(calm){ let k=nearestWall(room.yawT+fling); if(k===room.f && Math.abs(ov)>40){ const j=sideWall(Math.sign(ov)); if(j>=0) k=j; } goWall(k,false); }   /* Handy: am naechstliegenden Bild einrasten, ein kurzer Wisch reicht fuer einen Schritt */
@@ -1855,7 +1858,7 @@ function stepLook(dt){
     look.sT+=mv*dt*0.16*fast; if(mv) look.idle=0;
     look.idle+=dt;
     if(look.idle>0.7 && !ptr){ const a=((look.sT)%TAU+TAU)%TAU; let i=Math.round(a/STEP); if(i>=N) i=Math.abs(angD(a,0))<Math.abs(angD(a,(N-1)*STEP))?0:N-1; if(window.YRDSearch&&YRDSearch.active()){ let b=-1,bd=9; tiles.forEach(t=>{ if((t.svT??1)<1) return; const d=Math.abs(angD(a,t.i*STEP)); if(d<bd){bd=d;b=t.i;} }); if(b>=0) i=b; } look.sT+=angD(look.sT,i*STEP)*(1-Math.exp(-dt*2)); }   /* auch aus der Luecke zwischen 2012 und 2026 auf das naechste Projekt einrasten (Ruben 22.10.: Wechsel Overview -> Walk landete angeschnitten) */
-    look.s=lerp(look.s,look.sT,1-Math.exp(-dt*5));
+    look.s=lerp(look.s,look.sT,1-Math.exp(-dt*(performance.now()<(look.snapT||0)?11:5)));   /* Walk-Probe 27.10.: nach einem Wisch rastet es in rund 0,3 s ein, sonst wie bisher */
     tmpV.set(RRW*Math.sin(look.s),EYE_R,-RRW*Math.cos(look.s)); cam.pos.lerp(tmpV,k);
     cam.yaw+=angD(cam.yaw,-look.s)*k; cam.pitch=lerp(cam.pitch,0,k);
   } else if(nav==='oben'){

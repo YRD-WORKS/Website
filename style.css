@@ -13,6 +13,11 @@
   --base:clamp(10px, .88vw, 22px);
   --pad:max(16px, 1rem);
   font-size:var(--base);
+  /* Motion-Probe 26.10.: ein gemeinsamer Rhythmus. Dauern: fast = Hover und Zustand, mid = Umschalten und Ueberblenden,
+     slow = grosse Auftritte, move = Raster und Seiten verschieben (auch in site.js, MOVE). Kurven: out = ankommen (bremst ab),
+     in = gehen (beschleunigt), move = an Ort und Stelle verschieben */
+  --t-fast:.2s; --t-mid:.35s; --t-slow:.6s; --t-move:.8s;
+  --e-out:cubic-bezier(.2,.7,.2,1); --e-in:cubic-bezier(.5,0,.75,0); --e-move:cubic-bezier(.65,0,.35,1);
 }
 @media (max-width:700px){ :root{ --base:10px; font-size:15px; --pad:16px; } }
 @media (min-width:701px) and (pointer:coarse){ :root{ --base:clamp(14px, 1.05vw, 22px); } }   /* Testrunde 24.10., Lewin: Tablet (Touch) mit groesserer Mindestschrift, vorher 10 px Grundgroesse bei iPad hoch */
@@ -26,7 +31,7 @@ body{
 }
 a{color:var(--ink); text-decoration:none}
 a:active,.tile:active{opacity:.7}
-a:focus-visible,.tile:focus-visible,button:focus-visible{outline:1px solid var(--ink); outline-offset:3px}
+a:focus-visible,.tile:focus-visible,button:focus-visible{outline:2px solid var(--ink); outline-offset:3px}   /* Motion-Probe: 2 px statt 1 px, damit der Fokus bei Tastaturbedienung zu sehen ist */
 .caption{font-size:1.05rem; font-weight:420; line-height:1.22}
 .caption .n{color:var(--ink-4)}
 .cols{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); column-gap:1rem}
@@ -62,9 +67,9 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .overlay{
   position:fixed; inset:0; z-index:10; display:block;
   background:var(--veil); overflow-y:auto; overscroll-behavior:contain;
-  opacity:0; visibility:hidden; transition:opacity var(--d,.4s) ease, visibility 0s linear var(--d,.4s);
+  opacity:0; visibility:hidden; transition:opacity calc(var(--d,.4s) * .65) var(--e-in), visibility 0s linear calc(var(--d,.4s) * .65);   /* Motion-Probe 26.10.: Schliessen schneller (65 %) und beschleunigend */
 }
-.overlay.open{opacity:1; visibility:visible; transition:opacity var(--d,.4s) ease}
+.overlay.open{opacity:1; visibility:visible; transition:opacity var(--d,.4s) var(--e-out)}
 .overlay .panel{
   width:100%; min-height:100%;
   padding:calc(.9rem + env(safe-area-inset-top,0px)) var(--pad) calc(1rem + env(safe-area-inset-bottom,0px));
@@ -178,7 +183,7 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 /* Zoom: das gehoverte Thumb zoomt minimal ins Bild, Rahmen bleibt stehen */
 .phw{overflow:hidden}
 @media (hover:hover) and (pointer:fine){
-  .phw .ph{transition:transform .35s ease}
+  .phw .ph{transition:transform var(--t-mid) var(--e-out)}
   .tile:hover .phw .ph{transform:scale(1.01)}
 }
 @media (prefers-reduced-motion:reduce){ .phw .ph{transition:none} }
@@ -201,7 +206,7 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .proj-bi .en{font-style:italic}
 /* Deutsch schwarz, Englisch blass; Hover ueber Englisch tauscht die beiden */
 @media (hover:hover) and (pointer:fine){
-  .proj-bi p{transition:color .25s ease}
+  .proj-bi p{transition:color var(--t-fast) var(--e-out)}
   .proj-bi .en{color:rgba(0,0,255,.3)}
   .proj-bi:has(.en:hover) .en{color:var(--ink)}
   .proj-bi:has(.en:hover) .de{color:rgba(0,0,255,.3)}
@@ -216,7 +221,6 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 /* Variante Pfeile: oben zurueck zu allen Projekten, unten ins naechste Projekt, Schriftgroesse wie YRD.Works */
 .proj-nx{margin-top:1.2em}
 .arw{display:inline-block; transform-origin:0 50%}
-@media (hover:hover) and (pointer:fine){ .arw:hover{animation:wiggle .5s ease-in-out} }
 @media (prefers-reduced-motion:reduce){ .arw:hover{animation:none} }
 /* Kopf: YRD.Works links, All Projects mittig; unten Next Project mittig, zweizeilig */
 .head3{display:grid; grid-template-columns:1fr auto 1fr; column-gap:1rem; align-items:baseline}
@@ -235,7 +239,6 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .proj-nx a{display:inline-block}
 .proj-nx .nx-l{display:block; color:var(--ink-4)}
 .proj-nx .nx-t{display:inline-block; transform-origin:50% 50%}
-@media (hover:hover) and (pointer:fine){ .proj-nx a:hover .nx-t{animation:wiggle .5s ease-in-out} }
 /* Momentaufnahme der alten Projektseite beim Hochschieben */
 .swap-old{z-index:11; overflow:hidden; background:var(--bg); pointer-events:none}
 .swap-old .panel{background:var(--bg)}
@@ -246,7 +249,6 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 .proj-count .gp{font:inherit; color:var(--ink); background:none; border:0; padding:.15em .45em; margin:-.15em 0; cursor:pointer; line-height:inherit}
 .proj-count .gp:first-child{padding-left:0}
 .proj-count .gp:disabled{color:var(--ink-4); opacity:.5; cursor:default}
-@media (hover:hover) and (pointer:fine){ .proj-count .gp:not(:disabled):hover{animation:wiggle .5s ease-in-out} }
 @media (prefers-reduced-motion:reduce){ .proj-count .gp:hover{animation:none} }
 .proj-intro{margin-top:1.8em}
 .lang-sw{display:none}
@@ -284,7 +286,7 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 /* Intro: Woerter nacheinander, mittig, waehrend die Thumbs laden */
 #intro{position:fixed; inset:0; z-index:50; background:var(--bg); color:var(--ink);
   display:flex; align-items:center; justify-content:center; cursor:pointer;
-  transition:opacity .8s ease, visibility 0s linear .8s}
+  transition:opacity var(--t-slow) var(--e-in), visibility 0s linear var(--t-slow)}
 #intro.gone{opacity:0; visibility:hidden; pointer-events:none}
 #intro-w{font-size:clamp(1.6rem, 3.6vw, 4.5rem); font-weight:550; line-height:1; letter-spacing:-.01em; text-align:center; white-space:nowrap}
 html.intro-on, html.intro-on body{overflow:hidden}
@@ -301,7 +303,6 @@ html.intro-on, html.intro-on body{overflow:hidden}
 .contact-list a::before{content:""; display:inline-block; background-color:currentColor; margin-right:.4em;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 12'%3E%3Cpath d='M0 6H24.5M19 .8L24.5 6L19 11.2' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 12'%3E%3Cpath d='M0 6H24.5M19 .8L24.5 6L19 11.2' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") center / contain no-repeat;
   width:1.5em; height:.7em; vertical-align:.08em}
-@media (hover:hover) and (pointer:fine){ .contact-list a:hover{animation:wiggle .5s ease-in-out} }
 @media (prefers-reduced-motion:reduce){ .contact-list a:hover{animation:none} }
 @media (max-width:700px){ .contact-list{grid-template-columns:1fr; row-gap:0} .contact-list dd{margin-bottom:1em} }
 
@@ -320,7 +321,7 @@ html.intro-on, html.intro-on body{overflow:hidden}
 .fbar .fb-l{justify-self:start}.fbar .fb-c{justify-self:center}.fbar .fb-r{justify-self:end}
 .fbar .fb-r{display:flex;align-items:center;gap:1.4em}
 /* Download Portfolio: rechts in der Leiste, Pillenform wie der Ansichtsschalter, mit Umriss; beim Darueberfahren blau gefuellt */
-.dlp{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);color:var(--ink);background:var(--bg);white-space:nowrap;pointer-events:auto;transition:background .2s ease,color .2s ease}
+.dlp{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);color:var(--ink);background:var(--bg);white-space:nowrap;pointer-events:auto;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 @media (hover:hover) and (pointer:fine){ .dlp:hover{background:var(--ink);color:var(--bg)} }
 @media (max-width:700px){ .dlp .lg{display:none} body[data-ov="about"] .dlp,body[data-ov="contact"] .dlp,body[data-ov="impressum"] .dlp,body[data-ov="datenschutz"] .dlp{display:none} }   /* Handy: dort stehen rechts Impressum und Datenschutz */
 .fbar a{pointer-events:auto}
@@ -328,11 +329,10 @@ html.intro-on, html.intro-on body{overflow:hidden}
 .fbar .fb-c{display:flex;gap:.6em;align-items:center}
 /* Mitte der Leiste: Ziele als Pillen mit Umriss (Previous / All / Next Project), was gerade gewaehlt ist blau mit weisser Schrift:
    in der Galerie ist All Projects gewaehlt, im Projekt sind alle drei Ziele */
-.fbar .fb-c .arw{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transform-origin:50% 50%;transition:background .2s ease,color .2s ease}
+.fbar .fb-c .arw{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transform-origin:50% 50%;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 #fall{display:inline-block}
 body[data-ov=""] #fall,body:not([data-ov]) #fall{background:var(--ink);color:var(--bg);pointer-events:none}
 @media (hover:hover) and (pointer:fine){ .fbar .fb-c .arw:hover{background:rgba(0,0,255,.08)} }
-@media (hover:hover) and (pointer:fine){ #fall:hover{animation:wiggle .5s ease-in-out} }
 @media (max-width:700px){ .fbar{font-size:13px;column-gap:.8rem} .fbar .fb-c{gap:.4em} .fbar .lg{display:none} }   /* Handy: kuerzer (↑ All ↓), damit Impressum und Datenschutz daneben passen */
 body[data-ov="project"] #fnext,body[data-ov="project"] #fprev{display:inline-block}
 /* About, News, Contact, Impressum, Datenschutz (2D und 3D): in der Leiste mittig All Projects (Ziel, Umriss) und die Seite selbst (gewaehlt, blau gefuellt);
@@ -353,26 +353,25 @@ body[data-ov="about"] .proj-intro{display:none}
 /* rechts: wo Impressum und Datenschutz stehen, kein Download Portfolio; beide als Pillen mit Umriss, die aktuelle Seite blau gefuellt */
 body[data-ov="about"] .fbar .dlp,body[data-ov="contact"] .fbar .dlp,body[data-ov="impressum"] .fbar .dlp,body[data-ov="datenschutz"] .fbar .dlp{display:none}
 .fbar .flegal{gap:.6em}
-.fbar .flegal a,#ovlegal a{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transition:background .2s ease,color .2s ease}
+.fbar .flegal a,#ovlegal a{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 body[data-ov="impressum"] .flegal a[data-for="impressum"],body[data-ov="datenschutz"] .flegal a[data-for="datenschutz"],body[data-ov="impressum"] #ovlegal a[data-for="impressum"],body[data-ov="datenschutz"] #ovlegal a[data-for="datenschutz"]{background:var(--ink);color:var(--bg);pointer-events:none}
 @media (hover:hover) and (pointer:fine){ .fbar .flegal a:hover,#ovlegal a:hover{background:rgba(0,0,255,.08)} }
 @media (max-width:700px){ .fbar .flegal,#ovlegal{gap:.4em} .fbar .flegal a,#ovlegal a{padding:.3em .6em .26em} #ovlegal{font-size:13px} }   /* Handy: Contact mit beiden Rechtspillen passt in die Leiste */
 @media (max-width:700px){ body[data-ov="about"] .fbar .flegal{display:none} }   /* Handy: Impressum und Datenschutz stehen im About unter dem Text, die Leiste braucht den Platz fuer All und About */
 body[data-ov="about"] .flegal,body[data-ov="contact"] .flegal,body[data-ov="impressum"] .flegal,body[data-ov="datenschutz"] .flegal{display:inline-flex}
-@media (hover:hover) and (pointer:fine){ #fnext:hover,#fprev:hover,.flegal a:hover{animation:wiggle .5s ease-in-out} }
 .flegal a{display:inline-block;transform-origin:50% 50%}
 main{padding-bottom:7rem}
 .overlay .panel{padding-bottom:calc(6.5rem + env(safe-area-inset-bottom,0px))}
 .proj-nx{display:none}
 .vsw .seg{position:relative;display:inline-flex;line-height:1;background:var(--bg);border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink)}
-.vsw .seg > .on,.vsw .seg > a{position:relative;z-index:1;display:block;padding:.3em .8em .26em;color:var(--ink);transition:color .2s ease}
+.vsw .seg > .on,.vsw .seg > a{position:relative;z-index:1;display:block;padding:.3em .8em .26em;color:var(--ink);transition:color var(--t-fast) var(--e-out)}
 /* Umrandung sitzt direkt an der aktiven Ansicht (steht sofort, ohne Skript); der Knopf erscheint nur beim Wechsel und gleitet hinueber */
 /* aktive Ansicht blau mit weisser Schrift; beim Wechsel gleitet die blaue Flaeche hinueber */
 .vsw .seg > .on{background:var(--ink);color:var(--bg);border-radius:10em}
 /* Wechsel 3D -> 2D als Browser-Uebergang (View Transitions): das letzte 3D-Bild bleibt stehen, bis 2D gezeichnet ist, dann Ueberblenden ohne Weiss.
    Andere Seitenwechsel ueberspringen ihn (pageswap in site.js und projektraum.src.js) */
 @view-transition{navigation:auto}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.35s}
+::view-transition-old(root),::view-transition-new(root){animation-duration:var(--t-mid)}
 /* 2D -> 3D (Typ zu3d, setzt der Kopf von 3d/index.html): das 2D-Bild bleibt voll stehen, 3D blendet erst nach 0,3 s darueber ein, wenn die Vorschaubilder sicher gezeichnet sind */
 @keyframes vt-ein{from{opacity:0}to{opacity:1}}
 html:active-view-transition-type(zu3d)::view-transition-old(root){animation:none;opacity:1}
@@ -382,7 +381,7 @@ html.r3d body{animation:r3d-in .25s ease-out .05s both}
 @keyframes r3d-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){ html.r3d body{animation:none} }
 body[data-ov]:not([data-ov=""]):not([data-ov="project"]) .vsw .seg > .on{cursor:pointer}
-.vsw .knob{position:absolute;top:0;bottom:0;left:0;background:var(--ink);border-radius:10em;pointer-events:none;opacity:0;transition:transform .3s cubic-bezier(.2,.7,.2,1),width .3s cubic-bezier(.2,.7,.2,1)}
+.vsw .knob{position:absolute;top:0;bottom:0;left:0;background:var(--ink);border-radius:10em;pointer-events:none;opacity:0;transition:transform var(--t-mid) var(--e-out)}   /* Motion-Probe: nur verschieben (alle Felder gleich breit), Breite animiert nicht mehr */
 .vsw.moving .knob{opacity:1}
 .vsw.moving .seg > .on{background:none;color:var(--ink)}
 .vsw.moving .seg > a{color:var(--bg)}
@@ -398,7 +397,6 @@ body[data-ov]:not([data-ov=""]):not([data-ov="project"]) .vsw .seg > .on{cursor:
 #intro-w .ch{display:inline-block;transform-origin:50% 50%}
 #intro-w .ch-sl{margin:0 .25em}
 #intro-w .ch-cap{display:block;margin-top:1.4em;font-size:1.05rem;font-weight:420;letter-spacing:0;color:var(--ink-4)}
-@media (hover:hover) and (pointer:fine){ #intro-w .ch:hover{animation:wiggle .5s ease-in-out} }
 @media (prefers-reduced-motion:reduce){ #intro-w .ch:hover{animation:none} }
 /* Handy (21.10. abends): Leiste reduziert, weniger und groessere Pillen. Links die Ansicht, rechts nur was die Seite braucht (Projekt: Next Project);
    kein Download Portfolio, kein Previous (bleibt per Ziehen am oberen Rand), kein All (YRD.Works oben links fuehrt zur Uebersicht), keine Status-Pille */
@@ -418,7 +416,7 @@ body[data-ov]:not([data-ov=""]):not([data-ov="project"]) .vsw .seg > .on{cursor:
 /* Kuratierte Auswahlen (Themen) ueber dem Raster: eine Zeile Links, die gewaehlte als blaue Pille; darunter Titel, Zahl und PDF der Auswahl */
 .aw{display:flex;align-items:baseline;gap:1.4em;margin:0 0 2.2rem}
 .aw-list{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5em 1.4em}
-.aw-list a{display:inline-block;line-height:1;padding:.3em .8em .26em;margin:0 -.8em;border-radius:10em;color:var(--ink);white-space:nowrap;transition:background .2s ease,color .2s ease}
+.aw-list a{display:inline-block;line-height:1;padding:.3em .8em .26em;margin:0 -.8em;border-radius:10em;color:var(--ink);white-space:nowrap;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 .aw-list a[aria-current]{background:var(--ink);color:var(--bg);margin:0}
 @media (hover:hover) and (pointer:fine){ .aw-list a:not([aria-current]):hover{background:rgba(0,0,255,.08)} }
 .aw-head{margin:0 0 2.6rem}
@@ -478,7 +476,7 @@ body[data-aw]:not([data-aw=""]):not([data-ov]) #fall,body[data-aw]:not([data-aw=
 @media (max-width:700px){
   html.g3 .grid{grid-template-columns:repeat(3,minmax(0,1fr)); column-gap:calc((100vw - 2 * var(--pad)) * .28 / 9.56); row-gap:calc((100vw - 2 * var(--pad)) * .9 / 9.56)}   /* Abstaende genau wie das Raster in 3D am Handy (FX, FZ in projektraum.src.js), damit 2D und 3D deckungsgleich stehen */
   html.g3 .tile .caption{display:none}
-  .tile .caption{transition:opacity .5s ease}
+  .tile .caption{transition:opacity var(--t-slow) var(--e-out)}
   html.g3m .tile .caption{opacity:0}
 }
 
@@ -488,7 +486,7 @@ html.g3 #intro.quiet{transition:opacity .7s ease, visibility 0s linear .7s}   /*
 /* Handy (22.10.): Schalter List | Overview rechts in der Leiste der Uebersicht (statt All Projects): eine Spalte oder drei, gewaehlt blau gefuellt wie Walk | Overview in 3D */
 .lmode{display:none}
 .lmode{gap:0;line-height:1;background:var(--bg);border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink)}
-.lmode button{font:inherit;display:block;padding:.45em .95em .4em;border:0;border-radius:10em;background:none;color:var(--ink);line-height:1;cursor:pointer;transition:background .2s ease,color .2s ease}
+.lmode button{font:inherit;display:block;padding:.45em .95em .4em;border:0;border-radius:10em;background:none;color:var(--ink);line-height:1;cursor:pointer;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 html:not(.g3) .lmode [data-l="list"],html.g3 .lmode [data-l="ov"]{background:var(--ink);color:var(--bg)}
 @media (max-width:700px){
   body:not([data-ov]):not([data-aw]) .lmode,body:not([data-ov])[data-aw=""] .lmode,body[data-ov=""]:not([data-aw]) .lmode,body[data-ov=""][data-aw=""] .lmode{display:inline-grid}
@@ -504,7 +502,7 @@ html:not(.g3) .lmode [data-l="list"],html.g3 .lmode [data-l="ov"]{background:var
 .ldw{position:absolute;left:50%;top:50%;width:104px;height:116px;margin:-58px 0 0 -52px;background:var(--bg);border-radius:16px;pointer-events:none;z-index:3}
 .ldw .ld3{top:44%}
 .ld3p{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:12px;line-height:1;font-weight:420;color:var(--ink-4);font-variant-numeric:tabular-nums;letter-spacing:.02em}
-#ld2{position:fixed;inset:0;z-index:45;background:var(--bg);transition:opacity .35s ease,visibility 0s linear .35s}
+#ld2{position:fixed;inset:0;z-index:45;background:var(--bg);transition:opacity var(--t-mid) var(--e-in),visibility 0s linear var(--t-mid)}
 #ld2.weg{opacity:0;visibility:hidden}
 html.ld2pre main{visibility:hidden}   /* bis die Ladeanzeige steht (site.js) */
 
@@ -516,7 +514,7 @@ html.ld2pre main{visibility:hidden}   /* bis die Ladeanzeige steht (site.js) */
 
 /* Desktop (22.10., Probe): Schalter Project | Overview rechts in der Leiste, auf der Uebersicht und im Projekt; ersetzt dort All Projects in der Mitte */
 .pmode{display:none;gap:0;line-height:1;background:var(--bg);border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink)}
-.pmode button{font:inherit;display:block;padding:.3em .8em .26em;border:0;border-radius:10em;background:none;color:var(--ink);line-height:1;cursor:pointer;transition:background .2s ease,color .2s ease}
+.pmode button{font:inherit;display:block;padding:.3em .8em .26em;border:0;border-radius:10em;background:none;color:var(--ink);line-height:1;cursor:pointer;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 @media (hover:hover) and (pointer:fine){ .pmode button:hover{background:rgba(0,0,255,.08)} }
 body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-p="ov"],body[data-ov=""] .pmode [data-p="ov"]{background:var(--ink);color:var(--bg)}
 @media (min-width:701px){
@@ -534,7 +532,7 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
 .fbar .fb-l{display:flex;align-items:center;gap:.6em}
 .srch{display:flex;align-items:center;gap:.5em;pointer-events:auto;margin-left:.6em}
 .fbar .srch{margin-left:0}
-.srch .sb{display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);border:0;cursor:pointer;font:inherit;transition:background .2s ease,color .2s ease}
+.srch .sb{display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);border:0;cursor:pointer;font:inherit;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 .srch .sb svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
 .srch.active .sb{background:var(--ink);color:var(--bg)}
 @media (hover:hover) and (pointer:fine){ .srch:not(.active) .sb:hover{background:rgba(0,0,255,.08)} }
@@ -549,7 +547,6 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
 /* Suche oben (POS 'oben' in suche.js): als Wort vor About, beim Suchen eine weisse Pille mit Feld, Trefferzahl und × */
 .nav .srch-top{display:inline-flex;vertical-align:baseline;margin:0;gap:0;white-space:nowrap}
 .srch-top .sb{all:unset;cursor:pointer;color:var(--ink);display:inline-block;transform-origin:0 50%}
-@media (hover:hover) and (pointer:fine){ .srch-top .sb:hover{animation:wiggle .5s ease-in-out} }
 .srch-top.open .sb{display:none}
 .srch-top .sf{align-items:baseline;gap:.5em;background:var(--bg);border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);padding:.12em .3em .1em .75em;margin:-.12em 0}
 .srch-top input{border-bottom:0;width:9em;padding:0}
@@ -561,7 +558,7 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
 .news-top{display:flex; justify-content:space-between; align-items:center; gap:1rem; padding-bottom:1.2em; border-bottom:1px solid var(--line)}
 .news-n{color:var(--ink-4)}
 .news-lang{display:inline-flex; gap:.4em}
-.news-lang button{font:inherit; color:var(--ink); background:var(--bg); border:0; cursor:pointer; line-height:1; padding:.3em .8em .26em; border-radius:10em; box-shadow:inset 0 0 0 1px var(--ink); transition:background .2s ease,color .2s ease}
+.news-lang button{font:inherit; color:var(--ink); background:var(--bg); border:0; cursor:pointer; line-height:1; padding:.3em .8em .26em; border-radius:10em; box-shadow:inset 0 0 0 1px var(--ink); transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 .news-lang button[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
 @media (hover:hover) and (pointer:fine){ .news-lang button[aria-pressed="false"]:hover{background:rgba(0,0,255,.08)} }
 .post{display:grid; grid-template-columns:minmax(10em,1fr) var(--hw) minmax(0,1fr); column-gap:1rem; padding:2.4em 0 4.8em; border-bottom:1px solid var(--line)}
@@ -615,3 +612,23 @@ html.intro-on main{visibility:hidden}   /* [nur Repo 23.10.] Intro: unter der un
 .aw-sh .aw-sh-en{font-style:italic; color:var(--ink-4)}
 .aw-sh-b{display:inline-block; margin-top:.6em; padding:.45em 1em .4em; border:1px solid var(--ink); border-radius:10em; color:var(--ink)}
 @media (hover:hover) and (pointer:fine){ .aw-sh-b:hover{background:var(--ink); color:var(--bg)} }
+
+/* ---------- Motion-Probe 26.10. (Skills ui-ux-pro-max / web-design-guidelines) ---------- */
+/* Kontakt: statt Wackeln rueckt der Pfeil beim Darueberfahren ein Stueck nach rechts (zeigt, wohin es geht) */
+.contact-list a::before{transition:transform var(--t-fast) var(--e-out)}
+@media (hover:hover) and (pointer:fine){ .contact-list a:hover::before{transform:translateX(.25em)} }
+/* Pfeile am Bildzaehler: Rueckmeldung ueber die Farbe statt Wackeln */
+.proj-count .gp{transition:opacity var(--t-fast) var(--e-out)}
+@media (hover:hover) and (pointer:fine){ .proj-count .gp:not(:disabled):hover{opacity:.55} }
+/* Suchfeld: sichtbarer Fokus (vorher outline:none ohne Ersatz) */
+.srch input:focus-visible{border-bottom-color:var(--ink); box-shadow:0 1px 0 0 var(--ink)}
+/* Kachel -> Projekt: das Vorschaubild waechst zum ersten Bild der Strecke und zurueck (View Transitions, site.js).
+   Waehrend des Uebergangs blendet die Ebene nicht selbst ein, das uebernimmt die Ueberblendung des Uebergangs */
+html.vt-on .overlay{transition:none!important}
+html.vt-on main{transition:none!important}
+::view-transition-group(yrd-hero){animation-duration:var(--t-slow); animation-timing-function:var(--e-out)}
+html.vt-zu::view-transition-group(yrd-hero){animation-duration:calc(var(--t-slow) * .7); animation-timing-function:var(--e-move)}
+::view-transition-old(yrd-hero),::view-transition-new(yrd-hero){height:100%; width:100%; object-fit:cover; overflow:clip}
+html.vt-on::view-transition-old(root),html.vt-on::view-transition-new(root){animation-duration:var(--t-mid)}
+html.vt-zu::view-transition-old(root),html.vt-zu::view-transition-new(root){animation-duration:calc(var(--t-mid) * .7)}
+@media (prefers-reduced-motion:reduce){ ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important} }
