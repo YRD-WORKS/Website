@@ -321,7 +321,9 @@
     var cf=String((i>=0&&p.fotos)||'').trim().replace(/ · /g,', ');
     if(txt.length) rows.push('<div class="de">'+paras(txt)+'</div>');
     if(en.length) rows.push('<div class="en" lang="en">'+paras(en)+'</div>');
-    if(cf&&rows.length) rows.push('<p class="credit">'+esc(cf.indexOf(':')>=0?cf:'Fotos / Photos: '+cf)+'</p>');   /* eine Zeile fuer beide Sprachen, mittig */
+    /* Testrunde 26.10., Ruben: Werktext-Credit (textvon) als zweite Zeile unter den Fotocredits, im selben Absatz */
+    var cz=[]; if(cf) cz.push(esc(cf.indexOf(':')>=0?cf:'Fotos / Photos: '+cf)); if(i>=0&&p.textvon) cz.push('Text: '+esc(p.textvon));
+    if(cz.length&&rows.length) rows.push('<p class="credit">'+cz.join('<br>')+'</p>');   /* eine Zeile fuer beide Sprachen, mittig */
     if(i<0) rows.push('<div class="legal-row caption"><a href="'+href('impressum')+'">Impressum</a><a href="'+href('datenschutz')+'">Datenschutz</a></div>');
     var bi=document.getElementById('proj-bi'); bi.innerHTML=rows.join(''); bi.hidden=!rows.length; bi.classList.toggle('show-en',LANG==='en');
     document.getElementById('project').classList.toggle('is-proj',i>=0);

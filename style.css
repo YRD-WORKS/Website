@@ -261,7 +261,8 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
   .nav.cols{display:flex; justify-content:space-between; align-items:baseline}
   .nav .links{display:flex; gap:1em; white-space:nowrap}
   /* mehrere Bilder: Heroshot etwas schmaler, das naechste schaut am Rand hervor */
-  #project:has(.proj-gal > :nth-child(2)){--gh:calc((var(--hw) - 3rem) / 1.5)}
+  /* Testrunde 26.10., Ruben: mit den Pfeilen am Bildzaehler fuellen Querformate im Hochformat die ganze Breite (kein Hervorschauen mehr); Abstand = Rand, damit kein Streifen des naechsten Bilds steht */
+  .proj-gal{gap:var(--pad)}
   .proj-gal{scroll-snap-type:x mandatory} .proj-gal > *{scroll-snap-align:start}
   .lang-sw{display:block; grid-column:1 / -1}
   .proj-bi{row-gap:1.2em}
