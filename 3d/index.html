@@ -1057,7 +1057,8 @@ function layout(t){
   for(let k=0;k<60;k++){ const m=(lo+hi)/2, s=items.reduce((a,it)=>a+ang(it.ww,m)+ang(WGAP,m),0); if(s>TAU) lo=m; else hi=m; }
   // so weit, dass man eingerastet bei schmalem Bildwinkel noch vor der Raummitte steht
   /* Handy hochkant: Raum so weit, dass das breiteste Bild eingerastet ganz im Bild steht (wie restS, rund 3/4 der Bildschirmbreite), statt seitlich abgeschnitten */
-  const hoch=innerWidth<innerHeight && innerWidth<=700, wwMax=items.reduce((m,it)=>it.kind==='text'?m:Math.max(m,it.ww>it.hh*QX?it.hh*QCAP:it.ww),0);   /* extreme Querformate zaehlen nur mit 1,25 : 1 */
+  /* Testrunde 26.10., Ruben: gilt fuer jedes Hochformat (auch iPad hoch, 820 px), sonst stehen Querformate eingerastet links und rechts angeschnitten statt mit Nachbarbildern am Rand */
+  const hoch=innerWidth<innerHeight, wwMax=items.reduce((m,it)=>it.kind==='text'?m:Math.max(m,it.ww>it.hh*QX?it.hh*QCAP:it.ww),0);   /* extreme Querformate zaehlen nur mit 1,25 : 1 */
   const rW=hoch ? wwMax/(2*tanV()*(innerWidth/innerHeight)*REST*1.23)+0.3 : 0;
   const r=Math.max(RMIN, WH/(2*tanV()*REST)+0.6, hi, rW), n=items.length;
   const gapA=Math.min((TAU-items.reduce((a,it)=>a+ang(it.ww,r),0))/n, ang(WGAP,r));
