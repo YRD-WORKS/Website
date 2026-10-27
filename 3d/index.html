@@ -251,10 +251,10 @@ html.gate-on #intro{display:none}
 
 <header class="nav cols" aria-label="Site">
   <a class="home" href="#" id="home">YRD.Works</a>
-  <div class="links"><a href="about/">About</a>    <a href="news/">News</a>    <a href="../index/index.html">Index</a>    <a href="contact/">Contact</a></div>
+  <div class="links"><a href="../about/">About</a>    <a href="../news/">News</a>    <a href="../index/index.html">Index</a>    <a href="../contact/">Contact</a></div>
 </header>
 <!-- Handy: Menue oben rechts statt der Links (Ruben 22.10.) -->
-<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="#" data-mm-home>Projects</a><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
+<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="#" data-mm-home>Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></nav></div>
 <script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
   function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
   b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
@@ -263,7 +263,7 @@ html.gate-on #intro{display:none}
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); }); })();</script>
 
 <div id="hint" class="foot caption off"></div>
-<div id="legal" class="foot caption off"><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></div>
+<div id="legal" class="foot caption off"><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></div>
 <div id="navmode" class="foot caption off" role="group" aria-label="Project / Walk / Overview"><span class="seg"><button type="button" data-nav="proj" aria-pressed="false">Project</button><button type="button" data-nav="oben" aria-pressed="true">Overview</button><button type="button" data-nav="rund" aria-pressed="false">Walk</button></span></div>
 <div id="yearbox" class="foot caption off"><span id="yb-y"></span><span class="n" id="yb-t"></span></div>
 <div id="rtop" class="caption" aria-live="polite"><span id="rtop-t"></span><span class="n" id="rtop-y"></span></div>
@@ -274,7 +274,7 @@ html.gate-on #intro{display:none}
 <script src="../feedback.js"></script>
 <div id="abbar" class="foot caption"><a href="#" id="ab-all" class="arw">All<span class="lg"> Projects</span></a><span class="arw fst" data-for="about" aria-current="page">About</span><span class="arw fst" data-for="news" aria-current="page">News</span><span class="arw fst" data-for="contact" aria-current="page">Contact</span><span class="arw fst" data-for="impressum" aria-current="page">Impressum</span><span class="arw fst" data-for="datenschutz" aria-current="page">Datenschutz</span></div>
 <div id="dlbar" class="foot caption off"><a class="dlp" href="../portfolio/" title="Eigene Auswahl als PDF / Your own selection as PDF">↓ Download<span class="lg"> Portfolio</span></a></div>
-<div id="ovlegal" class="foot caption"><a href="impressum/" data-for="impressum">Impressum</a>    <a href="datenschutz/" data-for="datenschutz">Datenschutz</a></div>
+<div id="ovlegal" class="foot caption"><a href="../impressum/" data-for="impressum">Impressum</a>    <a href="../datenschutz/" data-for="datenschutz">Datenschutz</a></div>
 
 <div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw"><span class="dk">All<span class="lg"> Projects</span></span><span class="mb">Back</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
 <div id="rinfo" class="foot caption off"><span class="rt" id="r-title"></span><span class="n" id="r-count"></span></div>
@@ -285,7 +285,7 @@ html.gate-on #intro{display:none}
     <div class="head head3">
       <a href="./" data-home>YRD.Works</a>
       <a href="./" data-close class="arw">↑ All Projects</a>
-      <div class="links head-links"><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a></div>
+      <div class="links head-links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></div>
     </div>
     <div class="proj-gal" id="proj-gal"></div>
     <div class="proj-count caption" id="proj-count" aria-hidden="true"></div>
@@ -300,16 +300,49 @@ html.gate-on #intro{display:none}
   </div>
 </section>
 
+<!-- Testrunde 27.10., Nils Diezel: Ebenen-Links mit ../ (2D-Seiten), damit ein Klick vor dem Laden des Skripts nicht auf eine leere Adresse 3d/about/ fuehrt.
+     Testrunde 27.10., Ruben: Inhalt der News-Ebene setzt build_3d.py aus Quelle/template.html ein, hier nur Platzhalter. -->
 <!-- News -->
 <section class="overlay legal" id="news" aria-label="News" aria-hidden="true" style="--d:.4s">
   <div class="panel">
-    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a></div></div>
+    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></div></div>
     <div class="legal-text">
       <h2 class="proj-name">News</h2>
       <!-- Eintraege hier, je einer als:  <dt>TT.MM.JJJJ</dt><dd>Text, ggf. mit <a href="...">Link</a></dd> -->
-      <dl class="contact-list news-list">
-        <dt></dt><dd>Coming soon.</dd>
-      </dl>
+      <!-- Blog: je Beitrag ein <article class="post">, neuester oben. Bilder in Bilder/news-<jahr>-<name>/, Originale in Bildauswahl/.
+           Aufbau: links Datum/Ort/Themen, rechts Titel, Aufmacherbild, Text (DE und EN, Umschalter oben gilt fuer alle), weitere Bilder als Reihe;
+           Fotocredits unter der letzten Bildreihe: <p class="post-credit">Fotos / Photos: Name</p> -->
+      <div class="news-top caption"><span class="news-n">3 Beiträge</span><div class="news-lang" role="group" aria-label="Sprache"><button type="button" data-l="de" aria-pressed="true">Deutsch</button><button type="button" data-l="en" aria-pressed="false">English</button></div></div>
+      <article class="post">
+        <aside class="post-meta caption"><time datetime="2026-09-11">11.9.2026</time><span class="n">Frankfurt</span><span class="post-tags"><span>Residency</span><span>FlieKü</span></span></aside>
+        <div class="post-body">
+          <h3 class="post-title"><span class="de">Residents im FlieKü</span><span class="en" lang="en">Residents at FlieKü</span></h3>
+          <figure class="post-hero"><img loading="lazy" alt="FlieKü – Bild 1" src="../Bilder/news-2026-flieku/01.webp" width="1500" height="1000"></figure>
+          <div class="post-text"><div class="de"><p>YRD.Works sind seit Juli 2026 die ersten Artists in Residence im Fliegenden Künstler:innenzimmer (FlieKü) im Frankfurter Bahnhofsviertel. Das mobile Atelier, entworfen von Michel Müller und Nikolaus Hirsch, steht für die nächsten fünf Jahre auf dem François-Mitterrand-Platz. Eröffnet wurde es am 11. September mit einem Minigolfparcours aus zwölf Bahnen, für den die Besucher*innen ihre eigenen Schläger gestalten konnten. Ein Jahr lang entwickeln YRD.Works dort mit Kindern, Jugendlichen und der Nachbarschaft Projekte im öffentlichen Raum. Jeden Mittwoch von 16 bis 20 Uhr ist Open House.</p><p>Das FlieKü ist ein Programm der Crespo Foundation in Kooperation mit dem Jugend- und Sozialamt der Stadt Frankfurt.</p></div><div class="en" lang="en"><p>Since July 2026, YRD.Works have been the first artists in residence at the Fliegendes Künstler:innenzimmer (Flying Artists' Room), FlieKü for short, in Frankfurt's Bahnhofsviertel. Designed by Michel Müller and Nikolaus Hirsch, the mobile studio will stand on François-Mitterrand-Platz for the next five years. It opened on 11 September with a twelve-hole mini golf course for which visitors designed their own clubs. For one year, YRD.Works are developing projects in public space there with children, young people and the neighbourhood. Open House takes place every Wednesday from 4 to 8 pm.</p><p>The FlieKü is a programme of the Crespo Foundation in cooperation with the City of Frankfurt's Youth and Social Welfare Office.</p></div></div>
+          <div class="post-row"><figure style="flex:0.667"><img alt="FlieKü – Bild 2" src="../Bilder/news-2026-flieku/02.webp" width="667" height="1000" loading="lazy"></figure><figure style="flex:1.500"><img alt="FlieKü – Bild 3" src="../Bilder/news-2026-flieku/03.webp" width="1500" height="1000" loading="lazy"></figure><figure style="flex:0.667"><img alt="FlieKü – Bild 4" src="../Bilder/news-2026-flieku/04.webp" width="667" height="1000" loading="lazy"></figure></div>
+        <p class="post-credit">Fotos / Photos: Christof Jakob</p>
+        </div>
+      </article>
+      <article class="post">
+        <aside class="post-meta caption"><time datetime="2026-08-13">13.8.2026</time><span class="n">Frankfurt-Bockenheim</span><span class="post-tags"><span>Festivalarchitektur</span><span>WDC 2026</span></span></aside>
+        <div class="post-body">
+          <h3 class="post-title"><span class="de">Module Festival</span><span class="en" lang="en">Module Festival</span></h3>
+          <figure class="post-hero"><img loading="lazy" alt="Module Festival – Bild 1" src="../Bilder/news-2026-module/01.webp" width="1499" height="1000"></figure>
+          <div class="post-text"><div class="de"><p>Für das Module Festival der World Design Capital Frankfurt RheinMain 2026 haben YRD.Works die Festivalarchitektur auf dem Kulturcampus in Frankfurt-Bockenheim entwickelt und gebaut. Grundlage war ein einheitliches Rahmensystem aus Holz. Aus denselben Modulen entstanden halboffene Gänge, Sitzlandschaften, ein DJ-Pult und die Dächer über den Bühnen. Weiße Planen spannten die Dächer, blau gestrichene Platten bildeten Sitzflächen und Rückwände.</p><p>Vom 13. bis 16. August verbanden die Module Main Stage, Talk Stage, Radio Stage und Bar zu einem zusammenhängenden Gelände, dazu kamen die Weinfesttische aus dem Bestand von YRD.Works. Das kostenfreie Festival für Musik, Design und popkulturellen Dialog zeigte vier Tage lang Konzerte, DJ-Sets, Talks und Workshops. Das System ist zerlegbar und kann an anderen Orten wieder aufgebaut werden.</p></div><div class="en" lang="en"><p>For the Module Festival of World Design Capital Frankfurt RheinMain 2026, YRD.Works developed and built the festival architecture on the Kulturcampus in Frankfurt-Bockenheim. It was based on a single timber frame system. The same modules formed semi-open walkways, seating landscapes, a DJ booth and the roofs over the stages. White tarpaulins were stretched over the roofs, and blue-painted panels served as seats and back walls.</p><p>From 13 to 16 August the modules connected the Main Stage, Talk Stage, Radio Stage and bar into one continuous site, complemented by the festival tables from YRD.Works' own stock. For four days the free festival for music, design and pop-cultural dialogue presented concerts, DJ sets, talks and workshops. The system can be taken apart and rebuilt elsewhere.</p></div></div>
+          <div class="post-row"><figure style="flex:0.800"><img alt="Module Festival – Bild 2" src="../Bilder/news-2026-module/02.webp" width="800" height="1000" loading="lazy"></figure><figure style="flex:1.500"><img alt="Module Festival – Bild 3" src="../Bilder/news-2026-module/03.webp" width="1500" height="1000" loading="lazy"></figure><figure style="flex:0.800"><img alt="Module Festival – Bild 4" src="../Bilder/news-2026-module/04.webp" width="800" height="1000" loading="lazy"></figure></div><div class="post-row"><figure style="flex:1.499"><img alt="Module Festival – Bild 5" src="../Bilder/news-2026-module/05.webp" width="1499" height="1000" loading="lazy"></figure><figure style="flex:0.667"><img alt="Module Festival – Bild 6" src="../Bilder/news-2026-module/06.webp" width="667" height="1000" loading="lazy"></figure></div><div class="post-row"><figure style="flex:1.499"><img alt="Module Festival – Bild 7" src="../Bilder/news-2026-module/07.webp" width="1499" height="1000" loading="lazy"></figure><figure style="flex:1.499"><img alt="Module Festival – Bild 8" src="../Bilder/news-2026-module/08.webp" width="1499" height="1000" loading="lazy"></figure></div>
+        <p class="post-credit">Fotos / Photos: Ben Kuhlmann, Thomas Schoger, Stephan Junglas</p>
+        </div>
+      </article>
+      <article class="post">
+        <aside class="post-meta caption"><time datetime="2026-06-16">16.6.2026</time><span class="n">Frankfurt</span><span class="post-tags"><span>Edition</span><span>Objects of Resistance</span></span></aside>
+        <div class="post-body">
+          <h3 class="post-title"><span class="de">Safety Yellow Hammock</span><span class="en" lang="en">Safety Yellow Hammock</span></h3>
+          <figure class="post-hero"><img loading="lazy" alt="Safety Yellow Hammock – Bild 1" src="../Bilder/news-2026-objects-of-resistance/01.webp" width="1499" height="1000"></figure>
+          <div class="post-text"><div class="de"><p>Für die Ausstellung Objects of Resistance des Kunstvereins Mañana Bold, kuratiert von Maziar Rezai im Rahmen der World Design Capital Frankfurt RheinMain 2026, haben YRD.Works das sechste von zwölf Objekten entwickelt: Safety Yellow Hammock, eine Edition von 50 Hängematten in Warnwesten-Gelb. Jedes Objekt der Ausstellung steht für einen alltäglichen Gegenstand des Widerstands. Ausgangspunkt war hier die Warnweste, die mit der französischen Gilets-jaunes-Bewegung zu einem stark aufgeladenen Symbol geworden ist.</p><p>Die Hängematten sind aus leichtem Ripstop-Nylon. Die Reflektorstreifen haben YRD.Works in der Werkstatt selbst aufgenäht, jedes Stück trägt ein nummeriertes Etikett. Vorgestellt wurde die Edition vom 16. bis 19. Juni beim MEHR Festival der Otto-Brenner-Stiftung in Kooperation mit der IG Metall.</p><p>Die Arbeit übersetzt das Symbol in einen Gebrauchsgegenstand und spielt mit dem Bild der sozialen Hängematte. Zwischen Protestkleidung und Ruhepause verhandelt sie eine Politikmüdigkeit, die aus dem Zweifel entsteht, ob Handeln noch etwas verändern kann.</p></div><div class="en" lang="en"><p>For the exhibition Objects of Resistance by the art association Mañana Bold, curated by Maziar Rezai as part of World Design Capital Frankfurt RheinMain 2026, YRD.Works developed the sixth of twelve objects: Safety Yellow Hammock, an edition of 50 hammocks in high-visibility yellow. Each object in the exhibition stands for an everyday item of resistance. The starting point here was the safety vest, which became a highly charged symbol through the French gilets jaunes movement.</p><p>The hammocks are made of lightweight ripstop nylon. YRD.Works sewed on the reflective stripes themselves in the workshop, and each piece carries a numbered label. The edition was presented from 16 to 19 June at the MEHR Festival of the Otto Brenner Foundation in cooperation with IG Metall.</p><p>The work translates the symbol into an everyday object and plays with the German image of the social hammock, a byword for living off the welfare state. Between protest wear and a moment of rest, it deals with a political fatigue that grows from the doubt whether acting can still change anything.</p></div></div>
+          <div class="post-row"><figure style="flex:1.499"><img alt="Safety Yellow Hammock – Bild 2" src="../Bilder/news-2026-objects-of-resistance/02.webp" width="1499" height="1000" loading="lazy"></figure><figure style="flex:0.667"><img alt="Safety Yellow Hammock – Bild 8" src="../Bilder/news-2026-objects-of-resistance/08.webp" width="667" height="1000" loading="lazy"></figure></div><div class="post-row"><figure style="flex:0.667"><img alt="Safety Yellow Hammock – Bild 4" src="../Bilder/news-2026-objects-of-resistance/04.webp" width="667" height="1000" loading="lazy"></figure><figure style="flex:0.667"><img alt="Safety Yellow Hammock – Bild 5" src="../Bilder/news-2026-objects-of-resistance/05.webp" width="667" height="1000" loading="lazy"></figure><figure style="flex:0.667"><img alt="Safety Yellow Hammock – Bild 6" src="../Bilder/news-2026-objects-of-resistance/06.webp" width="667" height="1000" loading="lazy"></figure></div><div class="post-row"><figure style="flex:0.667"><img alt="Safety Yellow Hammock – Bild 7" src="../Bilder/news-2026-objects-of-resistance/07.webp" width="667" height="1000" loading="lazy"></figure><figure style="flex:1.499"><img alt="Safety Yellow Hammock – Bild 3" src="../Bilder/news-2026-objects-of-resistance/03.webp" width="1499" height="1000" loading="lazy"></figure></div>
+        <p class="post-credit">Fotos / Photos: Ben Kuhlmann</p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -317,7 +350,7 @@ html.gate-on #intro{display:none}
 <!-- Contact -->
 <section class="overlay legal" id="contact" aria-label="Contact" aria-hidden="true" style="--d:.4s">
   <div class="panel">
-    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a></div></div>
+    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></div></div>
     <div class="legal-text">
       <h2 class="proj-name">Contact</h2>
       <dl class="contact-list">
@@ -327,7 +360,7 @@ html.gate-on #intro{display:none}
         <dt>Work with us</dt><dd><a href="mailto:info@yrd.works?subject=Bewerbung%20Praktikum&amp;body=Hallo%2C%0A%0Aich%20m%C3%B6chte%20mich%20f%C3%BCr%20ein%20Praktikum%20bei%20YRD.Works%20bewerben.%0A%0AZeitraum%3A%0A%0APortfolio%20und%20Lebenslauf%20findet%20ihr%20im%20Anhang.%0A%0AViele%20Gr%C3%BC%C3%9Fe%0A">Apply for Internship</a></dd>
         <dt>Find us</dt><dd><a href="https://www.google.com/maps/search/?api=1&amp;query=Hafen+13%2C+63067+Offenbach" target="_blank" rel="noopener">Hafen 13, 63067 Offenbach</a></dd>
       </dl>
-      <div class="legal-row caption c-legal"><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></div>
+      <div class="legal-row caption c-legal"><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></div>
     </div>
   </div>
 </section>
@@ -335,7 +368,7 @@ html.gate-on #intro{display:none}
 <!-- Impressum -->
 <section class="overlay legal" id="impressum" aria-label="Impressum" aria-hidden="true">
   <div class="panel">
-    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a></div></div>
+    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></div></div>
     <div class="legal-text">
       <h2 class="proj-name">Impressum</h2>
       <p class="caption">Angaben gemäß § 5 DDG</p>
@@ -356,7 +389,7 @@ html.gate-on #intro{display:none}
 <!-- Datenschutz -->
 <section class="overlay legal" id="datenschutz" aria-label="Datenschutz" aria-hidden="true">
   <div class="panel">
-    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="about/">About</a><a href="news/">News</a><a href="../index/index.html">Index</a><a href="contact/">Contact</a></div></div>
+    <div class="head head3"><a href="./" data-home>YRD.Works</a><a href="./" data-close class="arw">↑ All Projects</a><div class="links head-links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></div></div>
     <div class="legal-text">
       <h2 class="proj-name">Datenschutz</h2>
       <p class="caption">[Entwurf, vor Veröffentlichung prüfen] Stand: September 2026</p>
@@ -1565,13 +1598,17 @@ function fillAbout(){
   if(a.text.length&&(a.text_en||[]).length) rows.push('<div class="lang-sw caption"><button type="button" data-l="de">DE</button> / <button type="button" data-l="en">EN</button></div>');
   rows.push(`<div class="de">${paras(a.text)}</div>`);
   if((a.text_en||[]).length) rows.push(`<div class="en" lang="en">${paras(a.text_en)}</div>`);
-  rows.push('<div class="legal-row caption"><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></div>');
+  rows.push('<div class="legal-row caption"><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></div>');
   $('#proj-bi').innerHTML=rows.join('');
   $('#project').classList.remove('is-proj');
   $('#proj-next-t').textContent=P[0].title;
   const c=$('#proj-count'); if(c) c.textContent='';
 }
 $('#proj-bi').addEventListener('click',e=>{ const b=e.target.closest('.lang-sw button'); if(b) $('#proj-bi').classList.toggle('show-en',b.dataset.l==='en'); });
+/* Testrunde 27.10., Ruben: News wie in 2D, ein Sprachumschalter fuer alle Beitraege */
+(()=>{ const n=$('#news'), g=n&&n.querySelector('.news-lang'); if(!g) return;
+  g.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; n.classList.toggle('show-en',b.dataset.l==='en');
+    g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); }); })();
 function showOv(key){
   curOv=(key&&OVS[key])?key:null;
   document.body.setAttribute('data-ov',curOv||'');   /* Impressum und Datenschutz unten rechts auf About, Contact, Impressum, Datenschutz */
@@ -1596,9 +1633,11 @@ document.addEventListener('click',e=>{
     if(v&&!reduce){ knobTo(v,a); setTimeout(()=>{ location.href=u; },320); } else location.href=u; return; }
   if(a.id==='ab-all'){ e.preventDefault(); showOv(null); if(mode==='proj') closeProject(); return; }   /* About: All Projects fuehrt in den Ring */
   if(a.id==='proj-next'){ e.preventDefault(); showOv(null); if(mode==='fly') finishFly(); openProject(0); return; }
-  if(a.closest('.overlay') && (a.hasAttribute('data-close')||a.hasAttribute('data-home'))){ e.preventDefault(); showOv(null); return; }
+  /* Testrunde 27.10., Nils Diezel: YRD.Works in einer Ebene fuehrt wie oben links zum Start (Uebersicht), nicht zurueck in den letzten Projektraum */
+  if(a.closest('.overlay') && a.hasAttribute('data-home')){ e.preventDefault(); $('#home').click(); return; }
+  if(a.closest('.overlay') && a.hasAttribute('data-close')){ e.preventDefault(); showOv(null); return; }
   if(a.hasAttribute('data-mm-home')){ e.preventDefault(); showOv(null); if(mode==='fly') finishFly(); if(mode==='proj') closeProject(); return; }   /* Handy-Menue: Projects = Uebersicht */
-  const m=(a.getAttribute('href')||'').match(/^(about|news|contact|impressum|datenschutz)\/$/);
+  const m=(a.getAttribute('href')||'').match(/^(?:\.\.\/)?(about|news|contact|impressum|datenschutz)\/$/);   /* Testrunde 27.10., Nils Diezel: Links zeigen jetzt auf ../about/ usw. */
   if(m){ e.preventDefault(); if(mode==='fly') finishFly(); showOv(m[1]); }
 },true);
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) showOv(null); }));

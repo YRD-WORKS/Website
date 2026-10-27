@@ -88,7 +88,7 @@
     var cn=navigator.connection; if(cn&&(cn.saveData||/2g/.test(cn.effectiveType||''))) return;
     if(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=500) return;
     var a=document.querySelector('a[href*="3d/"]'); if(!a) return;
-    var b3=new URL(a.getAttribute('href'),location.href);
+    var b3=new URL(a.getAttribute('href'),document.baseURI);   /* Testrunde 27.10., Ruben: gegen <base> aufloesen, sonst auf Unterseiten /messerschmiede/3d/... (404) */
     var pre=window.YRD_PRE={got:0,tot:0,done:false};
     /* erst los, wenn die sichtbaren Kacheln geladen sind (hoechstens 3 s), meist noch waehrend der Intro-Woerter */
     var t0=Date.now();
