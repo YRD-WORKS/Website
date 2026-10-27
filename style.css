@@ -632,3 +632,13 @@ html.vt-zu::view-transition-group(yrd-hero){animation-duration:calc(var(--t-slow
 html.vt-on::view-transition-old(root),html.vt-on::view-transition-new(root){animation-duration:var(--t-mid)}
 html.vt-zu::view-transition-old(root),html.vt-zu::view-transition-new(root){animation-duration:calc(var(--t-mid) * .7)}
 @media (prefers-reduced-motion:reduce){ ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important} }
+
+/* Testrunde 27.10., Ruben: am Handy langer Werktext erst zur Haelfte und unten ausgeblendet, "Weiterlesen" klappt auf (kurz() in site.js);
+   darunter wieder der Pfeil mit dem Namen des naechsten Projekts, damit man sieht, dass es nach unten weitergeht */
+@media (max-width:700px){
+  .proj-bi.zu > .de,.proj-bi.zu > .en{max-height:var(--zh);overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 45%,transparent);mask-image:linear-gradient(to bottom,#000 45%,transparent)}
+  .proj-bi .mehr{justify-self:start;font:inherit;font-style:normal;color:var(--ink);background:var(--bg);border:0;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);padding:.45em .95em .4em;line-height:1;margin-top:-.4em;cursor:pointer;touch-action:manipulation}
+  .proj-bi .mehr .en{font-style:normal}
+  .proj-bi.zu .credit{display:none}
+  #project.is-proj .proj-nx{display:block;margin-top:3.6em}
+}

@@ -290,7 +290,27 @@
   document.getElementById('proj-bi').addEventListener('click',function(e){
     var b=e.target.closest('.lang-sw button'); if(!b) return;
     LANG=b.dataset.l; this.classList.toggle('show-en',LANG==='en');
+    if(this.classList.contains('zu')) kurz();   /* andere Sprache, andere Hoehe */
   });
+  /* Testrunde 27.10., Ruben: am Handy langer Werktext erst zur Haelfte, unten ausgeblendet, "Weiterlesen" klappt ihn auf */
+  function kurz(){
+    var bi=document.getElementById('proj-bi'); if(!bi) return;
+    var m=bi.querySelector('.mehr'); if(m) m.remove(); bi.classList.remove('zu');
+    if(bi.dataset.auf||!window.matchMedia('(max-width:700px)').matches||!document.getElementById('project').classList.contains('is-proj')) return;
+    var t=bi.querySelector(bi.classList.contains('show-en')?':scope > .en':':scope > .de')||bi.querySelector(':scope > .de, :scope > .en'); if(!t) return;
+    var h=t.scrollHeight, lh=parseFloat(getComputedStyle(t).lineHeight)||20;
+    if(h<lh*12) return;   /* kurze Texte bleiben ganz */
+    bi.style.setProperty('--zh',Math.round(Math.max(lh*6,h/2))+'px');
+    var b=document.createElement('button'); b.type='button'; b.className='mehr';
+    b.innerHTML='<span class="de">Weiterlesen \u2193</span><span class="en" lang="en">Read more \u2193</span>';
+    var all=bi.querySelectorAll(':scope > .de, :scope > .en'); all[all.length-1].after(b);
+    bi.classList.add('zu');
+  }
+  document.getElementById('proj-bi').addEventListener('click',function(e){
+    if(!e.target.closest('.mehr')) return;
+    this.dataset.auf='1'; kurz();
+  });
+  kurz(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ if(document.getElementById('proj-bi').classList.contains('zu')) kurz(); });
   /* News: ein Sprachumschalter fuer alle Beitraege */
   (function(){ var n=document.getElementById('news'), g=n&&n.querySelector('.news-lang'); if(!g) return;
     g.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; var en=b.dataset.l==='en';
@@ -327,6 +347,7 @@
     if(i<0) rows.push('<div class="legal-row caption"><a href="'+href('impressum')+'">Impressum</a><a href="'+href('datenschutz')+'">Datenschutz</a></div>');
     var bi=document.getElementById('proj-bi'); bi.innerHTML=rows.join(''); bi.hidden=!rows.length; bi.classList.toggle('show-en',LANG==='en');
     document.getElementById('project').classList.toggle('is-proj',i>=0);
+    delete bi.dataset.auf; kurz();   /* Testrunde 27.10., Ruben: jedes Projekt startet gekuerzt */
     var nx=document.getElementById('proj-next');
     /* Pfeil nach unten: naechstes Projekt, von About aus das erste */
     var q=PROJECTS[nb(i,1)]; nx.href=href(q.slug); document.getElementById('proj-next-t').textContent=q.title;
