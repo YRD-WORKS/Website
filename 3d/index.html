@@ -1250,7 +1250,7 @@ function poseRooms(dt){
       }
       if(rm.fast){ const f=smooth(rm.m); o*=f; e*=f; }
       { const sp=rm.split||(rm.splitWith&&rooms.includes(rm.splitWith)?rm.splitWith.split:null);
-        if(sp){ const md=x=>((x%TAU)+TAU)%TAU, vu=sp.vu0+(sp.y0-cam.yaw), ph=w.phi+(rm.split?sp.a:0), first=!!rm.split!==!!sp.rev, u=first?md(ph-sp.H):sp.UB+md(ph-sp.B);   /* rev: Previous, neuer Raum links im Band */
+        if(sp){ const md=x=>((x%TAU)+TAU)%TAU, vu=sp.vu0+(sp.y0-cam.yaw), ph=w.phi+(rm.split?sp.a:0), first=!!rm.split!==!!sp.rev, u=first?ph-sp.H:sp.UB+(ph-sp.B);   /* rev: Previous, neuer Raum links im Band */
           const vis=Math.abs(u-vu)<Math.PI, ramp=smooth((performance.now()-sp.t0)/350);
           const f=rm.split?(vis?1:1-ramp):(vis?ramp:1-smooth(rm.splitWith.m)); o*=f; e*=f; } }
       if(rm.xin!=null){ const f=smooth(rm.xin); o*=f; e*=f; }   // neuer Raum beim Next Project: blendet an seinem Platz ein
@@ -1458,8 +1458,11 @@ function panPath(rm,old){
   // hoechstens eine halbe Drehung vom Blick entfernt liegt, so ueberlagern sich die beiden Kreise nie (auch nicht, wenn man vom linken Bild aus startet)
   const md=x=>((x%TAU)+TAU)%TAU;
   let Lo=0; old.walls.forEach((w,k)=>{ if(w.kind!=='text' && w.rel<old.walls[Lo].rel) Lo=k; });
-  const H=old.walls[Lo].phi+a-hw(old.walls[Lo])-gap/2, B=tw.phi+a+hw(tw)+gap/2, UB=md(B-H);
-  let vu0=md(-cam.yaw-H); if(vu0>UB) vu0-=TAU;
+  /* Testrunde 28.10., Ruben: bei Raeumen mit vielen Bildern (Bingenheim, Transition, Messerschmiede ...) ist der Kreis ganz geschlossen, B-H liegt ueber 2 pi.
+     md(B-H) machte daraus fast 0, beide Raeume galten als nicht im Blick und blendeten aus (alles weiss, dann sprang der neue Raum herein).
+     Die Winkel der Flaechen sind fortlaufend, deshalb ohne Modulo; den Blick am angesehenen Bild festmachen */
+  const H=old.walls[Lo].phi+a-hw(old.walls[Lo])-gap/2, B=tw.phi+a+hw(tw)+gap/2, UB=B-H;
+  const wf=old.walls[old.f]||old.walls[Lo], vu0=(wf.phi+a-H)+angD(wf.phi+a,-cam.yaw);
   old.split={a, B, H, UB, vu0, y0:cam.yaw, t0:performance.now()};
   rm.splitWith=old;
   let d=angD(cam.yaw,-wl.phi); if(d>0.02) d-=TAU;   // immer nach rechts (yaw nimmt ab)
@@ -1484,8 +1487,8 @@ function panPathPrev(rm,old){
   // Band abgerollt ab der linken Kante des neuen Raums: neuer Raum 0..UB, alter ab UB (Grenze B rechts vom Text des neuen)
   const md=x=>((x%TAU)+TAU)%TAU;
   let Ln=0; rm.walls.forEach((w,k)=>{ if(w.kind!=='text' && w.rel<rm.walls[Ln].rel) Ln=k; });
-  const H=rm.walls[Ln].phi-hw(rm.walls[Ln])-gap/2, B=tw.phi+hw(tw)+gap/2, UB=md(B-H);
-  let x=md(-cam.yaw-B); if(x>Math.PI*1.5) x-=TAU;
+  const H=rm.walls[Ln].phi-hw(rm.walls[Ln])-gap/2, B=tw.phi+hw(tw)+gap/2, UB=B-H;   /* Testrunde 28.10., Ruben: ohne Modulo, siehe panPath */
+  const wf=old.walls[old.f]||wo, x=(wf.phi+a-B)+angD(wf.phi+a,-cam.yaw);
   old.split={a, B, H, UB, vu0:UB+x, y0:cam.yaw, t0:performance.now(), rev:true};
   rm.splitWith=old;
   const M=rm.midK??T, wm=rm.walls[M];
@@ -2012,7 +2015,8 @@ function loop(now){
   // erst die Raeume: wird ein Raum in diesem Frame abgebaut, stehen Heroshot und Staffel im Ring im selben Frame wieder da (sonst flackert der Heroshot einen Frame lang)
   poseRooms(dt);
   tiles.forEach(t=>{ t.sv=lerp(t.sv??1,t.svT??1,1-Math.exp(-dt*6)); t.fade=lerp(t.fade,t.fadeT,fk); if(Math.abs(t.fade-t.fadeT)<0.002) t.fade=t.fadeT; t.hov=lerp(t.hov,t.hovT,1-Math.exp(-dt*10)); updDoor(t,dt); t.capK=roomOf(t.i)?0:Math.min(1,(t.capK??1)+dt/0.4); poseTile(t,now); poseStack(t); });
-  if(exitHold && mode!=='proj' && Math.hypot(cam.pos.x,cam.pos.z)<R-1){ exitHold=false; tiles.forEach(t=>t.fadeT=1); }
+  /* Testrunde 28.10., Ruben: aus einem Projekt ueber YRD.Works (auch aus News) in die Overview kam die Kamera nie in den Ring zurueck, die anderen Projekte blieben ausgeblendet; in der Overview sofort wieder einblenden */
+  if(exitHold && mode!=='proj' && (nav==='oben' || Math.hypot(cam.pos.x,cam.pos.z)<R-1)){ exitHold=false; tiles.forEach(t=>t.fadeT=1); }
   stackK=rooms.some(r=>!r.keepOthers)?((room&&room.path&&room.path.steer)?Math.max(0,stackK-dt/0.4):0):Math.min(1,stackK+dt/0.6);   // beim Zusteuern blenden die fremden Staffeln weich aus
   const inRoom=rooms.reduce((a,r)=>Math.max(a,r.m),0);   // der Ring blendet erst wieder ein, wenn der Raum verschwindet
   ringMat.opacity=gridMat.opacity*(1-inRoom);
