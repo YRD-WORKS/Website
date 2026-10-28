@@ -240,7 +240,7 @@
   function inField(p){ if(!st.f) return true; var a=aw(st.f); return !a||a.idx.indexOf(p.i)>=0; }
   function vis(p){ return inField(p)&&(!st.t.length||p.tags.some(function(t){ return st.t.indexOf(t)>=0; }))&&(!st.q||wnorm(st.q).split(' ').filter(Boolean).every(function(w){ return p.hay.indexOf(' '+w)>=0; })); }
   function target(){ var s=D.filter(function(p){ return st.p.indexOf(p.slug)>=0; }); return s.length?s:D.filter(vis); }
-  function shareUrl(tg){ var r=new URL(FILE?'index.html':'./',document.baseURI); r.search='?sel='+tg.map(function(p){ return p.slug; }).join(',')+(st.fr?'&from='+encodeURIComponent(st.fr):''); r.hash=''; return r.href; }
+  function shareUrl(tg){ var r=new URL(FILE?'selection/index.html':'selection/',document.baseURI);   /* Ruben 28.10.: ueber die Einstiegsseite selection/, damit die Link-Vorschau den Text der Auswahl zeigt (build.py) */ r.search='?sel='+tg.map(function(p){ return p.slug; }).join(',')+(st.fr?'&from='+encodeURIComponent(st.fr):''); r.hash=''; return r.href; }
   function paint(){
     document.querySelectorAll('.fl-i').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.f===st.f); });
     document.querySelectorAll('.chip').forEach(function(b){ b.setAttribute('aria-pressed',st.t.indexOf(b.dataset.t)>=0); });
@@ -298,7 +298,8 @@
   $('#pffor').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('#pfcopy').click(); } });
   $('#pfcopy').onclick=function(){ closePop(); copyLink('Link copied: your selection of '+selTxt()); };
   if(navigator.share&&window.matchMedia('(hover:none) and (pointer:coarse)').matches){   /* Ruben 28.10.: am Rechner nie, auch nicht bei Mac mit Touch-Erkennung */ $('#pfshare').hidden=false;   /* Handy, Tablet: Teilen-Menue des Systems */
-    $('#pfshare').onclick=function(){ var u=shareUrl(target()); closePop(); navigator.share({title:'YRD.Works / Selection'+(st.fr?' by '+st.fr:''), url:u}).catch(function(){}); }; }
+    $('#pfshare').onclick=function(){ var u=shareUrl(target()); closePop(); var d={title:'YRD.Works / Selection'+(st.fr?' by '+st.fr:''), url:u}; if(st.fr) d.text=st.fr+' hat dir eine Auswahl von Arbeiten von YRD.Works zusammengestellt.';   /* Ruben 28.10.: Name als Nachrichtenzeile ueber der Vorschau; Apps, die text nicht nehmen, zeigen nur den Link */
+      navigator.share(d).catch(function(){}); }; }
   $('#pfx').onclick=closePop;
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('#pfpop').hidden) closePop(); });
   document.addEventListener('click',function(e){ var pp=$('#pfpop'); if(!pp.hidden&&!pp.contains(e.target)&&!e.target.closest('#link')) closePop(); });
