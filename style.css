@@ -432,6 +432,7 @@ body[data-ov]:not([data-ov=""]):not([data-ov="project"]) .vsw .seg > .on{cursor:
   .aw-list::-webkit-scrollbar{display:none}
   .aw-pdf{display:none}   /* Handy: kein Download (Ruben 21.10.) */
 }
+.aw-pdf{display:none!important}   /* Launch 30.10., Ruben 28.10.: PDF-Funktion vorerst aus, auch am Rechner (siehe index/index.html #pdf) */
 body[data-aw]:not([data-aw=""]):not([data-ov]) #fall,body[data-aw]:not([data-aw=""])[data-ov=""] #fall{background:var(--bg);color:var(--ink);pointer-events:auto}   /* in einer Auswahl ist All Projects ein Ziel, nicht der Stand */
 
 /* Handy: Menue oben rechts (Menu / Close) statt der Links About, Contact; klappt unter dem Knopf eine linksbuendige Liste auf: Projects, News, About, Contact, Impressum, Datenschutz */

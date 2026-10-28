@@ -7,13 +7,13 @@
 <title>YRD.Works / Index</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="YRD.Works / Index">
-<meta property="og:description" content="Alle Arbeiten von YRD.Works auf einen Blick, mit Auswahl als Link oder PDF.">
+<meta property="og:description" content="Alle Arbeiten von YRD.Works auf einen Blick, mit Auswahl als Link.">
 <meta property="og:url" content="https://yrd-works.github.io/Website/index/">
 <meta property="og:image" content="https://yrd-works.github.io/Website/Bilder/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="description" content="Alle Arbeiten von YRD.Works als Liste: nach Arbeitsfeldern und Themen filtern, auswählen, als Link teilen oder als PDF laden.">
+<meta name="description" content="Alle Arbeiten von YRD.Works als Liste: nach Arbeitsfeldern und Themen filtern, auswählen, als Link teilen.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -37,9 +37,20 @@
 .lst{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-4)}
 .lst li{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--ink-2,rgba(0,0,255,.14))}
 .lst li[hidden]{display:none}
+/* Ruben 28.10.: Kopfzeile ueber der Liste, gleiche Spalten wie die Zeilen; am Handy aus (dort andere Spalten) */
+.lst-h{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:end;padding:0 0 .45rem;color:var(--ink-4)}
+@media (max-width:700px){ .lst-h{display:none} }
 /* Ruben 24.10. (Vorschlag Steffen): Auswahlkreis und Miniaturen groesser, vorher Kreis 1.15em, Bild 6.5em (Handy 5.2em) */
 .lst .ck{width:1.6em;height:1.6em;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);border:0;padding:0;cursor:pointer;justify-self:start}
 .lst li[aria-selected="true"] .ck{background:var(--ink)}
+/* Ruben 28.10.: Kreise deutlicher als anklickbar, ohne laut zu werden: leer mit feinem Plus, beim Ueberfahren der Zeile kraeftiger mit hellem Grund */
+.lst .ck{position:relative;justify-self:center}   /* Ruben 28.10.: eingerueckt, am linken Rand war der Kreis angeschnitten */
+.lst .ck::before{content:"+";position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.1em;line-height:1;color:var(--ink-4);transition:color .15s ease}
+.lst li[aria-selected="true"] .ck::before{content:""}
+@media (hover:hover) and (pointer:fine){
+  .lst li:not([aria-selected="true"]):hover .ck{background:rgba(0,0,255,.08);box-shadow:inset 0 0 0 1.5px var(--ink)}
+  .lst li:not([aria-selected="true"]):hover .ck::before{color:var(--ink)}
+}
 /* Testrunde 24.10.: auf Touch-Geraeten eine Tippflaeche von rund 40 px um den kleinen Kreis (sichtbar bleibt er gleich gross), am Rechner unveraendert */
 @media (pointer:coarse){ .lst .ck{position:relative} .lst .ck::after{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%} }
 .lst li[aria-selected="true"]{background:rgba(0,0,255,.05)}
@@ -50,6 +61,7 @@
 .lst .y{font-variant-numeric:tabular-nums}
 .empty{margin-top:1.4rem}
 /* Leiste: links Ansicht, Mitte Auswahl, rechts Link und PDF */
+#pdf{display:none!important}   /* Launch 30.10., Ruben 28.10.: PDF-Funktion vorerst aus (Projekt-PDFs veraltet); zum Einschalten diese Zeile und die in style.css (.aw-pdf) entfernen, Texte oben wieder um PDF ergaenzen */
 .fbar .fb-c{gap:1em}
 .ixa{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;cursor:pointer;font:inherit;border:0}
 .ixa.solid{background:var(--ink);color:var(--bg)}
@@ -79,6 +91,25 @@
 .ix-row:has(#q) .lb{display:none}
 .toast{position:fixed;left:50%;bottom:calc(5.4rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.4em .9em;border-radius:10em;opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:30}
 .toast.on{opacity:1}
+/* Ruben 28.10.: die Auswahl als eigenes Portfolio bewusst machen. 1 Leiste benennt die Auswahl und zaehlt sichtbar hoch,
+   2 Teilen wird Hauptknopf (ausgefuellt, der Platz des PDF-Knopfs), 3 Hinweis bei der ersten Auswahl je Sitzung,
+   4 Teilen-Fenster mit "Your name": der eigene Name geht als &from= in den Link, 2D zeigt beim Empfaenger, wer ausgewaehlt hat (site.js; Ruben 28.10. abends: nicht fuer wen, sondern von wem) */
+#selinfo{color:var(--ink);display:inline-block}
+#selinfo.bump{animation:pfbump .45s ease}
+@keyframes pfbump{0%{transform:scale(1)}35%{transform:scale(1.12)}100%{transform:scale(1)}}
+#link.solid{background:var(--ink);color:var(--bg);box-shadow:none}
+.pf-hint{position:fixed;left:50%;bottom:calc(5.4rem + env(safe-area-inset-bottom,0px));transform:translate(-50%,.4em);background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);padding:.5em 1em .45em;border-radius:10em;opacity:0;transition:opacity .3s ease,transform .3s ease;pointer-events:none;z-index:29;width:max-content;max-width:calc(100vw - 2 * var(--pad));text-align:center}
+.pf-hint.on{opacity:1;transform:translate(-50%,0)}
+.pf-pop{position:fixed;right:var(--pad);bottom:calc(var(--fb-b) + var(--fb-h) + .8rem + env(safe-area-inset-bottom,0px));width:min(24em,calc(100vw - 2 * var(--pad)));box-sizing:border-box;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink);border-radius:1.2em;padding:1.1em 1.2em 1.2em;z-index:31}
+.pf-pop[hidden]{display:none}
+.pf-pop h2{font:inherit;margin:0 2em .15em 0}
+.pf-pop .pf-n{color:var(--ink-4);margin:0 0 1em}
+.pf-pop label{display:block;margin:0 0 .4em;color:var(--ink-4)}
+.pf-pop .ix-q{width:100%}
+.pf-pop .pf-row{display:flex;gap:.5em;margin-top:1em;flex-wrap:wrap}
+.pf-pop .pf-x{position:absolute;top:.6em;right:.8em;font:inherit;font-size:1.3em;line-height:1;color:var(--ink);background:none;border:0;cursor:pointer;padding:.1em .2em}
+@media (max-width:700px){ .pf-pop{left:var(--pad);right:var(--pad);width:auto} .pf-hint{white-space:normal} }
+@media (prefers-reduced-motion:reduce){ #selinfo.bump{animation:none} .pf-hint{transition:none} }
 
 /* ---- Vereinfachter Index (23.10.) ---- */
 .ix-lead{margin:0 0 1.6rem}
@@ -139,12 +170,13 @@
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); }); })();</script>
 
 <main class="ix">
-  <section class="ix-lead"><h1 class="sr-only">Index</h1><div class="proj-bi ix-bi"><p class="de">Alle Arbeiten von YRD.Works auf einen Blick. Fields sind kuratierte Auswahlen, die Arbeiten aus einem Arbeitsfeld zusammenfassen. Topics filtern die Liste nach Themen und Formaten, etwa Intervention, Skulptur oder Essen &amp; Trinken. Ausgewählte Arbeiten lassen sich als Link teilen oder als PDF laden.</p><p class="en">All works by YRD.Works at a glance. Fields are curated selections that bring together works from one area of practice. Topics filter the list by theme and format, such as intervention, sculpture or food &amp; drink. Selected works can be shared as a link or downloaded as a PDF.</p></div></section>
+  <section class="ix-lead"><h1 class="sr-only">Index</h1><div class="proj-bi ix-bi"><p class="de">Alle Arbeiten von YRD.Works auf einen Blick. Fields sind kuratierte Auswahlen, die Arbeiten aus einem Arbeitsfeld zusammenfassen. Topics filtern die Liste nach Themen und Formaten, etwa Intervention, Skulptur oder Essen &amp; Trinken. Ausgewählte Arbeiten lassen sich als Link teilen.</p><p class="en">All works by YRD.Works at a glance. Fields are curated selections that bring together works from one area of practice. Topics filter the list by theme and format, such as intervention, sculpture or food &amp; drink. Selected works can be shared as a link.</p></div></section>
   <div class="tgs"><button type="button" class="tgb tg" data-pn="pn-f" aria-expanded="false">Fields</button><button type="button" class="tgb tg" data-pn="pn-t" aria-expanded="false">Topics</button></div>
   <div class="pn" id="pn-f" hidden><ul class="fl-g" id="fields"></ul></div>
   <div class="pn caption" id="pn-t" hidden><div class="chips" id="topics"></div></div>
   <div class="ix-bar caption"><div class="l"><span class="n" id="cnt"></span><span id="act"></span></div><div class="r"></div></div>
-  <div class="ix-row caption"><span class="lb n">Search</span><input class="ix-q" id="q" type="search" placeholder="Search" aria-label="Search"></div>
+  <div class="ix-row caption"><span class="lb n">Search</span><input class="ix-q" id="q" type="search" placeholder="Search" aria-label="Search" autocomplete="off" spellcheck="false"></div>
+  <div class="lst-h caption" aria-hidden="true"><span>Select</span><span></span><span>Project</span><span>Year</span><span>Location</span><span>Type</span></div>   <!-- Ruben 28.10.: Kopfzeile, damit die Kreise links als Auswahl lesbar sind -->
   <ol class="lst caption" id="lst"></ol>
   <p class="empty caption n" id="empty" hidden>No work matches this combination.</p>
 </main>
@@ -154,6 +186,16 @@
   <div class="fb-r"><a class="ixa" id="view" href="./">View →</a><button type="button" class="ixa" id="link">Copy link</button><a class="ixa solid" id="pdf" href="portfolio/index.html">↓ PDF</a></div>
 </div>
 <div class="toast caption" id="toast">Link copied</div>
+<!-- Ruben 28.10.: Hinweis bei der ersten Auswahl und Teilen-Fenster mit "Your name" -->
+<div class="pf-hint caption" id="pfhint" role="status">You're putting together your own portfolio. Share it as a link.</div>
+<div class="pf-pop caption" id="pfpop" role="dialog" aria-labelledby="pf-t" hidden>
+  <button type="button" class="pf-x" id="pfx" aria-label="Close">×</button>
+  <h2 id="pf-t">Your portfolio</h2>
+  <p class="pf-n" id="pfn"></p>
+  <label for="pffor">Your name (optional)</label>
+  <input class="ix-q" id="pffor" type="text" maxlength="60" autocomplete="off" spellcheck="false">
+  <div class="pf-row"><button type="button" class="ixa solid" id="pfcopy">Copy link</button><button type="button" class="ixa" id="pfshare" hidden>Share …</button><a class="ixa" id="pfview" href="./">Preview →</a></div>
+</div>
 
 <script src="projects.js"></script>
 <script src="portfolio/tags.js"></script>
@@ -178,9 +220,9 @@
     o.hay=' '+wnorm([p.title,p.year,p.ort,p.art,(x.tags||[]).join(' '),(x.such||[]).join(' ')].join(' '));
     return o; });
   var AW=window.AUSWAHL||[];
-  var st={f:'',t:[],q:'',p:[]};
+  var st={f:'',t:[],q:'',p:[],fr:''};   /* fr: eigener Name ("Your name", Ruben 28.10.) */
   (function(){ var u=new URLSearchParams(location.search);
-    st.f=u.get('f')||''; st.t=(u.get('t')||'').split(',').filter(Boolean); st.q=u.get('q')||''; st.p=(u.get('p')||'').split(',').filter(Boolean); })();
+    st.f=u.get('f')||''; st.t=(u.get('t')||'').split(',').filter(Boolean); st.q=u.get('q')||''; st.p=(u.get('p')||'').split(',').filter(Boolean); st.fr=(u.get('from')||'').slice(0,60); })();
   $('#q').value=st.q;
   var cnt={}; D.forEach(function(p){ p.tags.forEach(function(t){ cnt[t]=(cnt[t]||0)+1; }); });
   var TOP=(TG.filter||[]).filter(function(t){ return cnt[t]; }).sort(function(a,b){ return cnt[b]-cnt[a]||a.localeCompare(b,'de'); });
@@ -198,7 +240,7 @@
   function inField(p){ if(!st.f) return true; var a=aw(st.f); return !a||a.idx.indexOf(p.i)>=0; }
   function vis(p){ return inField(p)&&(!st.t.length||p.tags.some(function(t){ return st.t.indexOf(t)>=0; }))&&(!st.q||wnorm(st.q).split(' ').filter(Boolean).every(function(w){ return p.hay.indexOf(' '+w)>=0; })); }
   function target(){ var s=D.filter(function(p){ return st.p.indexOf(p.slug)>=0; }); return s.length?s:D.filter(vis); }
-  function shareUrl(tg){ var r=new URL(FILE?'index.html':'./',document.baseURI); r.search='?sel='+tg.map(function(p){ return p.slug; }).join(','); r.hash=''; return r.href; }
+  function shareUrl(tg){ var r=new URL(FILE?'index.html':'./',document.baseURI); r.search='?sel='+tg.map(function(p){ return p.slug; }).join(',')+(st.fr?'&from='+encodeURIComponent(st.fr):''); r.hash=''; return r.href; }
   function paint(){
     document.querySelectorAll('.fl-i').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.f===st.f); });
     document.querySelectorAll('.chip').forEach(function(b){ b.setAttribute('aria-pressed',st.t.indexOf(b.dataset.t)>=0); });
@@ -216,11 +258,14 @@
     if(k) a.push('<button type="button" class="act" data-rp="1">'+k+' selected <span>×</span></button>');
     $('#act').innerHTML=a.join(' ');
     var tg=target();
-    $('#selinfo').textContent=k?k+(k===1?' work selected':' works selected'):'';
+    var si=$('#selinfo'), sv=k?'Your selection · '+k+(k===1?' work':' works'):'';   /* Ruben 28.10.: die Leiste benennt, was entsteht, und zaehlt sichtbar hoch */
+    if(si.textContent!==sv){ si.textContent=sv; si.classList.remove('bump'); if(k){ void si.offsetWidth; si.classList.add('bump'); } }
+    $('#link').textContent=k?'Share selection ('+k+')':'Copy link'; $('#link').classList.toggle('solid',!!k);
+    if(!$('#pfpop').hidden) fillPop();
     $('#pdf').setAttribute('href','portfolio/index.html?p='+tg.map(function(p){ return p.key; }).join(','));
     $('#pdf').textContent='↓ PDF ('+tg.length+')';
     $('#view').setAttribute('href',shareUrl(tg)); $('#view').textContent='View '+tg.length+' →';
-    var u=new URLSearchParams(); if(st.f) u.set('f',st.f); if(st.t.length) u.set('t',st.t.join(',')); if(st.q) u.set('q',st.q); if(k) u.set('p',st.p.join(','));
+    var u=new URLSearchParams(); if(st.f) u.set('f',st.f); if(st.t.length) u.set('t',st.t.join(',')); if(st.q) u.set('q',st.q); if(k) u.set('p',st.p.join(',')); if(k&&st.fr) u.set('from',st.fr);
     var qs=u.toString(); try{ history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')); }catch(e){}
   }
   document.addEventListener('click',function(e){
@@ -236,12 +281,30 @@
   }); });
   if(window.YRDSearch&&window.matchMedia('(min-width:701px)').matches) YRDSearch.register(function(q){ st.q=q; $('#q').value=q; render(); return document.querySelectorAll('#lst li:not([hidden])').length; });
   $('#q').addEventListener('input',function(e){ st.q=e.target.value.trim(); render(); });
-  $('#lst').addEventListener('click',function(e){ var c=e.target.closest('.ck'); if(!c) return; var p=D[+c.closest('li').dataset.i], k=st.p.indexOf(p.slug); if(k<0) st.p.push(p.slug); else st.p.splice(k,1); render(); });
-  $('#link').onclick=function(){
+  $('#lst').addEventListener('click',function(e){ var c=e.target.closest('.ck'); if(!c) return; var p=D[+c.closest('li').dataset.i], k=st.p.indexOf(p.slug); if(k<0) st.p.push(p.slug); else st.p.splice(k,1); render(); if(k<0&&st.p.length===1) firstHint(); });
+  function copyLink(msg){
     var u=shareUrl(target()), t=$('#toast');
-    function ok(){ t.textContent='Link copied'; t.classList.add('on'); setTimeout(function(){ t.classList.remove('on'); },1600); }
+    function ok(){ t.textContent=msg; t.classList.add('on'); clearTimeout(copyLink.tm); copyLink.tm=setTimeout(function(){ t.classList.remove('on'); },2200); }
     if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,function(){ prompt('Link',u); }); else prompt('Link',u);
-  };
+  }
+  /* Ruben 28.10.: ohne Auswahl kopiert der Knopf wie bisher den Link zur Liste; mit Auswahl oeffnet er das Teilen-Fenster (Portfolio, Your name) */
+  function selTxt(){ var k=st.p.length; return k+(k===1?' work':' works'); }
+  function fillPop(){ $('#pfn').textContent=selTxt()+' selected'; $('#pfview').setAttribute('href',shareUrl(target())); }
+  function openPop(){ var pp=$('#pfpop'); $('#pffor').value=st.fr; fillPop(); pp.hidden=false; $('#pfhint').classList.remove('on');
+    if(window.matchMedia('(pointer:fine)').matches) $('#pffor').focus(); }
+  function closePop(){ $('#pfpop').hidden=true; }
+  $('#link').onclick=function(){ if(st.p.length){ if($('#pfpop').hidden) openPop(); else closePop(); } else copyLink('Link copied'); };
+  $('#pffor').addEventListener('input',function(e){ st.fr=e.target.value.replace(/\s+/g,' ').trim().slice(0,60); render(); });
+  $('#pffor').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('#pfcopy').click(); } });
+  $('#pfcopy').onclick=function(){ closePop(); copyLink('Link copied: your selection of '+selTxt()); };
+  if(navigator.share&&window.matchMedia('(hover:none) and (pointer:coarse)').matches){   /* Ruben 28.10.: am Rechner nie, auch nicht bei Mac mit Touch-Erkennung */ $('#pfshare').hidden=false;   /* Handy, Tablet: Teilen-Menue des Systems */
+    $('#pfshare').onclick=function(){ var u=shareUrl(target()); closePop(); navigator.share({title:'YRD.Works / Selection'+(st.fr?' by '+st.fr:''), url:u}).catch(function(){}); }; }
+  $('#pfx').onclick=closePop;
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('#pfpop').hidden) closePop(); });
+  document.addEventListener('click',function(e){ var pp=$('#pfpop'); if(!pp.hidden&&!pp.contains(e.target)&&!e.target.closest('#link')) closePop(); });
+  /* Hinweis bei der ersten Auswahl, einmal je Sitzung */
+  function firstHint(){ var seen=false; try{ seen=sessionStorage.getItem('yrdpfhint')==='1'; sessionStorage.setItem('yrdpfhint','1'); }catch(e){}
+    if(seen||!$('#pfpop').hidden) return; var h=$('#pfhint'); h.classList.add('on'); setTimeout(function(){ h.classList.remove('on'); },5000); }
   render();
   /* Ruben 25.10.: auf dem Handy wie bei About von links nach rechts wischen = zurueck zur Uebersicht. Die Seite folgt dem Finger,
      beim Loslassen gleitet sie ruhig hinaus (dann zurueck: ueber den Verlauf, sonst 2D) oder federt zurueck. Nicht in den waagrecht

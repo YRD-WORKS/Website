@@ -179,8 +179,9 @@
   /* Geteilte Auswahl aus dem Index: ?sel=<slug>,<slug> zeigt nur diese Arbeiten im Raster, mit Next / Previous innerhalb;
      bleibt beim Oeffnen und Schliessen von Projekten erhalten, All oder YRD.Works fuehren zu allen */
   var SHQ=new URLSearchParams(location.search).get('sel'), SHARED=null;
+  var SHFOR=(new URLSearchParams(location.search).get('from')||'').replace(/\s+/g,' ').trim().slice(0,60);   /* Ruben 28.10.: "Your name" aus dem Index (&from=), wer die Auswahl gemacht hat */
   if(SHQ){ var _ix=SHQ.split(',').map(function(k){ return SLUG_IDX.hasOwnProperty(k)?SLUG_IDX[k]:-1; }).filter(function(i){ return i>=0; }).sort(function(a,b){ return a-b; });
-    if(_ix.length){ SHARED={key:'',shared:true,titel:'Selection',text:'',idx:_ix,id:null}; awCur=SHARED; } }
+    if(_ix.length){ SHARED={key:'',shared:true,titel:SHFOR?'Selected by '+SHFOR:'Selection',text:'',idx:_ix,id:null}; awCur=SHARED; } }
   /* Besuchszaehler (z.php): je Seitenwechsel eine Zeile, ohne Cookies und ohne IP; bei file:// und lokal nicht */
   var lastT=null;
   function track(h){ if(!window.YRD_Z||FILE||/^(localhost|127\.)/.test(location.hostname)) return; var k=(h||'start')+'|'+(awCur&&awCur.shared?SHQ:''); if(k===lastT) return; lastT=k;
@@ -206,9 +207,11 @@
     /* [nur Repo 23.10.] Geteilte Auswahl (Ruben): Einleitung DE/EN und ein deutlicher Knopf zu allen Arbeiten */
     var sh=document.getElementById('aw-sh');
     if(!sh){ sh=document.createElement('div'); sh.id='aw-sh'; sh.className='aw-sh';
-      sh.innerHTML='<p class="aw-sh-de">Diese Auswahl der Projekte von YRD.Works wurde extra für dich zusammengestellt. Das gesamte Portfolio findest du unter „Alle Arbeiten“.</p>'
-        +'<p class="aw-sh-en" lang="en">This selection of YRD.Works projects was put together especially for you. You will find the full portfolio under “All works”.</p>'
+      sh.innerHTML='<p class="aw-sh-de">Diese Auswahl der Projekte von YRD.Works wurde für dich zusammengestellt. Das gesamte Portfolio findest du unter „Alle Arbeiten“.</p>'
+        +'<p class="aw-sh-en" lang="en">This selection of YRD.Works projects was put together for you. You will find the full portfolio under “All works”.</p>'
         +'<a class="aw-sh-b" href="./" data-home>Alle Arbeiten / All works →</a>';
+      if(SHFOR){ sh.querySelector('.aw-sh-de').textContent='Diese Auswahl der Projekte von YRD.Works hat '+SHFOR+' für dich zusammengestellt. Das gesamte Portfolio findest du unter „Alle Arbeiten“.';   /* Ruben 28.10.: eigener Name des Absenders, als Text, nie als HTML */
+        sh.querySelector('.aw-sh-en').textContent=SHFOR+' put together this selection of YRD.Works projects for you. You will find the full portfolio under “All works”.'; }
       sh.querySelector('a').addEventListener('click',function(){ try{ history.replaceState(null,'',location.pathname+location.hash); }catch(e){} });   /* Adresse ohne ?sel=, sonst kaeme beim Neuladen wieder die Auswahl */
       hd.appendChild(sh); }
     sh.hidden=!a.shared;
@@ -395,7 +398,7 @@
   function known(k){ return k===''||ROUTES.hasOwnProperty(k)||SLUG_IDX.hasOwnProperty(k)||AWK.hasOwnProperty(k); }
   /* Seite wechseln ohne Neuladen; bei file:// (Doppelklick) klassisch weiterblaettern */
   function go(k,replace){
-    var u=abs(k); if(k===''&&awCur&&awCur.shared){ var uu=new URL(u); uu.search='?sel='+SHQ; u=uu.href; }
+    var u=abs(k); if(k===''&&awCur&&awCur.shared){ var uu=new URL(u); uu.search='?sel='+SHQ+(SHFOR?'&from='+encodeURIComponent(SHFOR):''); u=uu.href; }
     try{ history[replace?'replaceState':'pushState'](null,'',u); }
     catch(err){ location.href=u; return; }
     route();
