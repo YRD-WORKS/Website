@@ -1718,7 +1718,7 @@ let pcs='';
 function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); stage.classList.toggle('c-d',v==='d'); }
 /* Ruben 30.10.: unter den Bildern (Boden) zeigt die Maus denselben runden Pfeil nach unten, Klick verlaesst den Raum (zurueck in den Ring) */
 function downHit(w,x,y){ if(!PFEIL3D||!fineP.matches||mode!=='proj'||!room||room.read||room.te<1||w) return false;
-  ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.01) return false;
+  ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.01 || ndc.y>-0.7) return false;   /* Ruben 30.10.: nur im unteren Streifen ueber der Leiste */
   const t=-o.y/d.y, px=o.x+d.x*t, pz=o.z+d.z*t; return Math.hypot(px-room.c.x,pz-room.c.z)<room.r-0.1; }   // trifft den Boden innerhalb des Bildkreises
 /* Richtung fuer den Pfeil: 1 rechts, -1 links, 0 keiner */
 function pfeilDir(w,x){
