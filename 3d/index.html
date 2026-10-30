@@ -1034,6 +1034,19 @@ function makeArrow(c,phi,dist){
   g.position.copy(c).addScaledVector(dirOf(phi),dist).setY(0.012); g.rotation.y=-phi;
   return {g,mat,hit,o:0};
 }
+/* Ruben 30.10.: „Back“ mit Pfeil auf dem Boden, zeigt zu einem hin (ins Kreisinnere), Klick verlaesst den Raum.
+   Liegt im unteren Bildrand vor einem und ist fuer den flachen Blickwinkel in die Tiefe gestreckt, damit es normal lesbar ist */
+function makeBackLabel(){
+  const cv=document.createElement('canvas'); cv.width=512; cv.height=256; const g=cv.getContext('2d');
+  g.fillStyle='rgb(0,0,255)'; g.strokeStyle='rgb(0,0,255)'; g.textAlign='center'; g.textBaseline='middle';
+  g.font='420 92px "ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif'; g.fillText('Back',256,82);
+  g.lineWidth=9; g.lineCap='round'; g.lineJoin='round'; g.beginPath(); g.moveTo(211,165); g.lineTo(256,210); g.lineTo(301,165); g.stroke();
+  const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=ANISO;
+  const mat=new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0, depthWrite:false});
+  const g0=new THREE.Group(), flat=new THREE.Group(); flat.rotation.x=-Math.PI/2; g0.add(flat);
+  const mesh=new THREE.Mesh(geo1,mat); mesh.userData.exit=true; flat.add(mesh); g0.visible=false;
+  return {g:g0,flat,mesh,mat,tex,o:0};
+}
 
 /* HTML-Ebene hinter dem Canvas (wie CSS3DRenderer); die Textflaeche stanzt im WebGL ein Fenster frei,
    so verdecken Fotos davor den Text, und der Text ist echtes HTML */
@@ -1078,8 +1091,8 @@ const rooms=[]; let room=null;
 const roomOf=i=>rooms.find(r=>r.i===i);
 let arrowHover=null, turnHover=0, exitHover=false;
 /* Ruben 30.10.: ein Pfeilsystem wie in 2D (Rechner Zeiger-Pfeil, Touch Wischen); Wende- und Zurueck-Pfeile am Boden aus. Wieder an: BODEN=true */
-const BODEN=false;
-const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(BODEN&&!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]):[];
+const BODEN=false, BACKB=true;   // BACKB: nur das „Back“ am Boden (Ruben 30.10.)
+const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(BODEN&&!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]).concat(BACKB&&room.back.lab.o>0.3?[room.back.lab.mesh]:[]):[];
 function stackPose(t,it){ const jz=it.jz??it.j, p=t.up.clone().setY(TILEY).addScaledVector(t.right,it.lx).addScaledVector(t.nrm,-jz*DZ); p.y+=jz*DY+(it.ly||0); return p; }
 /* Aufteilung des Raums. Reihe: im Bogen von links nach rechts Heroshot, die Staffelbilder, Text; das mittlere Bild steht geradeaus.
    Beim Betreten faechert sich die Staffel hinter dem Heroshot zur Reihe auf, die mit der Fahrt waechst und sich zum Bogen biegt */
@@ -1178,7 +1191,7 @@ function buildRoom(i){
     return w;
   });
   const turns=[-1,1].map(sg=>{ const a=makeArrow(c,0,0); a.sg=sg; a.hit.userData.turn=sg; grp.add(a.g); return a; });
-  const back=makeArrow(c,0,0); back.hit.userData.exit=true; grp.add(back.g);
+  const back=makeArrow(c,0,0); back.hit.userData.exit=true; grp.add(back.g); back.lab=makeBackLabel(); grp.add(back.lab.g);
   const rm={i,c,grp,walls,turns,back,r,m:0,mT:1,te:0,path:null,f:0,s:0,sT:0,yawT:-t.th,pitchT:PITCH0,px:0,pxT:0,py:0,pyT:0,idle:0,read:false,
     t0:t.up.clone(), out:dirOf(t.th), ce:-4, closeT:0, midK, cloud, wback:cloud?WBACK:0};
   rm.rest=restS(walls[midK],rm);   // die Fahrt endet gleich eingerastet vor dem Bild geradeaus
@@ -1199,7 +1212,7 @@ function buildRoom(i){
 }
 function disposeRoom(rm){
   scene.remove(rm.grp);
-  rm.turns.forEach(a=>a.mat.dispose()); rm.back.mat.dispose();
+  rm.turns.forEach(a=>a.mat.dispose()); rm.back.mat.dispose(); rm.back.lab.mat.dispose(); rm.back.lab.tex.dispose();
   rm.walls.forEach(w=>{ w.dead=true; w.arrow.mat.dispose(); if(w.m) w.m.dispose(); w.sm.dispose(); w.own.forEach(x=>x&&x.dispose()); if(w.el) w.el.remove(); });
   (rm.ghosts||[]).forEach(g=>g.m.dispose());
   rooms.splice(rooms.indexOf(rm),1);
@@ -1281,6 +1294,10 @@ function poseRooms(dt){
     { const live=BODEN && rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), a=rm.back, pc=-cam.yaw;
       a.g.position.copy(rm.c).addScaledVector(dirOf(pc),rm.r-0.3).setY(0.012); a.g.rotation.y=-(pc+Math.PI); a.g.scale.setScalar(ARWS);
       const aT=live?(exitHover?ARW2:ARW1):0; a.o=lerp(a.o,aT,1-Math.exp(-dt*8)); a.mat.opacity=a.o*smooth(rm.m); a.g.visible=a.mat.opacity>0.01; }
+    { const L=rm.back.lab, live=BACKB && rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), pc=-cam.yaw;
+      const al=Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.82), hY=Math.max(0.5,cam.pos.y), D=hY/Math.tan(al), w=0.11*D;
+      L.g.position.copy(cam.pos).addScaledVector(dirOf(pc),D).setY(0.012); L.g.rotation.y=-pc; L.flat.scale.set(w, w*0.5/Math.sin(al), 1);
+      const aT=live?(exitHover?1:0.7):0; L.o=lerp(L.o,aT,1-Math.exp(-dt*8)); L.mat.opacity=L.o*smooth(rm.m); L.g.visible=L.mat.opacity>0.01; }
     if(rm.ghosts){ const g=1-smooth(pr/0.25); rm.ghosts.forEach(x=>{ x.m.opacity=g; x.mesh.visible=g>0.01; }); }   // Staffelbilder der Wolke blenden aus
     if(rm.mT===0 && rm.m<=0 && rm.ce<-3.99) disposeRoom(rm);   // erst wenn alle Bilder wieder genau in der Staffel stehen
   }
