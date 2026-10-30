@@ -1712,10 +1712,20 @@ let ptr=null, hovered=null, lastMove={x:-1,y:-1};
    einen runden Pfeil, ein Klick geht ein Bild weiter. Nicht an der Textflaeche (Klick dort = lesen), nicht am Ende der Strecke.
    Ausschalten: PFEIL3D=false (dann wie vorher: Klick aufs Bild geht naeher heran bzw. zurueck in die Mitte) */
 const PFEIL3D=true, fineP=matchMedia('(hover:hover) and (pointer:fine)');
-{ const cur=d=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d===2?'M16 11v10M11.5 16.5l4.5 4.5 4.5-4.5':d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d===2?'s-resize':d>0?'e-resize':'w-resize');
-  const s=document.createElement('style'); s.textContent='#stage.c-r canvas{cursor:'+cur(1)+'!important}#stage.c-l canvas{cursor:'+cur(-1)+'!important}#stage.c-d canvas{cursor:'+cur(2)+'!important}'; document.head.appendChild(s); }
+{ const cur=d=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d===3?'M16 21V11M11.5 15.5L16 11l4.5 4.5':d===2?'M16 11v10M11.5 16.5l4.5 4.5 4.5-4.5':d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d===3?'n-resize':d===2?'s-resize':d>0?'e-resize':'w-resize');
+  const s=document.createElement('style'); s.textContent='#stage.c-r canvas{cursor:'+cur(1)+'!important}#stage.c-l canvas{cursor:'+cur(-1)+'!important}#stage.c-d canvas{cursor:'+cur(2)+'!important}#stage.c-u canvas{cursor:'+cur(3)+'!important}'; document.head.appendChild(s); }
 let pcs='';
-function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); stage.classList.toggle('c-d',v==='d'); }
+function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); stage.classList.toggle('c-d',v==='d'); stage.classList.toggle('c-u',v==='u'); }
+/* Ruben 30.10.: im Walk dieselben Zeiger-Pfeile wie im Raum (nur Rechner): ueber dem mittleren Bild nach vorne (Raum betreten),
+   im unteren Streifen nach unten (zurueck zur Overview), sonst rechts bzw. links (naechstes bzw. voriges Projekt) */
+function walkDir(x,y){ if(!PFEIL3D||!fineP.matches||mode!=='look'||nav!=='rund'||curOv) return '';
+  if(-(y/innerHeight)*2+1 < -0.7) return 'd';
+  const t=pick(x,y); if(t && t.i===rundIdx(look.s)) return 'u';
+  return x>innerWidth/2?'r':'l'; }
+function walkGo(d){ const i0=rundIdx(look.sT);
+  if(d==='u'){ openProject(i0); return; }
+  if(d==='d'){ setNav('oben'); return; }
+  const i=((i0+(d==='r'?1:-1))%N+N)%N; look.sT+=angD(look.sT,i*STEP); look.idle=0.7; look.snapT=performance.now()+600; }
 /* Ruben 30.10.: unter den Bildern (Boden) zeigt die Maus denselben runden Pfeil nach unten, Klick verlaesst den Raum (zurueck in den Ring) */
 function downHit(w,x,y){ if(!PFEIL3D||!fineP.matches||mode!=='proj'||!room||room.read||room.te<1||w) return false;
   ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.01 || ndc.y>-0.7) return false;   /* Ruben 30.10.: nur im unteren Streifen ueber der Leiste */
@@ -1891,6 +1901,7 @@ function endPtr(e){
     else if(isNear(room)) goWall(room.f,false);                    // nochmal: zurueck in die Mitte
     return;
   }
+  { const d=walkDir(e.clientX,e.clientY); if(d){ walkGo(d); return; } }   // Walk am Rechner: Zeiger-Pfeile
   const t=pick(e.clientX,e.clientY);
   if(t && mode==='look') openProject(t.i);
 }
@@ -2074,6 +2085,7 @@ function loop(now){
   applyView();
   camera.position.copy(cam.pos); camera.rotation.set(cam.pitch,cam.yaw,0);
   if(mode==='look' && !ptr && lastMove.x>=0 && !curOv) setHover(pick(lastMove.x,lastMove.y));
+  if(mode==='look') setPC(!ptr && lastMove.x>=0 ? walkDir(lastMove.x,lastMove.y) : ''); else if(mode!=='proj') setPC('');
   else if(mode==='proj' && !ptr && lastMove.x>=0 && !curOv){ if(hovered) setHover(null);
     const tr=$('#rtop').getBoundingClientRect(), overT=lastMove.x>=tr.left&&lastMove.x<=tr.right&&lastMove.y>=tr.top&&lastMove.y<=tr.bottom;   /* Testrunde 23.10., Ruben: ueber dem Titel oben mittig keine Link-Hand, er ist nur Text */
     const pw=overT?null:pickWall(lastMove.x,lastMove.y); if(overT){ pickWall.arrow=null; pickWall.turn=0; pickWall.exit=false; } arrowHover=pickWall.arrow?pw:null; turnHover=pickWall.turn; exitHover=pickWall.exit; const noAct=PFEIL3D&&fineP.matches&&pw&&pw.k===room.f&&pw.kind!=='text'&&!pickWall.arrow&&!pickWall.turn&&!isNear(room); stage.classList.toggle('hover',(!!pw&&!noAct)||exitHover); const pd=pfeilDir(pw,lastMove.x); setPC(downHit(pw,lastMove.x,lastMove.y)?'d':pd>0?'r':pd<0?'l':''); }
@@ -2081,7 +2093,7 @@ function loop(now){
   if(nav==='frei' && moved>6 && !hint.classList.contains('off') && mode==='look') showHint(false);
   if(mode==='proj' && hintT>0){ hintT-=dt; if(hintT<=0) showHint(false); }
   if(mode!=='proj'){ arrowHover=null; turnHover=0; exitHover=false; }
-  if(mode!=='proj'||ptr||curOv||(room&&room.read)) setPC('');
+  if((mode!=='proj'&&mode!=='look')||ptr||curOv||(mode==='proj'&&room&&room.read)) setPC('');   // look: Walk-Pfeile (walkDir) oben
   const fk=1-Math.exp(-dt*4);
   // erst die Raeume: wird ein Raum in diesem Frame abgebaut, stehen Heroshot und Staffel im Ring im selben Frame wieder da (sonst flackert der Heroshot einen Frame lang)
   poseRooms(dt);
