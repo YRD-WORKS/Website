@@ -319,12 +319,15 @@
   (function(){ var n=document.getElementById('news'); if(!n) return;
     window.YRD_NLB=function(root){
       var lb=null, list=[], k=0;
-      function show(){ var im=list[k]; lb.querySelector('img').src=im.currentSrc||im.src; lb.querySelector('img').alt=im.alt; lb.querySelector('.nlb-n').textContent=list.length>1?(k+1)+' / '+list.length:''; }
+      function show(){ var im=list[k]; lb.querySelector('img').src=im.currentSrc||im.src; lb.querySelector('img').alt=im.alt; lb.querySelector('.gn').textContent=(k+1)+' / '+list.length; lb.querySelector('.nlb-n').hidden=list.length<2; }
       function open(im){ list=Array.prototype.slice.call(im.closest('.post').querySelectorAll('.post-body figure img')); k=Math.max(0,list.indexOf(im));
         lb=document.createElement('div'); lb.id='nlb'; lb.setAttribute('role','dialog'); lb.setAttribute('aria-label','Bild');
-        lb.innerHTML='<button type="button" class="nlb-a" data-d="-1" aria-label="Previous"></button><button type="button" class="nlb-a" data-d="1" aria-label="Next"></button><span class="nlb-f"><img alt=""><button type="button" class="nlb-x" aria-label="Close">×</button></span><span class="nlb-n caption"></span>';
+        lb.innerHTML='<button type="button" class="nlb-a" data-d="-1" aria-label="Previous"></button><button type="button" class="nlb-a" data-d="1" aria-label="Next"></button><span class="nlb-f"><img alt=""><button type="button" class="nlb-x" aria-label="Close">×</button></span><span class="nlb-n caption"><button type="button" class="nlb-g" data-d="-1" aria-label="Previous image">←</button><span class="gn"></span><button type="button" class="nlb-g" data-d="1" aria-label="Next image">→</button></span>';
         document.body.appendChild(lb); show(); requestAnimationFrame(function(){ lb.classList.add('on'); });
-        lb.addEventListener('click',function(e){ var a=e.target.closest('.nlb-a'); if(a&&list.length>1){ k=(k+ +a.dataset.d+list.length)%list.length; show(); } else if(e.target.closest('.nlb-x')||!e.target.closest('.nlb-f')) shut(); else if(list.length>1){ var r=e.target.closest('.nlb-f').getBoundingClientRect(); k=(k+(e.clientX>r.left+r.width/2?1:-1)+list.length)%list.length; show(); } });
+        lb.addEventListener('click',function(e){ var a=e.target.closest('.nlb-a,.nlb-g'); if(a&&list.length>1){ k=(k+ +a.dataset.d+list.length)%list.length; show(); } else if(e.target.closest('.nlb-x')||!e.target.closest('.nlb-f')) shut(); else if(list.length>1){ var r=e.target.closest('.nlb-f').getBoundingClientRect(); k=(k+(e.clientX>r.left+r.width/2?1:-1)+list.length)%list.length; show(); } });
+        /* Feedback Edwin 30.10. (Tablet): sichtbare Pfeile neben der Zahl, Wischen blaettert */
+        var tx=null; lb.addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});
+        lb.addEventListener('touchend',function(e){ if(tx===null||list.length<2) return; var dx=e.changedTouches[0].clientX-tx; tx=null; if(Math.abs(dx)>40){ e.preventDefault(); k=(k+(dx<0?1:-1)+list.length)%list.length; show(); } });
         document.addEventListener('keydown',key,true); }
       function shut(){ if(!lb) return; var l=lb; lb=null; document.removeEventListener('keydown',key,true); l.classList.remove('on'); setTimeout(function(){ l.remove(); },200); }
       function key(e){ if(!lb) return; if(e.key==='Escape'){ e.stopPropagation(); e.preventDefault(); shut(); } else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&list.length>1){ e.stopPropagation(); e.preventDefault(); k=(k+(e.key==='ArrowRight'?1:-1)+list.length)%list.length; show(); } }
