@@ -1,0 +1,33 @@
+# yrd.works auf IONOS (Launch 30.10.2026). Wird von build.py als Seite-neu/.htaccess kopiert.
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# www.yrd.works -> https://yrd.works
+RewriteCond %{HTTP_HOST} ^www\.yrd\.works$ [NC]
+RewriteRule ^ https://yrd.works%{REQUEST_URI} [L,R=301]
+# http -> https (nur fuer yrd.works, andere Subdomains bleiben unberuehrt)
+RewriteCond %{HTTP_HOST} ^yrd\.works$ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://yrd.works%{REQUEST_URI} [L,R=301]
+# Alte Seite: Portfolio-PDFs -> Download Portfolio
+RewriteRule ^downloads/Yrd_Portfolio_(DE|EN)\.pdf$ /portfolio/ [L,R=301,NC]
+</IfModule>
+
+# Komprimierung
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript text/javascript application/json image/svg+xml application/xml text/xml
+</IfModule>
+
+# Caching: Bilder und Schrift lange, CSS/JS kurz (keine Versionsnummern), HTML immer neu pruefen
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/webp "access plus 30 days"
+ExpiresByType image/jpeg "access plus 30 days"
+ExpiresByType image/png "access plus 30 days"
+ExpiresByType font/woff2 "access plus 1 year"
+ExpiresByType text/css "access plus 1 hour"
+ExpiresByType application/javascript "access plus 1 hour"
+ExpiresByType text/javascript "access plus 1 hour"
+ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

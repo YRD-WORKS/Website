@@ -164,8 +164,9 @@
   var PASTEL=['#f6c9c4','#f9dcb8','#f7eeb0','#d6ecc0','#bfe3d6','#c3e0ef','#c9d3f3','#dccbf0','#f0c8df','#efd9cc','#e3e8c4','#cfe7e3','#f4d2b0','#d9d4ec','#bcd9c8','#f3e1e8'];
   function esc(t){ return String(t||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function thumb(p,i){
-    if(p.img) return '<img class="ph"'+(i>=6?' loading="lazy"':'')+' alt="'+esc(p.title)+'" src="'+R+encodeURI(p.img)+'" style="aspect-ratio:3 / 2;object-fit:cover">';
-    if(p.gallery&&p.gallery.length) return '<img class="ph" loading="lazy" alt="'+esc(p.title)+'" src="'+R+encodeURI(p.gallery[0][0])+'" style="aspect-ratio:3 / 2;object-fit:cover">';
+    var src=p.img||(p.gallery&&p.gallery.length?p.gallery[0][0]:null);   /* Launch 30.10.2026: srcset mit 900-px-Fassung (p.t aus build.py), erste Reihe ohne lazy */
+    var ss=(src&&p.t)?' srcset="'+R+encodeURI(p.t[0])+' 900w, '+R+encodeURI(src)+' '+p.t[1]+'w" sizes="(max-width:700px) calc(100vw - 32px), 33vw"':'';
+    if(src) return '<img class="ph"'+(i>=3?' loading="lazy"':(i===0?' fetchpriority="high"':''))+' alt="" src="'+R+encodeURI(src)+'"'+ss+' style="aspect-ratio:3 / 2;object-fit:cover">';
     return '<div class="ph" style="aspect-ratio:3 / 2;background:'+(i<0?PASTEL[7]:PASTEL[(i*7+Math.floor(i/8)*3)%PASTEL.length])+'"></div>';
   }
   /* Eigene Adresse pro Projekt, z. B. #soups */
@@ -314,10 +315,24 @@
     this.dataset.auf='1'; kurz();
   });
   kurz(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){ if(document.getElementById('proj-bi').classList.contains('zu')) kurz(); });
-  /* News: ein Sprachumschalter fuer alle Beitraege */
-  (function(){ var n=document.getElementById('news'), g=n&&n.querySelector('.news-lang'); if(!g) return;
-    g.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; var en=b.dataset.l==='en';
-      n.classList.toggle('show-en',en); g.querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed',String(x===b)); }); }); })();
+  /* News (Testrunde 29.10.): Text wie bei den Projekten; am Handy gilt DE / EN fuer alle Beitraege und die Titel. Bilder per Klick gross */
+  (function(){ var n=document.getElementById('news'); if(!n) return;
+    window.YRD_NLB=function(root){
+      var lb=null, list=[], k=0;
+      function show(){ var im=list[k]; lb.querySelector('img').src=im.currentSrc||im.src; lb.querySelector('img').alt=im.alt; lb.querySelector('.nlb-n').textContent=list.length>1?(k+1)+' / '+list.length:''; }
+      function open(im){ list=Array.prototype.slice.call(im.closest('.post').querySelectorAll('.post-body figure img')); k=Math.max(0,list.indexOf(im));
+        lb=document.createElement('div'); lb.id='nlb'; lb.setAttribute('role','dialog'); lb.setAttribute('aria-label','Bild');
+        lb.innerHTML='<button type="button" class="nlb-a" data-d="-1" aria-label="Previous"></button><button type="button" class="nlb-a" data-d="1" aria-label="Next"></button><span class="nlb-f"><img alt=""><button type="button" class="nlb-x" aria-label="Close">×</button></span><span class="nlb-n caption"></span>';
+        document.body.appendChild(lb); show(); requestAnimationFrame(function(){ lb.classList.add('on'); });
+        lb.addEventListener('click',function(e){ var a=e.target.closest('.nlb-a'); if(a&&list.length>1){ k=(k+ +a.dataset.d+list.length)%list.length; show(); } else if(e.target.closest('.nlb-x')||!e.target.closest('.nlb-f')) shut(); else if(list.length>1){ var r=e.target.closest('.nlb-f').getBoundingClientRect(); k=(k+(e.clientX>r.left+r.width/2?1:-1)+list.length)%list.length; show(); } });
+        document.addEventListener('keydown',key,true); }
+      function shut(){ if(!lb) return; var l=lb; lb=null; document.removeEventListener('keydown',key,true); l.classList.remove('on'); setTimeout(function(){ l.remove(); },200); }
+      function key(e){ if(!lb) return; if(e.key==='Escape'){ e.stopPropagation(); e.preventDefault(); shut(); } else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&list.length>1){ e.stopPropagation(); e.preventDefault(); k=(k+(e.key==='ArrowRight'?1:-1)+list.length)%list.length; show(); } }
+      root.addEventListener('click',function(e){ var im=e.target.closest('.post-body figure img'); if(!im) return; e.preventDefault(); open(im); });
+      return shut;
+    };
+    window.YRD_NLB(n);
+  })();
   /* About: nutzt dieselbe Unterseite wie die Projekte. Portrait in Bilder/about/. */
   
   function fillProject(i){
@@ -520,10 +535,19 @@
     var fine=window.matchMedia('(hover:hover) and (pointer:fine)'), g=document.getElementById('proj-gal'); if(!g) return;
     function cur(d){ return 'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d>0?'e-resize':'w-resize'); }
     var CR=cur(1), CL=cur(-1);
+    /* Testrunde 29.10. (Mac, Chrome): der Pfeil kam verzoegert oder erst nach dem Klick. Jetzt als Klassen aus einem Stylesheet (Chrome laedt
+       das Zeigerbild einmal statt bei jeder Bewegung neu), Pruefung hoechstens einmal je Bild, und nach dem Blaettern mit der letzten Mausposition */
+    var st=document.createElement('style'); st.textContent='.proj-gal.c-r{cursor:'+CR+'}.proj-gal.c-l{cursor:'+CL+'}'; document.head.appendChild(st);
+    var mx=null, raf=0, cs='';
+    function setC(v){ if(v===cs) return; cs=v; g.classList.toggle('c-r',v==='r'); g.classList.toggle('c-l',v==='l'); }
+    function upd(){ raf=0; if(mx===null||!fine.matches||galImgs().length<2){ setC(''); return; } var d=mx>g.getBoundingClientRect().left+g.getBoundingClientRect().width/2?1:-1; setC(canGo(d)?(d>0?'r':'l'):''); }
+    function req(){ if(!raf) raf=requestAnimationFrame(upd); }
     function side(e){ var r=g.getBoundingClientRect(); return e.clientX-r.left>r.width/2?1:-1; }
     function canGo(d){ var imgs=galImgs(), i=galIndex(g,imgs), atEnd=g.scrollLeft>=g.scrollWidth-g.clientWidth-2; return d>0?(i<imgs.length-1&&!atEnd):(i>0||g.scrollLeft>2); }
-    g.addEventListener('mousemove',function(e){ if(!fine.matches||galImgs().length<2){ g.style.cursor=''; return; } var d=side(e); g.style.cursor=canGo(d)?(d>0?CR:CL):''; });
-    g.addEventListener('mouseleave',function(){ g.style.cursor=''; });
+    g.addEventListener('mousemove',function(e){ mx=e.clientX; req(); });
+    g.addEventListener('mouseenter',function(e){ mx=e.clientX; upd(); });
+    g.addEventListener('mouseleave',function(){ mx=null; setC(''); });
+    g.addEventListener('scroll',req,{passive:true});
     function galStep(d){
       var imgs=galImgs(); if(imgs.length<2||!canGo(d)) return;
       /* Ziel: das naechste Bild, das rechts bzw. links vom heutigen Anfang der Strecke beginnt (am Ende der Strecke nicht zwei zurueck) */
@@ -534,7 +558,7 @@
     g.addEventListener('click',function(e){
       if(!fine.matches||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
       if(e.target.closest('a,button')) return;
-      var d=side(e); galStep(d); g.style.cursor=canGo(d)?(d>0?CR:CL):'';
+      var d=side(e); galStep(d); req();
     });
     document.getElementById('proj-count').addEventListener('click',function(e){ var b=e.target.closest('.gp'); if(!b||b.disabled) return; galStep(+b.dataset.d); });
   })();

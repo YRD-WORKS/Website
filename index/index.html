@@ -8,14 +8,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="YRD.Works / Index">
 <meta property="og:description" content="Alle Arbeiten von YRD.Works auf einen Blick, mit Auswahl als Link.">
-<meta property="og:url" content="https://yrd-works.github.io/Website/index/">
-<meta property="og:image" content="https://yrd-works.github.io/Website/Bilder/og.jpg">
+<meta property="og:url" content="https://yrd.works/index/">
+<meta property="og:image" content="https://yrd.works/Bilder/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Alle Arbeiten von YRD.Works als Liste: nach Arbeitsfeldern und Themen filtern, auswählen, als Link teilen.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=1db38ed4">
 <style>
 /* Ansicht Index: alle Arbeiten als Liste. Oben Erklaerung DE/EN, Knoepfe Fields und Topics (klappen auf), Suche am Handy; Zeilen anwaehlbar;
    unten in der Leiste: Link kopieren und PDF fuer die Auswahl (ohne Auswahl: fuer alles, was die Liste gerade zeigt) */
@@ -38,7 +38,7 @@
 .lst li{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--ink-2,rgba(0,0,255,.14))}
 .lst li[hidden]{display:none}
 /* Ruben 28.10.: Kopfzeile ueber der Liste, gleiche Spalten wie die Zeilen; am Handy aus (dort andere Spalten) */
-.lst-h{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:end;padding:0 0 .45rem;color:var(--ink-4)}
+.lst-h{display:grid;grid-template-columns:2.6em 10em minmax(0,3fr) 5em minmax(0,2fr) minmax(0,3fr);column-gap:1.2rem;align-items:end;padding:0 0 .45rem;color:var(--ink)}   /* Ruben 29.10.: dunkler, als Ueberschrift lesbar (vorher blass) */
 @media (max-width:700px){ .lst-h{display:none} }
 /* Ruben 24.10. (Vorschlag Steffen): Auswahlkreis und Miniaturen groesser, vorher Kreis 1.15em, Bild 6.5em (Handy 5.2em) */
 .lst .ck{width:1.6em;height:1.6em;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);border:0;padding:0;cursor:pointer;justify-self:start}
@@ -63,6 +63,10 @@
 /* Leiste: links Ansicht, Mitte Auswahl, rechts Link und PDF */
 #pdf{display:none!important}   /* Launch 30.10., Ruben 28.10.: PDF-Funktion vorerst aus (Projekt-PDFs veraltet); zum Einschalten diese Zeile und die in style.css (.aw-pdf) entfernen, Texte oben wieder um PDF ergaenzen */
 .fbar .fb-c{gap:1em}
+/* Ruben 29.10.: links Back to Projects statt des Ansichtsschalters (Schalter bleibt im Code, hidden), Mitte Index blau gefuellt */
+.fbar .fback{display:inline-block}
+.fbar .vsw[hidden]{display:none}
+.fbar .fb-c .ixst{background:var(--ink);color:var(--bg);pointer-events:none}
 .ixa{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;cursor:pointer;font:inherit;border:0}
 .ixa.solid{background:var(--ink);color:var(--bg)}
 @media (hover:hover) and (pointer:fine){ .ixa:not(.solid):hover{background:rgba(0,0,255,.08)} }
@@ -129,6 +133,7 @@
 .ix-bi p + p{margin-top:0}
 @media (max-width:700px){ .ix{--hw:calc(100vw - 2 * var(--pad))} .ix-bi{row-gap:1.2em} }
 .tgs{display:flex;gap:.6em;margin:0 0 1.6rem}
+.tgs .ix-q{flex:0 1 26em;width:auto;min-width:6em}   /* Ruben 29.10.: Suche in derselben Zeile wie Fields und Topics */
 .tgb{font:inherit;color:var(--ink);background:var(--bg);border:0;cursor:pointer;line-height:1;padding:.42em 1em .38em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);white-space:nowrap;transition:background .2s ease,color .2s ease}
 .tgb::after{content:"+";display:inline-block;margin-left:.5em;width:.6em}
 .tgb[aria-expanded="true"]{background:var(--ink);color:var(--bg)}
@@ -171,20 +176,20 @@
 
 <main class="ix">
   <section class="ix-lead"><h1 class="sr-only">Index</h1><div class="proj-bi ix-bi"><p class="de">Alle Arbeiten von YRD.Works auf einen Blick. Fields sind kuratierte Auswahlen, die Arbeiten aus einem Arbeitsfeld zusammenfassen. Topics filtern die Liste nach Themen und Formaten, etwa Intervention, Skulptur oder Essen &amp; Trinken. Ausgewählte Arbeiten lassen sich als Link teilen.</p><p class="en">All works by YRD.Works at a glance. Fields are curated selections that bring together works from one area of practice. Topics filter the list by theme and format, such as intervention, sculpture or food &amp; drink. Selected works can be shared as a link.</p></div></section>
-  <div class="tgs"><button type="button" class="tgb tg" data-pn="pn-f" aria-expanded="false">Fields</button><button type="button" class="tgb tg" data-pn="pn-t" aria-expanded="false">Topics</button></div>
+  <div class="tgs"><button type="button" class="tgb tg" data-pn="pn-f" aria-expanded="false">Fields</button><button type="button" class="tgb tg" data-pn="pn-t" aria-expanded="false">Topics</button><input class="ix-q" id="q" type="search" placeholder="Search" aria-label="Search" autocomplete="off" spellcheck="false"></div>
   <div class="pn" id="pn-f" hidden><ul class="fl-g" id="fields"></ul></div>
   <div class="pn caption" id="pn-t" hidden><div class="chips" id="topics"></div></div>
   <div class="ix-bar caption"><div class="l"><span class="n" id="cnt"></span><span id="act"></span></div><div class="r"></div></div>
-  <div class="ix-row caption"><span class="lb n">Search</span><input class="ix-q" id="q" type="search" placeholder="Search" aria-label="Search" autocomplete="off" spellcheck="false"></div>
   <div class="lst-h caption" aria-hidden="true"><span>Select</span><span></span><span>Project</span><span>Year</span><span>Location</span><span>Type</span></div>   <!-- Ruben 28.10.: Kopfzeile, damit die Kreise links als Auswahl lesbar sind -->
   <ol class="lst caption" id="lst"></ol>
   <p class="empty caption n" id="empty" hidden>No work matches this combination.</p>
 </main>
 <div class="fbar caption" id="fbar">
-  <div class="fb-l"><div class="vsw"><span class="vlab">View</span><span class="seg" role="group" aria-label="View"><a href="./" id="v2d">2D</a><a href="3d/" id="v3d">3D</a></span></div></div>
-  <div class="fb-c"><span class="n" id="selinfo"></span></div>
+  <div class="fb-l"><a href="./" class="fback">←<span class="lg"> Back to</span> Projects</a><div class="vsw" hidden><span class="vlab">View</span><span class="seg" role="group" aria-label="View"><a href="./" id="v2d">2D</a><a href="3d/" id="v3d">3D</a></span></div></div>
+  <div class="fb-c"><span class="arw ixst" aria-current="page">Index</span><span class="n" id="selinfo"></span></div>
   <div class="fb-r"><a class="ixa" id="view" href="./">View →</a><button type="button" class="ixa" id="link">Copy link</button><a class="ixa solid" id="pdf" href="portfolio/index.html">↓ PDF</a></div>
 </div>
+<script>/* Back to Projects: zurueck in die Ansicht, aus der man kam (3D oder 2D) */ document.querySelector('.fbar .fback').addEventListener('click',function(){ this.href=(/\/3d\//.test(document.referrer)?document.getElementById('v3d'):document.getElementById('v2d')).href; });</script>
 <div class="toast caption" id="toast">Link copied</div>
 <!-- Ruben 28.10.: Hinweis bei der ersten Auswahl und Teilen-Fenster mit "Your name" -->
 <div class="pf-hint caption" id="pfhint" role="status">You're putting together your own portfolio. Share it as a link.</div>
@@ -197,10 +202,10 @@
   <div class="pf-row"><button type="button" class="ixa solid" id="pfcopy">Copy link</button><button type="button" class="ixa" id="pfshare" hidden>Share …</button><a class="ixa" id="pfview" href="./">Preview →</a></div>
 </div>
 
-<script src="projects.js"></script>
+<script src="projects.js?v=0791746a"></script>
 <script src="portfolio/tags.js"></script>
-<script src="suche.js"></script>
-<script src="feedback.js"></script>
+<script src="suche.js?v=0afcf223"></script>
+<script src="feedback.js?v=f0e7757e"></script>
 <script>
 (function(){
   var FILE=location.protocol==='file:';

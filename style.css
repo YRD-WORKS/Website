@@ -7,7 +7,7 @@
   color-scheme: light;
   --bg:#ffffff;
   --ink:rgb(0,0,255);
-  --ink-4:rgba(0,0,255,.45);
+  --ink-4:rgba(0,0,255,.65);   /* Launch 30.10.2026: .45 -> .65, Kontrast 4,9:1 */
   --veil:rgba(255,255,255,.95);
   --line:rgba(0,0,255,.3);
   --base:clamp(10px, .88vw, 22px);
@@ -193,9 +193,9 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 @keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-3deg)}45%{transform:rotate(2.2deg)}70%{transform:rotate(-1deg)}}
 @media (hover:hover) and (pointer:fine){ .tile:hover .wiggle{animation:wiggle .5s ease-in-out} }
 /* Wackler auch in der Navigation */
-.nav .links a{display:inline-block; transform-origin:0 50%}
-@media (hover:hover) and (pointer:fine){ .nav .links a:hover{animation:wiggle .5s ease-in-out} }
-@media (prefers-reduced-motion:reduce){ .nav .links a:hover{animation:none} }
+.nav .links a,.nav .home,.head3 > a[data-home]{display:inline-block; transform-origin:0 50%}
+@media (hover:hover) and (pointer:fine){ .nav .links a:hover,.nav .home:hover,.head3 > a[data-home]:hover{animation:wiggle .5s ease-in-out} }   /* Testrunde 29.10.: YRD.Works links wackelt wie das Menue rechts */
+@media (prefers-reduced-motion:reduce){ .nav .links a:hover,.nav .home:hover,.head3 > a[data-home]:hover{animation:none} }
 @media (prefers-reduced-motion:reduce){ .tile:hover .wiggle{animation:none} }
 
 /* Projektseite: Bild links, Werktext darunter */
@@ -207,7 +207,7 @@ main{padding:calc(.9rem + 4.4rem) var(--pad) 0}
 /* Deutsch schwarz, Englisch blass; Hover ueber Englisch tauscht die beiden */
 @media (hover:hover) and (pointer:fine){
   .proj-bi p{transition:color var(--t-fast) var(--e-out)}
-  .proj-bi .en{color:rgba(0,0,255,.3)}
+  .proj-bi .en{color:rgba(0,0,255,.3)}   /* Ruben 29.10. abends: wieder heller (vorher .65), damit DE und EN klar unterscheidbar sind; beim Hovern voll blau */
   .proj-bi:has(.en:hover) .en{color:var(--ink)}
   .proj-bi:has(.en:hover) .de{color:rgba(0,0,255,.3)}
 }
@@ -490,7 +490,7 @@ html.g3 #intro.quiet{transition:opacity .7s ease, visibility 0s linear .7s}   /*
 .lmode button{font:inherit;display:block;padding:.45em .95em .4em;border:0;border-radius:10em;background:none;color:var(--ink);line-height:1;cursor:pointer;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
 html:not(.g3) .lmode [data-l="list"],html.g3 .lmode [data-l="ov"]{background:var(--ink);color:var(--bg)}
 @media (max-width:700px){
-  body:not([data-ov]):not([data-aw]) .lmode,body:not([data-ov])[data-aw=""] .lmode,body[data-ov=""]:not([data-aw]) .lmode,body[data-ov=""][data-aw=""] .lmode{display:inline-grid}
+  body:not([data-ov]):not([data-aw]) .lmode,body:not([data-ov])[data-aw=""] .lmode,body[data-ov=""]:not([data-aw]) .lmode,body[data-ov=""][data-aw=""] .lmode{display:inline-flex}
   body:not([data-ov]):not([data-aw]) #fall,body:not([data-ov])[data-aw=""] #fall,body[data-ov=""]:not([data-aw]) #fall,body[data-ov=""][data-aw=""] #fall{display:none!important}
 }
 
@@ -519,13 +519,13 @@ html.ld2pre main{visibility:hidden}   /* bis die Ladeanzeige steht (site.js) */
 @media (hover:hover) and (pointer:fine){ .pmode button:hover{background:rgba(0,0,255,.08)} }
 body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-p="ov"],body[data-ov=""] .pmode [data-p="ov"]{background:var(--ink);color:var(--bg)}
 @media (min-width:701px){
-  body:not([data-ov]):not([data-aw]) .pmode,body:not([data-ov])[data-aw=""] .pmode,body[data-ov=""]:not([data-aw]) .pmode,body[data-ov=""][data-aw=""] .pmode,body[data-ov="project"]:not([data-aw]) .pmode,body[data-ov="project"][data-aw=""] .pmode{display:inline-grid}
+  body:not([data-ov]):not([data-aw]) .pmode,body:not([data-ov])[data-aw=""] .pmode,body[data-ov=""]:not([data-aw]) .pmode,body[data-ov=""][data-aw=""] .pmode,body[data-ov="project"]:not([data-aw]) .pmode,body[data-ov="project"][data-aw=""] .pmode{display:inline-flex}
   body:not([data-ov]):not([data-aw]) #fall,body:not([data-ov])[data-aw=""] #fall,body[data-ov=""]:not([data-aw]) #fall,body[data-ov=""][data-aw=""] #fall,body[data-ov="project"]:not([data-aw]) #fall,body[data-ov="project"][data-aw=""] #fall{display:none!important}
 }
 
 /* (22.10.) Umschalter gleich gebaut: alle Felder eines Schalters gleich breit (so breit wie das laengste Wort), Schrift mittig;
    so steht z. B. Walk genau in der Mitte zwischen Project und Overview, auch wenn eines davon blau gefuellt ist */
-.vsw .seg,#navmode .seg{display:inline-grid!important;grid-auto-flow:column;grid-auto-columns:1fr}
+.vsw .seg{display:inline-grid!important;grid-auto-flow:column;grid-auto-columns:1fr}
 .lmode,.pmode{grid-auto-flow:column;grid-auto-columns:1fr}
 .vsw .seg > .on,.vsw .seg > a,.lmode button,.pmode button,#navmode .seg button{text-align:center}
 
@@ -579,10 +579,33 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
 .post-body .post-credit{margin:1.6rem 0 0; text-align:center; font-size:.72em; line-height:1.3; color:var(--ink-4)}
 .post-row figure{margin:0; min-width:0}
 .post-row img{display:block; width:100%; height:auto}
-#news:not(.show-en) .post .en,#news.show-en .post .de{display:none}
-#news .post .en{font-style:normal}
+/* Testrunde 29.10. (Ruben): Englisch unter dem Deutschen, kursiv, in derselben Lesespalte; keine Labels, kein Umschalter */
+#news .post-title .en{display:none}
+#news .post-text .en{font-style:italic; margin-top:1.2em}
+@media (hover:hover) and (pointer:fine){ #news .post-text .de,#news .post-text .en{transition:color var(--t-fast) var(--e-out)} #news .post-text .en{color:rgba(0,0,255,.3)} #news .post-text:has(.en:hover) .en{color:var(--ink)} #news .post-text:has(.en:hover) .de{color:rgba(0,0,255,.3)} }   /* wie bei den Projekten: Englisch blass, beim Darueberfahren voll */
+/* Bilder eines Beitrags: Klick zeigt sie gross */
+.post-body figure img{cursor:zoom-in}
+#nlb{position:fixed; inset:0; z-index:60; background:rgba(255,255,255,.94); display:flex; align-items:center; justify-content:center; cursor:zoom-out; opacity:0; transition:opacity var(--t-fast) var(--e-out)}
+#nlb.on{opacity:1}
+#nlb .nlb-f{position:relative; z-index:1; cursor:default; line-height:0}
+#nlb img{max-width:min(78vw,1400px); max-height:78vh; width:auto; height:auto; object-fit:contain; display:block}
+#nlb .nlb-n{position:absolute; left:50%; bottom:calc(var(--pad) + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); color:var(--ink-4)}
+#nlb .nlb-a{all:unset; position:absolute; top:0; bottom:0; width:50%; cursor:pointer}
+#nlb .nlb-a[data-d="-1"]{left:0} #nlb .nlb-a[data-d="1"]{right:0}
+#nlb .nlb-x{all:unset; box-sizing:border-box; position:absolute; top:.8rem; right:.8rem; width:2.4rem; height:2.4rem; border-radius:50%; background:var(--bg); box-shadow:inset 0 0 0 1px var(--ink); color:var(--ink); font-size:1.5rem; line-height:2.3rem; text-align:center; cursor:pointer}
+@media (hover:hover) and (pointer:fine){ #nlb .nlb-x:hover{background:#ebebff} }
+@media (max-width:700px){ #nlb img{max-width:calc(100vw - 2 * var(--pad)); max-height:80vh} #nlb .nlb-x{top:.5rem; right:.5rem} }
+/* News, About, Contact (Ruben 29.10.): Leiste bleibt; links Back to Projects statt des Ansichtsschalters, in der Mitte nur die offene Seite (blau gefuellt), keine Suche */
+.fbar .fback{display:none}
+.fbar .fb-l{display:flex;align-items:center;gap:.6em}
+:is(body[data-ov="news"],body[data-ov="about"],body[data-ov="contact"]) .fbar .fb-l,.fbar .fb-l:has(> .vsw[hidden]){margin-bottom:0}   /* Back-Pille auf derselben Hoehe wie die Pillen in der Mitte (der Schalter sitzt optisch 5 px hoeher) */
+:is(body[data-ov="news"],body[data-ov="about"],body[data-ov="contact"]) .fbar .fback{display:inline-block}
+:is(body[data-ov="news"],body[data-ov="about"],body[data-ov="contact"]) :is(.fbar .fb-l .vsw,#fall,#srch){display:none}
+.fback{line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transition:background var(--t-fast) var(--e-out)}
+@media (hover:hover) and (pointer:fine){ .fback:hover{background:rgba(0,0,255,.08); animation:none} }   /* wackelt nicht */
 @media (max-width:700px){
   .post{grid-template-columns:1fr; padding:1.8em 0 3.6em}
+
   .post-meta{position:static; flex-direction:row; flex-wrap:wrap; align-items:baseline; column-gap:.8em; margin-bottom:1em}
   .post-meta time{font-size:inherit}
   .post-tags{margin-top:0}
@@ -643,3 +666,26 @@ html.vt-zu::view-transition-old(root),html.vt-zu::view-transition-new(root){anim
   .proj-bi.zu .credit{display:none}
   #project.is-proj .proj-nx{display:block;margin-top:3.6em}
 }
+
+/* Launch 30.10.2026: groessere Tippflaechen am Handy (mind. 44 px hoch), Optik unveraendert; kein Doppeltipp-Zoom-Warten */
+@media (max-width:700px){
+  a,button{touch-action:manipulation}
+  .mm-b,.proj-count .gp,.fbar .fb-c .arw,.vsw .seg > a,.fbar .flegal a,#ovlegal a,.lang-sw button{position:relative}
+  .mm-b::after,.proj-count .gp::after,.fbar .fb-c .arw::after,.vsw .seg > a::after,.fbar .flegal a::after,#ovlegal a::after,.lang-sw button::after{content:"";position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}
+  .mm-b::after{left:-12px;right:-12px}
+  .mm-l a{position:relative}
+  .mm-l a::after{content:"";position:absolute;left:-.6em;right:-.6em;top:-.2em;bottom:-.2em}
+}
+
+/* News-Entwurf ausblenden (article.post mit hidden), 29.10.2026 */
+.post[hidden]{display:none!important}
+
+/* Flattersatz (29.10.2026): Silbentrennung in Werk-, News- und About-Texten, nur bei langen Woertern (mind. 8 Zeichen, 4 vor und 4 nach dem Trennstrich), hoechstens 2 Trennungen in Folge */
+.proj-bi p,.post-text p,.legal-text p{-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:8 4 4;-webkit-hyphenate-limit-before:4;-webkit-hyphenate-limit-after:4;-webkit-hyphenate-limit-lines:2;hyphenate-limit-lines:2;overflow-wrap:break-word}
+
+/* (30.10., Feedback) Ortsanzeige als Pfad von fern nach nah, in 2D und 3D gleich: einzelne Pillen, dazwischen ein schmaler Pfeil, gewaehlt blau gefuellt.
+   2D Rechner Overview › Project, 2D Handy Overview › List, 3D Overview › Walk › Project (Handy Overview › Walk) */
+.lmode,.pmode,#navmode .seg{align-items:center;gap:.35em!important;background:none!important;box-shadow:none!important;border-radius:0}
+.lmode button,.pmode button,#navmode .seg button{box-shadow:inset 0 0 0 1px var(--ink)}
+.lmode button,.pmode button{background:var(--bg)}
+.lmode .sep,.pmode .sep,#navmode .sep{color:var(--ink);line-height:1;opacity:.6;pointer-events:none}

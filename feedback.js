@@ -1,9 +1,9 @@
-/* Feedback-Knopf fuer die Testrunde (Ruben 23.10.): Lasche am rechten Rand, oeffnet ein Formular,
+/* Feedback-Knopf (Testrunde ab 23.10., seit Launch 30.10.2026 an info@yrd.works): Lasche am rechten Rand, oeffnet ein Formular,
    "Mail schreiben" oeffnet eine fertig ausgefuellte Mail. Seite, Ansicht, Geraet, System, Browser und
    Bildschirm werden vorbelegt. Abschalten fuer den Release: FEEDBACK=False in build.py (dann ist diese Datei leer). */
 (function(){
   if(window.__yrdFb) return; window.__yrdFb=1;
-  var MAIL='add.task.nn87n3crx3sdbd8u@todoist.net';   /* Todoist-Projekt NEUE WEBSITE (23.10., Ruben) */
+  var MAIL='info@yrd.works';   /* seit Launch 30.10.2026 an info@ (vorher Todoist-Projekt NEUE WEBSITE) */
   var ua=navigator.userAgent||'', touch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
   var w=screen.width||innerWidth, h=screen.height||innerHeight, kurz=Math.min(w,h);
   function sys(){ if(/iPhone|iPod/.test(ua)) return 'iOS'; if(/iPad/.test(ua)||(/Macintosh/.test(ua)&&touch)) return 'iPadOS';
@@ -45,7 +45,7 @@
     var name=''; try{ name=localStorage.getItem('yrd-fb-name')||''; }catch(e){}
     ov.innerHTML='<form class="fb-p" role="dialog" aria-modal="true" aria-labelledby="fb-h" novalidate>'+
       '<button type="button" class="fb-x" aria-label="Schließen">×</button>'+
-      '<h2 id="fb-h">Feedback zur neuen Website</h2><p class="fb-sub">Danke fürs Testen! Seite und Gerät sind schon eingetragen, bitte prüfen.</p>'+
+      '<h2 id="fb-h">Feedback zur neuen Website</h2><p class="fb-sub">Danke für dein Feedback! Seite und Gerät sind schon eingetragen.</p>'+
       '<div class="fb-f"><span class="fb-l">Was möchtest du melden?</span><div class="fb-r">'+opts('art',['Fehler','Vorschlag'],'Fehler')+'</div></div>'+
       '<div class="fb-f"><label class="fb-l" for="fb-name">Dein Name</label><input type="text" id="fb-name" autocomplete="name" value=""></div>'+
       '<div class="fb-f"><label class="fb-l" for="fb-seite">Wo? (Seite oder Projekt)</label><input type="text" id="fb-seite" value=""></div>'+
@@ -80,7 +80,7 @@
       return t.charAt(0).toUpperCase()+t.slice(1); }
     function subj(){ var bug=val('art')==='Fehler', n=$('#fb-name').value.trim()||'anonym', P={'kaputt, geht nicht':'p1','sieht falsch aus':'p2','Kleinigkeit':'p3'};
       var wo=[$('#fb-seite').value.trim(), val('ansicht'), val('geraet')==='Handy'||val('geraet')==='Tablet'?val('geraet'):''].filter(Boolean).join(' · ');
-      return '('+n.replace(/[@+]/g,'')+') '+(bug?'':'Vorschlag: ')+kurz($('#fb-was').value,80)+(wo?' · '+wo:'')+(bug&&P[val('prio')]?' '+P[val('prio')]:'')+' @testrunde'; }
+      return 'Website-Feedback: ('+n.replace(/[@+]/g,'')+') '+(bug?'':'Vorschlag: ')+kurz($('#fb-was').value,80)+(wo?' · '+wo:'')+(bug&&P[val('prio')]?' ('+val('prio')+')':''); }
     function open(){ $('#fb-seite').value=seite(); var a=f.querySelector('input[name="ansicht"][value="'+ansicht()+'"]'); if(a) a.checked=true; $('#fb-tech').textContent=tech(); $('#fb-msg').textContent=''; upd(); ov.hidden=false; tab.setAttribute('aria-expanded','true'); setTimeout(function(){ ($('#fb-name').value?$('#fb-was'):$('#fb-name')).focus(); },30); }
     function shut(){ ov.hidden=true; tab.setAttribute('aria-expanded','false'); tab.focus(); }
     function keep(){ try{ localStorage.setItem('yrd-fb-name',$('#fb-name').value.trim()); }catch(e){} }
