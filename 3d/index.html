@@ -1039,8 +1039,11 @@ function makeArrow(c,phi,dist){
 function makeBackLabel(){
   const cv=document.createElement('canvas'); cv.width=512; cv.height=256; const g=cv.getContext('2d');
   g.fillStyle='rgb(0,0,255)'; g.strokeStyle='rgb(0,0,255)'; g.textAlign='center'; g.textBaseline='middle';
-  g.font='420 92px "ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif'; g.fillText('Back',256,82);
-  g.lineWidth=9; g.lineCap='round'; g.lineJoin='round'; g.beginPath(); g.moveTo(211,165); g.lineTo(256,210); g.lineTo(301,165); g.stroke();
+  /* Stil wie der Mauszeiger-Pfeil: weisser Kreis, feiner blauer Rand, Pfeil nach unten (zu einem hin); darunter „Back“ */
+  const k=5.2, cx=256, cy=88; g.lineWidth=1.5*k; g.lineCap='butt'; g.lineJoin='miter';
+  g.beginPath(); g.arc(cx,cy,14.5*k,0,Math.PI*2); g.fillStyle='#fff'; g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(cx,cy-5*k); g.lineTo(cx,cy+5*k); g.moveTo(cx-4.5*k,cy+0.5*k); g.lineTo(cx,cy+5*k); g.lineTo(cx+4.5*k,cy+0.5*k); g.stroke();
+  g.fillStyle='rgb(0,0,255)'; g.font='420 64px "ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif'; g.fillText('Back',cx,214);
   const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=ANISO;
   const mat=new THREE.MeshBasicMaterial({map:tex, transparent:true, opacity:0, depthWrite:false});
   const g0=new THREE.Group(), flat=new THREE.Group(); flat.rotation.x=-Math.PI/2; g0.add(flat);
@@ -1295,9 +1298,9 @@ function poseRooms(dt){
       a.g.position.copy(rm.c).addScaledVector(dirOf(pc),rm.r-0.3).setY(0.012); a.g.rotation.y=-(pc+Math.PI); a.g.scale.setScalar(ARWS);
       const aT=live?(exitHover?ARW2:ARW1):0; a.o=lerp(a.o,aT,1-Math.exp(-dt*8)); a.mat.opacity=a.o*smooth(rm.m); a.g.visible=a.mat.opacity>0.01; }
     { const L=rm.back.lab, live=BACKB && rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), pc=-cam.yaw;
-      const al=Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.82), hY=Math.max(0.5,cam.pos.y), D=hY/Math.tan(al), w=0.11*D;
+      const al=Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.72)   /* 30.10.: mittig zwischen Bildunterkante und Leiste */, hY=Math.max(0.5,cam.pos.y), D=hY/Math.tan(al), w=0.11*D;
       L.g.position.copy(cam.pos).addScaledVector(dirOf(pc),D).setY(0.012); L.g.rotation.y=-pc; L.flat.scale.set(w, w*0.5/Math.sin(al), 1);
-      const aT=live?(exitHover?1:0.7):0; L.o=lerp(L.o,aT,1-Math.exp(-dt*8)); L.mat.opacity=L.o*smooth(rm.m); L.g.visible=L.mat.opacity>0.01; }
+      const aT=live?(exitHover?1:0.85):0; L.o=lerp(L.o,aT,1-Math.exp(-dt*8)); L.mat.opacity=L.o*smooth(rm.m); L.g.visible=L.mat.opacity>0.01; }
     if(rm.ghosts){ const g=1-smooth(pr/0.25); rm.ghosts.forEach(x=>{ x.m.opacity=g; x.mesh.visible=g>0.01; }); }   // Staffelbilder der Wolke blenden aus
     if(rm.mT===0 && rm.m<=0 && rm.ce<-3.99) disposeRoom(rm);   // erst wenn alle Bilder wieder genau in der Staffel stehen
   }
