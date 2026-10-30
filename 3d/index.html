@@ -1094,7 +1094,7 @@ const rooms=[]; let room=null;
 const roomOf=i=>rooms.find(r=>r.i===i);
 let arrowHover=null, turnHover=0, exitHover=false;
 /* Ruben 30.10.: ein Pfeilsystem wie in 2D (Rechner Zeiger-Pfeil, Touch Wischen); Wende- und Zurueck-Pfeile am Boden aus. Wieder an: BODEN=true */
-const BODEN=false, BACKB=true;   // BACKB: nur das „Back“ am Boden (Ruben 30.10.)
+const BODEN=false, BACKB=false;   /* 30.10.: Back am Boden wieder aus, stattdessen Zeiger-Pfeil nach unten (siehe downHit) */   // BACKB: nur das „Back“ am Boden (Ruben 30.10.)
 const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(BODEN&&!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]).concat(BACKB&&room.back.lab.o>0.3?[room.back.lab.mesh]:[]):[];
 function stackPose(t,it){ const jz=it.jz??it.j, p=t.up.clone().setY(TILEY).addScaledVector(t.right,it.lx).addScaledVector(t.nrm,-jz*DZ); p.y+=jz*DY+(it.ly||0); return p; }
 /* Aufteilung des Raums. Reihe: im Bogen von links nach rechts Heroshot, die Staffelbilder, Text; das mittlere Bild steht geradeaus.
@@ -1712,10 +1712,14 @@ let ptr=null, hovered=null, lastMove={x:-1,y:-1};
    einen runden Pfeil, ein Klick geht ein Bild weiter. Nicht an der Textflaeche (Klick dort = lesen), nicht am Ende der Strecke.
    Ausschalten: PFEIL3D=false (dann wie vorher: Klick aufs Bild geht naeher heran bzw. zurueck in die Mitte) */
 const PFEIL3D=true, fineP=matchMedia('(hover:hover) and (pointer:fine)');
-{ const cur=d=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d>0?'e-resize':'w-resize');
-  const s=document.createElement('style'); s.textContent='#stage.c-r canvas{cursor:'+cur(1)+'!important}#stage.c-l canvas{cursor:'+cur(-1)+'!important}'; document.head.appendChild(s); }
+{ const cur=d=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+(d===2?'M16 11v10M11.5 16.5l4.5 4.5 4.5-4.5':d>0?'M11 16h10M17 11.5l4.5 4.5-4.5 4.5':'M21 16H11M15 11.5L10.5 16l4.5 4.5')+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16, '+(d===2?'s-resize':d>0?'e-resize':'w-resize');
+  const s=document.createElement('style'); s.textContent='#stage.c-r canvas{cursor:'+cur(1)+'!important}#stage.c-l canvas{cursor:'+cur(-1)+'!important}#stage.c-d canvas{cursor:'+cur(2)+'!important}'; document.head.appendChild(s); }
 let pcs='';
-function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); }
+function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); stage.classList.toggle('c-d',v==='d'); }
+/* Ruben 30.10.: unter den Bildern (Boden) zeigt die Maus denselben runden Pfeil nach unten, Klick verlaesst den Raum (zurueck in den Ring) */
+function downHit(w,x,y){ if(!PFEIL3D||!fineP.matches||mode!=='proj'||!room||room.read||room.te<1||w) return false;
+  ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.01) return false;
+  const t=-o.y/d.y, px=o.x+d.x*t, pz=o.z+d.z*t; return Math.hypot(px-room.c.x,pz-room.c.z)<room.r-0.1; }   // trifft den Boden innerhalb des Bildkreises
 /* Richtung fuer den Pfeil: 1 rechts, -1 links, 0 keiner */
 function pfeilDir(w,x){
   /* Ruben 29.10.: auch ueber den Nachbarbildern und dazwischen, wie die ganze Bildstrecke in 2D; nur die angesehene Textflaeche nicht (Klick = lesen) */
@@ -1875,6 +1879,7 @@ function endPtr(e){
     { const r=$('#rtop').getBoundingClientRect(); if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom) return; }   /* Testrunde 23.10., Ruben: Klick auf den Titel oben mittig ist kein Link, fuehrt nirgends hin */
     const w=pickWall(e.clientX,e.clientY);
     if(pickWall.exit){ closeProject(); return; }   // Pfeil zurueck
+    if(downHit(w,e.clientX,e.clientY)){ closeProject(); return; }   // Zeiger-Pfeil nach unten: raus
     if(w && pickWall.turn){ goWall(w.k,false); return; }   // Wendepfeil: in der Mitte bleiben, zur Nachbarflaeche drehen
     { const d=pfeilDir(w,e.clientX); if(d){ goWall(sideWall(-d),isNear(room)); return; } }   // Pfeil wie in 2D: ein Bild weiter
     if(PFEIL3D && fineP.matches){   /* Ruben 29.10.: am Rechner kein Heranzoomen per Klick mehr (naeher nur mit Mausrad/Trackpad) */
@@ -2071,7 +2076,7 @@ function loop(now){
   if(mode==='look' && !ptr && lastMove.x>=0 && !curOv) setHover(pick(lastMove.x,lastMove.y));
   else if(mode==='proj' && !ptr && lastMove.x>=0 && !curOv){ if(hovered) setHover(null);
     const tr=$('#rtop').getBoundingClientRect(), overT=lastMove.x>=tr.left&&lastMove.x<=tr.right&&lastMove.y>=tr.top&&lastMove.y<=tr.bottom;   /* Testrunde 23.10., Ruben: ueber dem Titel oben mittig keine Link-Hand, er ist nur Text */
-    const pw=overT?null:pickWall(lastMove.x,lastMove.y); if(overT){ pickWall.arrow=null; pickWall.turn=0; pickWall.exit=false; } arrowHover=pickWall.arrow?pw:null; turnHover=pickWall.turn; exitHover=pickWall.exit; const noAct=PFEIL3D&&fineP.matches&&pw&&pw.k===room.f&&pw.kind!=='text'&&!pickWall.arrow&&!pickWall.turn&&!isNear(room); stage.classList.toggle('hover',(!!pw&&!noAct)||exitHover); const pd=pfeilDir(pw,lastMove.x); setPC(pd>0?'r':pd<0?'l':''); }
+    const pw=overT?null:pickWall(lastMove.x,lastMove.y); if(overT){ pickWall.arrow=null; pickWall.turn=0; pickWall.exit=false; } arrowHover=pickWall.arrow?pw:null; turnHover=pickWall.turn; exitHover=pickWall.exit; const noAct=PFEIL3D&&fineP.matches&&pw&&pw.k===room.f&&pw.kind!=='text'&&!pickWall.arrow&&!pickWall.turn&&!isNear(room); stage.classList.toggle('hover',(!!pw&&!noAct)||exitHover); const pd=pfeilDir(pw,lastMove.x); setPC(downHit(pw,lastMove.x,lastMove.y)?'d':pd>0?'r':pd<0?'l':''); }
   else if(hovered) setHover(null);
   if(nav==='frei' && moved>6 && !hint.classList.contains('off') && mode==='look') showHint(false);
   if(mode==='proj' && hintT>0){ hintT-=dt; if(hintT<=0) showHint(false); }
