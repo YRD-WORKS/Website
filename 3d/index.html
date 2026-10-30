@@ -974,7 +974,7 @@ const HINTS = {
   rund:  touchUI ? 'Wischen: weitergehen · Tippen: Projekt betreten' : 'Scrollen, Ziehen oder Pfeiltasten: weitergehen · Klick: Projekt betreten',
   frei:  touchUI ? 'Wischen: schauen und gehen · Tippen: Projekt öffnen' : 'W A S D: gehen · Ziehen: schauen · Klick: Projekt öffnen',
   oben:  touchUI ? 'Wischen: drehen und kippen · Tippen: Projekt betreten' : 'Ziehen: drehen · Scrollen: hinein in den Rundgang · Klick: Projekt betreten',
-  proj:  touchUI ? 'Wischen: umsehen · Tippen auf ein Bild: hingehen, auf den Text: lesen' : 'Klick rechts oder links aufs Bild: weiter · Pfeile am Boden: drehen, zurück · Scrollen: näher, zurück aus dem Raum'
+  proj:  touchUI ? 'Wischen: umsehen · Tippen auf ein Bild: hingehen, auf den Text: lesen' : 'Klick rechts oder links aufs Bild: weiter · Scrollen: näher, zurück aus dem Raum'
 };
 const hint=$('#hint');
 function showHint(on){ hint.classList.toggle('off',!on); }
@@ -1077,7 +1077,9 @@ function textEl(p,i){
 const rooms=[]; let room=null;
 const roomOf=i=>rooms.find(r=>r.i===i);
 let arrowHover=null, turnHover=0, exitHover=false;
-const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]):[];
+/* Ruben 30.10.: ein Pfeilsystem wie in 2D (Rechner Zeiger-Pfeil, Touch Wischen); Wende- und Zurueck-Pfeile am Boden aus. Wieder an: BODEN=true */
+const BODEN=false;
+const roomPicks=()=>room&&room.te>=1&&room.m>0.6?room.walls.map(w=>w.mesh).concat(BODEN&&!isNear(room)&&!room.read&&!hochP()?room.turns.map(a=>a.hit).concat([room.back.hit]):[]):[];
 function stackPose(t,it){ const jz=it.jz??it.j, p=t.up.clone().setY(TILEY).addScaledVector(t.right,it.lx).addScaledVector(t.nrm,-jz*DZ); p.y+=jz*DY+(it.ly||0); return p; }
 /* Aufteilung des Raums. Reihe: im Bogen von links nach rechts Heroshot, die Staffelbilder, Text; das mittlere Bild steht geradeaus.
    Beim Betreten faechert sich die Staffel hinter dem Heroshot zur Reihe auf, die mit der Fahrt waechst und sich zum Bogen biegt */
@@ -1268,7 +1270,7 @@ function poseRooms(dt){
       w.arrow.o=lerp(w.arrow.o,aT,1-Math.exp(-dt*8)); w.arrow.mat.opacity=w.arrow.o*e; w.arrow.g.visible=w.arrow.o*e>0.01;
     });
     // Wendepfeile links und rechts neben dem Pfeil der angesehenen Flaeche: zur vorigen bzw. naechsten Flaeche
-    { const live=rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), wf=rm.walls[rm.f], e=smooth(rm.m);
+    { const live=BODEN && rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), wf=rm.walls[rm.f], e=smooth(rm.m);
       rm.turns.forEach(a=>{
         const pc=-cam.yaw, tp=tmpC.copy(rm.c).addScaledVector(dirOf(pc),rm.r-0.3).addScaledVector(rgtR.set(Math.cos(pc),0,Math.sin(pc)),a.sg*0.95).setY(0.012);
         if(a.o<0.02) a.g.position.copy(tp); else a.g.position.lerp(tp,1-Math.exp(-dt*6));
@@ -1276,7 +1278,7 @@ function poseRooms(dt){
         const aT=live?(turnHover===a.sg?ARW2:ARW0):0; a.o=lerp(a.o,aT,1-Math.exp(-dt*8)); a.mat.opacity=a.o*e; a.g.visible=a.o*e>0.01; a.g.scale.setScalar(ARWS);
       }); }
     // Pfeil zurueck: liegt vor einem auf dem Boden und zeigt zu einem hin; folgt dem Blick, Klick verlaesst den Raum
-    { const live=rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), a=rm.back, pc=-cam.yaw;
+    { const live=BODEN && rm===room && rm.te>=1 && Math.abs(relS(rm))<0.2 && !ptr && !rm.read && !hochP(), a=rm.back, pc=-cam.yaw;
       a.g.position.copy(rm.c).addScaledVector(dirOf(pc),rm.r-0.3).setY(0.012); a.g.rotation.y=-(pc+Math.PI); a.g.scale.setScalar(ARWS);
       const aT=live?(exitHover?ARW2:ARW1):0; a.o=lerp(a.o,aT,1-Math.exp(-dt*8)); a.mat.opacity=a.o*smooth(rm.m); a.g.visible=a.mat.opacity>0.01; }
     if(rm.ghosts){ const g=1-smooth(pr/0.25); rm.ghosts.forEach(x=>{ x.m.opacity=g; x.mesh.visible=g>0.01; }); }   // Staffelbilder der Wolke blenden aus
