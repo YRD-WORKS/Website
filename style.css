@@ -585,6 +585,8 @@ body[data-ov="project"] .pmode [data-p="proj"],body:not([data-ov]) .pmode [data-
 @media (hover:hover) and (pointer:fine){ #news .post-text .de,#news .post-text .en{transition:color var(--t-fast) var(--e-out)} #news .post-text .en{color:rgba(0,0,255,.3)} #news .post-text:has(.en:hover) .en{color:var(--ink)} #news .post-text:has(.en:hover) .de{color:rgba(0,0,255,.3)} }   /* wie bei den Projekten: Englisch blass, beim Darueberfahren voll */
 /* Bilder eines Beitrags: Klick zeigt sie gross */
 .post-body figure img{cursor:zoom-in}
+/* (31.10., Ruben) am Rechner: Plus im Kreis wie das Schliessen-x und die Zeiger-Pfeile */
+@media (hover:hover) and (pointer:fine){ .post-body figure img{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2214.5%22%20fill%3D%22%23fff%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3Cpath%20d%3D%22M16%2010v12M10%2016h12%22%20fill%3D%22none%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3C/svg%3E") 16 16, zoom-in} }
 #nlb{position:fixed; inset:0; z-index:60; background:rgba(255,255,255,.94); display:flex; align-items:center; justify-content:center; cursor:zoom-out; opacity:0; transition:opacity var(--t-fast) var(--e-out)}
 #nlb.on{opacity:1}
 #nlb .nlb-f{position:relative; z-index:1; cursor:default; line-height:0}
