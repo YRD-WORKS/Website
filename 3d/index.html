@@ -149,6 +149,16 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
 #rinfo{display:none!important}
 .foot.off{pointer-events:none}
 #rinfo,#rbar,#r-back{z-index:19}
+/* Ruben 31.10.: Treppe in der Leistenmitte (Rechner): Overview „↓ Walk“, Walk „↑ Overview“ und „↓ Project“; sichtbar nur im Ring (body.wk), am Handy nicht (dort landet 3D von selbst im Walk, Overview/Walk stehen rechts) */
+#wbar{left:50%;transform:translateX(-50%);display:none;align-items:center;gap:.6em;white-space:nowrap;pointer-events:auto;z-index:19;
+  box-sizing:border-box;height:calc(var(--fb-h) + var(--fb-b) + env(safe-area-inset-bottom,0px));padding-bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px))}
+body.wk #wbar{display:flex}
+#wbar a{display:none;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);white-space:nowrap;transform-origin:50% 50%;transition:background .2s ease,color .2s ease}
+body.wk:not(.nav-rund) #wbar #w-down{display:inline-block}
+body.wk.nav-rund #wbar #w-up,body.wk.nav-rund #wbar #w-in{display:inline-block}
+@media (hover:hover) and (pointer:fine){#wbar a:hover{background:rgba(0,0,255,.08);animation:wiggle .5s ease-in-out}}
+@media (max-width:700px){#wbar{display:none!important}}
+body[data-ov]:not([data-ov=""]) #wbar{display:none!important}
 /* Textflaeche: echtes HTML im Raum (hinter dem durchsichtigen Canvas), Satz wie auf der Galerie-Seite */
 #css3d{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
 #css3d-cam{position:absolute;left:0;top:0;transform-style:preserve-3d;pointer-events:none}
@@ -287,7 +297,8 @@ html.gate-on #intro{display:none}
 <div id="dlbar" class="foot caption off"><a class="dlp" href="../portfolio/" title="Eigene Auswahl als PDF / Your own selection as PDF">↓ Download<span class="lg"> Portfolio</span></a></div>
 <div id="ovlegal" class="foot caption"><a href="../impressum/" data-for="impressum">Impressum</a>    <a href="../datenschutz/" data-for="datenschutz">Datenschutz</a></div>
 
-<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw" title="Raum verlassen / Exit room">↓<span class="lg"> Exit<span class="pj"> Project</span></span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
+<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw" title="Raum verlassen / Exit room">↓ Exit<span class="lg pj"> Project</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
+<div id="wbar" class="foot caption" aria-label="Ansicht wechseln / Change view"><a href="#" id="w-down" class="arw" title="Hinunter in den Rundgang / Down into the walk">↓ Walk</a><a href="#" id="w-up" class="arw" title="Hinauf in die Übersicht / Up to the overview">↑ Overview</a><a href="#" id="w-in" class="arw" title="Dieses Projekt betreten / Enter this project">↓ Project</a></div>
 <div id="rinfo" class="foot caption off"><span class="rt" id="r-title"></span><span class="n" id="r-count"></span></div>
 <a href="#" id="r-back" class="foot caption">← Back</a>
 
@@ -919,7 +930,7 @@ function finishFly(){
   look.yaw=look.yawT=0; look.pitch=look.pitchT=0; look.s=look.sT=0; look.az=look.azT=0; look.el=look.elT=OB.el; look.dist=look.distT=OB.dist;
   walker.pos.set(0,EYE,0); walker.yaw=0; walker.pitch=0;
   mode='look'; setNav(nav,true);
-  if(nav==='oben' && !reduce){ DRIFT.on=true; DRIFT.t=0; }
+  if(nav==='oben' && !reduce){ DRIFT.on=true; DRIFT.t=0; if(fromGrid&&!deep) autoLand(); }
   ['#navmode','#yearbox','#legal','#vswbar','#fband','#dlbar'].forEach(s=>$(s).classList.remove('off')); showHint(true);
 }
 introCb=()=>{
@@ -1012,6 +1023,18 @@ document.querySelectorAll('#navmode button').forEach(b=>b.addEventListener('clic
     if(t) openProject(t.i); return; }   /* wie ein Klick auf die Kachel */
   if(mode==='proj') closeProject(); if(mode==='look') setNav(b.dataset.nav); }));
 
+/* Ruben 31.10.: Landung aus der Overview in den Walk, eine Fahrt fuer alles: Knopf „Walk“ in der Leistenmitte, Klick auf den Boden,
+   und einmal je Sitzung von selbst kurz nach der Ankunft aus 2D (wer vorher dreht, scrollt oder tippt, bleibt oben). Flug wie am Handy (DIVE) */
+let autoLandT=0;
+function landIn(s){ if(mode!=='look'||nav!=='oben'||DIVE) return; clearTimeout(autoLandT); stopDrift();
+  const i=rundIdx(s); setNav('rund',true); look.s=look.sT=i*STEP; look.idle=0; retT=0; hintT=0;
+  DIVE={t:0, p0:cam.pos.clone(), y0:cam.yaw, pi0:cam.pitch, f0:baseFov}; }
+function autoLand(){
+  let seen=false; try{ seen=sessionStorage.getItem('yrd3dland')==='1'; }catch(e){}
+  if(seen||reduce||innerWidth<=700) return;
+  try{ sessionStorage.setItem('yrd3dland','1'); }catch(e){}
+  clearTimeout(autoLandT); autoLandT=setTimeout(()=>{ if(mode==='look'&&nav==='oben'&&DRIFT.on) landIn(look.az); },2600);   /* DRIFT.on: seit der Ankunft nichts angefasst */
+}
 function tileInView(){
   if(nav==='frei'){
     let best=null, bd=1e9; const f=new THREE.Vector3(-Math.sin(cam.yaw),0,-Math.cos(cam.yaw));
@@ -1633,6 +1656,11 @@ window.addEventListener('popstate',()=>{
   else if(mode==='proj'&&!OVS[h]) closeProject();
 });
 $('#r-close').onclick=e=>{e.preventDefault(); closeProject();};
+/* Ruben 31.10.: Treppe in der Leistenmitte: Overview „↓ Walk“, Walk „↑ Overview“ und „↓ Project“ (der Raum hat dort Previous | Exit | Next) */
+{ const w=$('#wbar'); if(w){
+  w.querySelector('#w-down').onclick=e=>{ e.preventDefault(); if(mode==='fly') finishFly(); if(mode==='look'&&nav==='oben') landIn(look.az); };
+  w.querySelector('#w-up').onclick=e=>{ e.preventDefault(); if(mode==='look'&&nav==='rund'&&!DIVE) setNav('oben'); };
+  w.querySelector('#w-in').onclick=e=>{ e.preventDefault(); if(mode==='look'&&nav==='rund'&&!DIVE){ const t=tileInView(); if(t) openProject(t.i); } }; } }
 $('#r-next').onclick=e=>{e.preventDefault(); if(mode==='proj') openProject((cur+1)%N);};
 $('#r-prev').onclick=e=>{e.preventDefault(); if(mode==='proj') openProject((cur-1+N)%N);};
 
@@ -1746,11 +1774,17 @@ let pcs='';
 function setPC(v){ if(v===pcs) return; pcs=v; stage.classList.toggle('c-r',v==='r'); stage.classList.toggle('c-l',v==='l'); stage.classList.toggle('c-d',v==='d'); stage.classList.toggle('c-u',v==='u'); }
 /* Ruben 30.10.: im Walk dieselben Zeiger-Pfeile wie im Raum (nur Rechner): ueber dem mittleren Bild nach vorne (Raum betreten),
    im unteren Streifen nach unten (zurueck zur Overview), sonst rechts bzw. links (naechstes bzw. voriges Projekt) */
-function walkDir(x,y){ if(!PFEIL3D||!fineP.matches||mode!=='look'||nav!=='rund'||curOv) return '';
+function floorAngle(x,y){   /* Ruben 31.10.: Bodenpunkt unter dem Zeiger als Ringwinkel (fuer die Landung aus der Overview), null wenn kein Boden */
+  ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.005) return null;
+  const t=-o.y/d.y, px=o.x+d.x*t, pz=o.z+d.z*t; if(Math.hypot(px,pz)>R*1.6) return null; return Math.atan2(px,-pz); }
+function walkDir(x,y){ if(!PFEIL3D||!fineP.matches||mode!=='look'||curOv||DIVE) return '';
+  if(nav==='oben'){ if(pick(x,y)||ptr) return ''; return floorAngle(x,y)==null?'':'d'; }   /* Ruben 31.10.: Overview: ueber dem Boden Pfeil nach unten, Klick landet dort im Walk */
+  if(nav!=='rund') return '';
   if(-(y/innerHeight)*2+1 < -0.7) return 'd';
   const t=pick(x,y); if(t && t.i===rundIdx(look.s)) return 'u';
   return x>innerWidth/2?'r':'l'; }
-function walkGo(d){ const i0=rundIdx(look.sT);
+function walkGo(d,x,y){ const i0=rundIdx(look.sT);
+  if(nav==='oben'){ if(d==='d'){ const a=floorAngle(x,y); if(a!=null) landIn(a); } return; }
   if(d==='u'){ openProject(i0); return; }
   if(d==='d'){ setNav('oben'); return; }
   const i=((i0+(d==='r'?1:-1))%N+N)%N; look.sT+=angD(look.sT,i*STEP); look.idle=0.7; look.snapT=performance.now()+600; }
@@ -1929,7 +1963,7 @@ function endPtr(e){
     else if(isNear(room)) goWall(room.f,false);                    // nochmal: zurueck in die Mitte
     return;
   }
-  { const d=walkDir(e.clientX,e.clientY); if(d){ walkGo(d); return; } }   // Walk am Rechner: Zeiger-Pfeile
+  { const d=walkDir(e.clientX,e.clientY); if(d){ walkGo(d,e.clientX,e.clientY); return; } }   // Walk am Rechner: Zeiger-Pfeile
   const t=pick(e.clientX,e.clientY);
   if(t && mode==='look') openProject(t.i);
 }
@@ -2113,6 +2147,7 @@ function loop(now){
   applyView();
   camera.position.copy(cam.pos); camera.rotation.set(cam.pitch,cam.yaw,0);
   if(mode==='look' && !ptr && lastMove.x>=0 && !curOv) setHover(pick(lastMove.x,lastMove.y));
+  document.body.classList.toggle('wk', mode==='look' && !DIVE && !curOv);   /* Ruben 31.10.: Treppe in der Leistenmitte nur im Ring */
   if(mode==='look') setPC(!ptr && lastMove.x>=0 ? walkDir(lastMove.x,lastMove.y) : ''); else if(mode!=='proj') setPC('');
   else if(mode==='proj' && !ptr && lastMove.x>=0 && !curOv){ if(hovered) setHover(null);
     const tr=$('#rtop').getBoundingClientRect(), overT=lastMove.x>=tr.left&&lastMove.x<=tr.right&&lastMove.y>=tr.top&&lastMove.y<=tr.bottom;   /* Testrunde 23.10., Ruben: ueber dem Titel oben mittig keine Link-Hand, er ist nur Text */
