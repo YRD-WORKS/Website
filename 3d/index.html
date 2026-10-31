@@ -1656,7 +1656,7 @@ window.addEventListener('popstate',()=>{
   else if(mode==='proj'&&!OVS[h]) closeProject();
 });
 $('#r-close').onclick=e=>{e.preventDefault(); closeProject();};
-/* Ruben 31.10.: Treppe in der Leistenmitte: Overview „↓ Walk“, Walk „↑ Overview“ und „↓ Project“ (der Raum hat dort Previous | Exit | Next) */
+/* Ruben 31.10.: Treppe in der Leistenmitte: Overview „↑ Walk“, Walk „↓ Overview“ und „↑ Project“ (der Raum hat dort Previous | Exit | Next); ↑ hinein, ↓ hinaus */
 { const w=$('#wbar'); if(w){
   w.querySelector('#w-down').onclick=e=>{ e.preventDefault(); if(mode==='fly') finishFly(); if(mode==='look'&&nav==='oben') landIn(look.az); };
   w.querySelector('#w-up').onclick=e=>{ e.preventDefault(); if(mode==='look'&&nav==='rund'&&!DIVE) setNav('oben'); };
@@ -1778,13 +1778,13 @@ function floorAngle(x,y){   /* Ruben 31.10.: Bodenpunkt unter dem Zeiger als Rin
   ndc.set(x/innerWidth*2-1, -(y/innerHeight)*2+1); ray.setFromCamera(ndc,camera); const o=ray.ray.origin, d=ray.ray.direction; if(d.y>-0.005) return null;
   const t=-o.y/d.y, px=o.x+d.x*t, pz=o.z+d.z*t; if(Math.hypot(px,pz)>R*1.6) return null; return Math.atan2(px,-pz); }
 function walkDir(x,y){ if(!PFEIL3D||!fineP.matches||mode!=='look'||curOv||DIVE) return '';
-  if(nav==='oben'){ if(pick(x,y)||ptr) return ''; return floorAngle(x,y)==null?'':'d'; }   /* Ruben 31.10.: Overview: ueber dem Boden Pfeil nach unten, Klick landet dort im Walk */
+  if(nav==='oben'){ if(pick(x,y)||ptr) return ''; return floorAngle(x,y)==null?'':'u'; }   /* Ruben 31.10.: Overview: ueber dem Boden Pfeil nach oben (hinein), Klick landet dort im Walk */
   if(nav!=='rund') return '';
   if(-(y/innerHeight)*2+1 < -0.7) return 'd';
   const t=pick(x,y); if(t && t.i===rundIdx(look.s)) return 'u';
   return x>innerWidth/2?'r':'l'; }
 function walkGo(d,x,y){ const i0=rundIdx(look.sT);
-  if(nav==='oben'){ if(d==='d'){ const a=floorAngle(x,y); if(a!=null) landIn(a); } return; }
+  if(nav==='oben'){ if(d==='u'){ const a=floorAngle(x,y); if(a!=null) landIn(a); } return; }
   if(d==='u'){ openProject(i0); return; }
   if(d==='d'){ setNav('oben'); return; }
   const i=((i0+(d==='r'?1:-1))%N+N)%N; look.sT+=angD(look.sT,i*STEP); look.idle=0.7; look.snapT=performance.now()+600; }
