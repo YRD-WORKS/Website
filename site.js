@@ -5,10 +5,11 @@
   /* Doppelklick (file://): dort gibt es keine Ordner-Adressen. Die Vorschau laeuft dann wie frueher als eine Seite
      mit #-Adressen (index.html#soups), damit Ueberblenden und Hochschieben genauso funktionieren wie online */
   var FILE=location.protocol==='file:';
+  function dec(x){ try{ return decodeURIComponent(x); }catch(e){ return ''; } }   /* Pruefbericht 31.10.: #%E0 (abgeschnittener Link) warf URIError in route() */
   var ROOT=new URL('./',document.baseURI);
   var HOME=new URL('index.html',document.baseURI);
   if(FILE&&location.pathname!==HOME.pathname){   /* Unterseite direkt geoeffnet: auf die Startseite mit # umlenken */
-    var k0=decodeURIComponent(location.pathname.slice(ROOT.pathname.length).replace(/index\.html$/,'').replace(/\/$/,''));
+    var k0=dec(location.pathname.slice(ROOT.pathname.length).replace(/index\.html$/,'').replace(/\/$/,''));
     location.replace(HOME.href+(k0?'#'+k0:'')); return;
   }
   function href(k){ return FILE?'index.html'+(k?'#'+k:''):(k?k+'/':'./'); }
@@ -89,11 +90,18 @@
     if(matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<=500) return;
     var a=document.querySelector('a[href*="3d/"]'); if(!a) return;
     var b3=new URL(a.getAttribute('href'),document.baseURI);   /* Testrunde 27.10., Ruben: gegen <base> aufloesen, sonst auf Unterseiten /messerschmiede/3d/... (404) */
-    var pre=window.YRD_PRE={got:0,tot:0,done:false};
+    /* Pruefbericht 31.10. (Ruben): nur auf der Startseite, und erst wenn die Maus den 3D-Schalter beruehrt oder 10 s nach den Kacheln nichts passiert ist;
+       vorher zog jede Seite (auch jede Projektseite per Direktlink) beim ersten Besuch rund 11 MB, auch fuer Besucher*innen ohne 3D. Schon vorgeladen (yrd3dpre): nichts tun */
+    if(location.pathname!==ROOT.pathname&&location.pathname!==HOME.pathname) return;
+    try{ if(sessionStorage.getItem('yrd3dpre')==='1'){ window.YRD_PRE={got:0,tot:0,done:true}; return; } }catch(e){}
+    var pre=window.YRD_PRE={got:0,tot:0,done:false}, los=false, idleT=0;
+    function start(){ if(los) return; los=true; clearTimeout(idleT); document.removeEventListener('pointerover',hov,true); lade(); }
+    function hov(e){ if(e.target.closest&&e.target.closest('[data-raum]')) start(); }
+    document.addEventListener('pointerover',hov,true);
     /* erst los, wenn die sichtbaren Kacheln geladen sind (hoechstens 3 s), meist noch waehrend der Intro-Woerter */
     var t0=Date.now();
     function bereit(){ var ims=document.querySelectorAll('#grid img'), vh=innerHeight; for(var j=0;j<ims.length;j++){ if(ims[j].getBoundingClientRect().top>vh) break; if(!ims[j].complete) return false; } return true; }
-    (function warte(){ if(bereit()||Date.now()-t0>3000) lade(); else setTimeout(warte,100); })();
+    (function warte(){ if(bereit()||Date.now()-t0>3000) idleT=setTimeout(start,10000); else setTimeout(warte,100); })();
     function fertig(){ if(pre.done) return; pre.done=true; try{ sessionStorage.setItem('yrd3dpre','1'); }catch(e){} }   /* yrd3dpre: 3D zeigt den Wuerfel dann erst spaet (vorlage.html) */
     function lade(){
       fetch(new URL('vorladen.json',b3).href).then(function(r){ return r.json(); }).then(function(L){
@@ -409,10 +417,10 @@
   var TITLE0=document.documentElement.getAttribute('data-title0')||document.title;
   var TITLES={about:'About',news:'News',contact:'Contact',impressum:'Impressum',datenschutz:'Datenschutz'};
   function curKey(){
-    if(FILE) return decodeURIComponent(location.hash.slice(1));
+    if(FILE) return dec(location.hash.slice(1));
     var p=location.pathname, r=ROOT.pathname;
     if(p.indexOf(r)===0) p=p.slice(r.length);
-    return decodeURIComponent(p.replace(/index\.html$/,'').replace(/\/$/,''));
+    return dec(p.replace(/index\.html$/,'').replace(/\/$/,''));
   }
   function known(k){ return k===''||ROUTES.hasOwnProperty(k)||SLUG_IDX.hasOwnProperty(k)||AWK.hasOwnProperty(k); }
   /* Seite wechseln ohne Neuladen; bei file:// (Doppelklick) klassisch weiterblaettern */
@@ -426,7 +434,7 @@
   function route(){
     var h=curKey();
     /* alte Links mit # (yrd.works/#soups) auf die neue Adresse umleiten */
-    if(!FILE&&!h&&location.hash.length>1){ var lh=decodeURIComponent(location.hash.slice(1)); if(known(lh)&&lh){ go(lh,true); return; } }
+    if(!FILE&&!h&&location.hash.length>1){ var lh=dec(location.hash.slice(1)); if(known(lh)&&lh){ go(lh,true); return; } }
     var id=ROUTES[h]||null;
     if(AWK.hasOwnProperty(h)){ var ch=awCur!==AWK[h]; awCur=AWK[h]; applyAw(); if(ch&&!first) scrollTo(0,0); }
     else if(h===''||/^r\d+(\.\d+)?$/.test(h)){ if(awCur&&!awCur.shared){ awCur=null; applyAw(); } else if(awCur&&first) applyAw(); }
@@ -488,7 +496,7 @@
     if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
     var a=e.target.closest('a[href]'); if(!a||a.target||a.closest('[data-close],[data-home]')) return;
     var u=new URL(a.href); if(u.protocol!==ROOT.protocol||u.host!==ROOT.host||u.pathname.indexOf(ROOT.pathname)!==0) return;
-    var k=FILE?(u.pathname===HOME.pathname?decodeURIComponent(u.hash.slice(1)):null):decodeURIComponent(u.pathname.slice(ROOT.pathname.length).replace(/index\.html$/,'').replace(/\/$/,''));
+    var k=FILE?(u.pathname===HOME.pathname?dec(u.hash.slice(1)):null):dec(u.pathname.slice(ROOT.pathname.length).replace(/index\.html$/,'').replace(/\/$/,''));
     if(k===null) return;
     if(!known(k)) return;
     e.preventDefault(); if(a.classList.contains('aw-all')&&awCur){ awCur=null; SHQ=null; applyAw(); }

@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>YRD.Works / 404</title>
 <meta name="robots" content="noindex">
+<!-- Pruefbericht 31.10.: Fehlerseite erscheint unter jeder Adresse (ErrorDocument), darum absolute Pfade (laufen auch ohne JavaScript);
+     unter yrd.works/test-neu/ und dem GitHub-Spiegel (/Website/) setzt das Skript den Praefix vor Schrift und Link -->
+<script>(function(){ var m=location.pathname.match(/^\/(test-neu|Website)\//); if(!m) return; var b='/'+m[1]+'/', st=document.createElement('style');
+  st.textContent="@font-face{font-family:'ABC Areal';src:url("+b+"Schrift/ABCAreal-Regular.woff2) format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'ABC Areal';src:url("+b+"Schrift/ABCAreal-RegularItalic.woff2) format('woff2');font-weight:400;font-style:italic;font-display:swap}";
+  document.addEventListener('DOMContentLoaded',function(){ document.head.appendChild(st); var a=document.getElementById('home'); if(a) a.href=b; }); })();</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:'ABC Areal';src:url(/Schrift/ABCAreal-Regular.woff2) format('woff2');font-weight:400;font-display:swap}
@@ -20,7 +25,7 @@ a{color:inherit;text-decoration:underline;text-underline-offset:.15em}
 <main>
 <p>Diese Seite gibt es nicht.</p>
 <p class="en">This page does not exist.</p>
-<p style="margin-top:1.2em"><a href="/">YRD.Works / All Works</a></p>
+<p style="margin-top:1.2em"><a href="/" id="home">YRD.Works / All Works</a></p>
 </main>
 </body>
 </html>

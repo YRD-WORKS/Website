@@ -27,6 +27,7 @@
   if(/^#r\d+$/.test(location.hash) && innerWidth<=700){ if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)) h.classList.add('g3','ld2pre'); return; }   /* Handy (22.10.): aus 3D wie beim Start: drei Spalten, dann eine (site.js) */
   if(!/^#r\d+$/.test(location.hash) || (location.protocol!=='file:' && 'CSSViewTransitionRule' in window)) return;
   try{ d=sessionStorage.getItem('yrd3d'); sessionStorage.removeItem('yrd3d'); }catch(e){}
+  if(d&&!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(d)) d=null;   /* Pruefbericht 31.10.: nur ein echtes Standbild kommt ins CSS */
   if(!d){ h.classList.add('r3d'); return; }
   h.classList.add('r3db'); var s=document.createElement('style');
   s.textContent='html.r3db body::after{content:"";position:fixed;inset:0;z-index:4;pointer-events:none;background:#fff url('+d+') center / 100% 100% no-repeat;transition:opacity .6s cubic-bezier(.45,0,.55,1)}html.r3db.weg body::after{opacity:0}';
@@ -271,8 +272,8 @@
 </div>
 <script src="projects.js?v=0791746a"></script>
 <script src="portfolio/tags.js"></script>
-<script src="suche.js?v=0afcf223"></script>
+<script src="suche.js?v=a555267c"></script>
 <script src="feedback.js?v=f0e7757e"></script>
-<script src="site.js?v=28860f8a"></script>
+<script src="site.js?v=44e92f19"></script>
 </body>
 </html>

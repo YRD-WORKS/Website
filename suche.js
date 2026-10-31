@@ -51,7 +51,11 @@
     ['pointerdown','mousedown','touchstart','wheel'].forEach(function(t){ box.addEventListener(t,function(e){ e.stopPropagation(); },{passive:true}); });
     if(q){ inp.value=q; open(); }
   }
-  window.YRDSearch={ register:function(fn){ fns.push(fn); run(); }, match:match, active:active, term:function(){ return active()?q:''; } };
+  /* Pruefbericht 31.10.: set(v) setzt den Begriff von aussen (Index mit ?q= in der Adresse, Index-Suchfeld), damit Lupe, sessionStorage und Liste denselben Stand haben;
+     vorher ueberschrieb register() den ?q=-Deeplink sofort mit dem (meist leeren) sessionStorage-Wert */
+  function setQ(v){ q=String(v||''); try{ if(q) sessionStorage.setItem(KEY,q); else sessionStorage.removeItem(KEY); }catch(e){}
+    if(inp){ inp.value=q; if(q){ var f=box.querySelector('.sf'); f.hidden=false; btn.setAttribute('aria-expanded','true'); box.classList.add('open'); } } run(); }
+  window.YRDSearch={ register:function(fn){ fns.push(fn); run(); }, set:setQ, match:match, active:active, term:function(){ return active()?q:''; } };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ build(); run(); }); else { build(); run(); }
   if(DESK.addEventListener) DESK.addEventListener('change',run);
 })();

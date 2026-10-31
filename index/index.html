@@ -75,10 +75,10 @@
 @media (max-width:700px){
   .ix-row{display:block}
   .ix-row .lb{display:none}
-  .fields,#topics{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--pad));padding:0 var(--pad);scrollbar-width:none}
-  .fields::-webkit-scrollbar,#topics::-webkit-scrollbar{display:none}
+  #fields,#topics{flex-wrap:nowrap;overflow-x:auto;margin:0 calc(-1 * var(--pad));padding:0 var(--pad);scrollbar-width:none}
+  #fields::-webkit-scrollbar,#topics::-webkit-scrollbar{display:none}   /* Pruefbericht 31.10.: vorher .fields, das Element heisst #fields (Regel griff nie) */
   #topics{overflow-x:auto;margin:0 calc(-1 * var(--pad)) 1rem;padding:0 var(--pad);scrollbar-width:none}
-  .fbar .fb-r{display:flex!important} #pdf{display:none} #view{display:none}   /* Handy: Link teilen ja, PDF nein (Ruben 21.10.) */
+  body .fbar .fb-r{display:flex!important} #pdf{display:none} #view{display:none}   /* Handy: Link teilen ja, PDF nein (Ruben 21.10.) */
   .ix-lead p{font-size:13px}
   .lst li{grid-template-columns:2.4em 7.5em minmax(0,1fr) auto;row-gap:.15em}
   .lst .o{display:none}
@@ -204,7 +204,7 @@
 
 <script src="projects.js?v=0791746a"></script>
 <script src="portfolio/tags.js"></script>
-<script src="suche.js?v=0afcf223"></script>
+<script src="suche.js?v=a555267c"></script>
 <script src="feedback.js?v=f0e7757e"></script>
 <script>
 (function(){
@@ -284,8 +284,9 @@
     document.querySelectorAll('.tg[data-pn]').forEach(function(x){ x.setAttribute('aria-expanded','false'); document.getElementById(x.dataset.pn).hidden=true; });
     if(o){ if(b.dataset.pn==='pn-t') fillTopics(); else fillFields(); p.hidden=false; b.setAttribute('aria-expanded','true'); }
   }); });
-  if(window.YRDSearch&&window.matchMedia('(min-width:701px)').matches) YRDSearch.register(function(q){ st.q=q; $('#q').value=q; render(); return document.querySelectorAll('#lst li:not([hidden])').length; });
-  $('#q').addEventListener('input',function(e){ st.q=e.target.value.trim(); render(); });
+  var viaS=false;   /* Pruefbericht 31.10.: ?q= aus der Adresse zuerst in die Leisten-Suche geben, sonst loescht register() ihn; das eigene Feld meldet Eingaben dorthin */
+  if(window.YRDSearch&&YRDSearch.set&&window.matchMedia('(min-width:701px)').matches){ viaS=true; if(st.q) YRDSearch.set(st.q); YRDSearch.register(function(q){ st.q=q; if($('#q').value!==q) $('#q').value=q; render(); return document.querySelectorAll('#lst li:not([hidden])').length; }); }
+  $('#q').addEventListener('input',function(e){ st.q=e.target.value.trim(); if(viaS) YRDSearch.set(st.q); else render(); });
   $('#lst').addEventListener('click',function(e){ var c=e.target.closest('.ck'); if(!c) return; var p=D[+c.closest('li').dataset.i], k=st.p.indexOf(p.slug); if(k<0) st.p.push(p.slug); else st.p.splice(k,1); render(); if(k<0&&st.p.length===1) firstHint(); });
   function copyLink(msg){
     var u=shareUrl(target()), t=$('#toast');
@@ -322,7 +323,7 @@
       if(r&&r.indexOf(base)===0&&r.indexOf('/index/')<0&&history.length>1) history.back(); else location.href=$('#v2d').href; }
     addEventListener('pageshow',function(e){ if(e.persisted){ pg.style.transition='none'; setX(0); } });
     document.addEventListener('touchstart',function(e){ sx=null; on=false; dx=0; v=0;
-      if(e.touches.length!==1||e.target.closest('.fields,#topics,.fbar,input,textarea')) return;
+      if(e.touches.length!==1||e.target.closest('#fields,#topics,.fbar,input,textarea')) return;
       var t=e.touches[0]; if(t.clientX<24) return; sx=t.clientX; sy=t.clientY; lx=sx; lt=e.timeStamp; W=innerWidth; },{passive:true});
     document.addEventListener('touchmove',function(e){ if(sx===null) return;
       var t=e.touches[0], x=t.clientX-sx, y=t.clientY-sy;
