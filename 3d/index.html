@@ -149,7 +149,7 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
 #rinfo{display:none!important}
 .foot.off{pointer-events:none}
 #rinfo,#rbar,#r-back{z-index:19}
-/* Ruben 31.10.: Treppe in der Leistenmitte (Rechner): Overview „↓ Walk“, Walk „↑ Overview“ und „↓ Project“; sichtbar nur im Ring (body.wk), am Handy nicht (dort landet 3D von selbst im Walk, Overview/Walk stehen rechts) */
+/* Ruben 31.10.: Treppe in der Leistenmitte (Rechner): Overview „↑ Walk“, Walk „↓ Overview“ und „↑ Project“ (Ruben 31.10.: ↑ heisst vorwaerts/hinein, ↓ zurueck/hinaus, wie die Zeiger-Pfeile im Walk und „↓ Exit Project“); sichtbar nur im Ring (body.wk), am Handy nicht (dort landet 3D von selbst im Walk, Overview/Walk stehen rechts) */
 #wbar{left:50%;transform:translateX(-50%);display:none;align-items:center;gap:.6em;white-space:nowrap;pointer-events:auto;z-index:19;
   box-sizing:border-box;height:calc(var(--fb-h) + var(--fb-b) + env(safe-area-inset-bottom,0px));padding-bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px))}
 body.wk #wbar{display:flex}
@@ -298,7 +298,7 @@ html.gate-on #intro{display:none}
 <div id="ovlegal" class="foot caption"><a href="../impressum/" data-for="impressum">Impressum</a>    <a href="../datenschutz/" data-for="datenschutz">Datenschutz</a></div>
 
 <div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw" title="Raum verlassen / Exit room">↓ Exit<span class="lg pj"> Project</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
-<div id="wbar" class="foot caption" aria-label="Ansicht wechseln / Change view"><a href="#" id="w-down" class="arw" title="Hinunter in den Rundgang / Down into the walk">↓ Walk</a><a href="#" id="w-up" class="arw" title="Hinauf in die Übersicht / Up to the overview">↑ Overview</a><a href="#" id="w-in" class="arw" title="Dieses Projekt betreten / Enter this project">↓ Project</a></div>
+<div id="wbar" class="foot caption" aria-label="Ansicht wechseln / Change view"><a href="#" id="w-down" class="arw" title="Hinunter in den Rundgang / Down into the walk">↑ Walk</a><a href="#" id="w-up" class="arw" title="Hinauf in die Übersicht / Up to the overview">↓ Overview</a><a href="#" id="w-in" class="arw" title="Dieses Projekt betreten / Enter this project">↑ Project</a></div>
 <div id="rinfo" class="foot caption off"><span class="rt" id="r-title"></span><span class="n" id="r-count"></span></div>
 <a href="#" id="r-back" class="foot caption">← Back</a>
 
