@@ -98,7 +98,6 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
 /* Handy (21.10. abends): Leiste wie in 2D reduziert: links die Ansicht, rechts Overview / Walk bzw. im Raum All und Next Project; kein Download, kein Previous, Pillen groesser */
 @media (max-width:700px){#vswbar,#navmode,#abbar,#rbar,#ovlegal{font-size:15px!important}#dlbar,#abbar .fst{display:none!important}#navmode,#rbar{left:auto!important;right:0!important;transform:none!important;padding-right:calc(var(--pad) + var(--fb-in))}#abbar{left:auto!important;right:0!important;transform:none!important;padding-right:calc(var(--pad) + var(--fb-in))}#navmode button,#rbar a,#abbar .arw,#ovlegal a{padding:.45em .95em .4em!important}#rbar{gap:.5em!important}}
 /* Handy (22.10.): Leiste im Raum: links neben der Ansicht „Back“ (bis 26.10. „← Walk“) als Ausgang, rechts ← und → fuer voriges und naechstes Projekt */
-#r-close .mb{display:none}
 @media (max-width:700px){#navmode .seg{display:inline-flex!important}#navmode button[data-nav="proj"],#navmode .s2{display:none}}   /* Handy (30.10.): Overview › Walk, Project entfaellt */
 /* Desktop (22.10.): wie in 2D: rechts in der Leiste „Walk | Overview“ (Walk zuerst), die Mitte bleibt zum Navigieren; im Projektraum steht der Schalter ebenfalls rechts, ohne Auswahl, und fuehrt in Walk oder Overview; All entfaellt dort */
 @media (min-width:701px){
@@ -109,10 +108,10 @@ body[data-ov="about"] #dlbar,body[data-ov="contact"] #dlbar,body[data-ov="impres
   body.proj-open #navmode button[aria-pressed="true"]{background:var(--bg);color:var(--ink)}
   body.reading #navmode{visibility:hidden}
   body[data-ov]:not([data-ov=""]) #navmode{display:none}
-  #r-close{display:none!important}
+  /* Ruben 31.10.: Exit Project mit Pfeil nach unten zwischen Previous und Next, auch am Rechner (vorher dort ausgeblendet, All Projects nur am Handy als Back) */
 }
-@media (max-width:700px){#r-close .dk{display:none}#r-close .mb{display:inline}#r-close{order:-1;margin-right:.5em}#r-prev .lg,#r-next .lg{display:none!important}}
-@media (min-width:701px) and (max-width:1024px) and (pointer:coarse){#r-prev .pj,#r-next .pj{display:none!important}}   /* Testrunde 24.10., Lewin: Tablet hoch mit groesserer Schrift, sonst laeuft Next Project in Project / Walk / Overview; Ruben 26.10.: statt nur Pfeilen „← Previous“ und „Next →“, mittig in der Luecke (placeNav) */
+@media (max-width:700px){#r-prev .lg,#r-next .lg{display:none!important}#r-close .pj{display:none}}   /* Handy: ← | ↓ Exit | → */
+@media (min-width:701px) and (max-width:1024px) and (pointer:coarse){#r-prev .pj,#r-next .pj,#r-close .pj{display:none!important}}   /* Testrunde 24.10., Lewin: Tablet hoch mit groesserer Schrift, sonst laeuft Next Project in Project / Walk / Overview; Ruben 26.10.: statt nur Pfeilen „← Previous“ und „Next →“, mittig in der Luecke (placeNav) */
 @media (max-width:700px){#r-back{left:auto!important;right:0!important;transform:none!important;margin-right:calc(var(--pad) + var(--fb-in));font-size:15px!important;line-height:1;padding:.45em .95em .4em!important;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px) + (var(--fb-h) - 1.85em) / 2)!important;height:auto!important}}   /* Handy: Back als Pille rechts wie Next Project */
 @media (max-width:700px){body[data-ov="impressum"] #ovlegal a[data-for="impressum"],body[data-ov="datenschutz"] #ovlegal a[data-for="datenschutz"]{display:none}}
 /* Handy (22.10.): rechts die offene Seite als blau gefuellte Pille (wie Overview / Walk), ohne All und ohne die Rechtspillen */
@@ -288,7 +287,7 @@ html.gate-on #intro{display:none}
 <div id="dlbar" class="foot caption off"><a class="dlp" href="../portfolio/" title="Eigene Auswahl als PDF / Your own selection as PDF">↓ Download<span class="lg"> Portfolio</span></a></div>
 <div id="ovlegal" class="foot caption"><a href="../impressum/" data-for="impressum">Impressum</a>    <a href="../datenschutz/" data-for="datenschutz">Datenschutz</a></div>
 
-<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw"><span class="dk">All<span class="lg"> Projects</span></span><span class="mb">Back</span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
+<div id="rbar" class="foot caption off"><a href="#" id="r-prev" class="arw">←<span class="lg"> Previous<span class="pj"> Project</span></span></a><a href="#" id="r-close" class="arw" title="Raum verlassen / Exit room">↓<span class="lg"> Exit<span class="pj"> Project</span></span></a><a href="#" id="r-next" class="arw"><span class="lg">Next<span class="pj"> Project</span> </span>→</a></div>
 <div id="rinfo" class="foot caption off"><span class="rt" id="r-title"></span><span class="n" id="r-count"></span></div>
 <a href="#" id="r-back" class="foot caption">← Back</a>
 
