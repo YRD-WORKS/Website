@@ -2,43 +2,46 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>YRD.Works – Corporate (Probe mit Fotos)</title>
+<title>YRD.Works – Corporate (Iteration 2)</title>
 <base href="../">
 <link rel="stylesheet" href="corporate/tailwind.css">
 <link rel="stylesheet" href="style.css">
 <style>
-  /* Leiste unten: Seite tut so, als waere sie eine Unterseite wie About (body data-ov), Link About oben nicht unterstreichen */
   .nav .links a{text-decoration:none!important}
   body[data-ov] main{visibility:visible!important}
-  /* Platzhalter-Kasten: Haarlinie mit Diagonalen, Label in der Mitte */
   .box{position:relative;border:1px solid rgba(0,0,255,.4);display:flex;align-items:center;justify-content:center;
       background:linear-gradient(to top right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px)),
                  linear-gradient(to bottom right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px))}
   .box span{background:#fff;padding:.3em .7em;letter-spacing:.08em}
-  /* Vollbild-Video oben: randlos, auch hinter der Kopfzeile */
-  .hero{position:relative;height:100vh;height:100svh;margin:calc(-1 * (.9rem + 4.4rem)) calc(-1 * var(--pad)) 0;overflow:hidden;background:#000}
-  .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.45),rgba(0,0,40,0) 45%),linear-gradient(to bottom,rgba(0,0,40,.25),rgba(0,0,40,0) 18%);pointer-events:none}
-  .hero-in{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:1rem}
-  @media (max-width:700px){.hero-in{flex-direction:column}}
-  /* Kopfzeile weiss, solange das Video zu sehen ist */
-  body.on-hero .nav a,body.on-hero .mm-b{color:#fff;transition:color .35s}
+  /* randlose Vollbild-Abschnitte (Video oben, Projekte) */
+  .full{position:relative;height:100vh;height:100svh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));overflow:hidden;background:#000}
+  .hero{margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .full video,.full img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .full img{animation:kb 20s ease-in-out infinite alternate}
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .full::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%),linear-gradient(to bottom,rgba(0,0,40,.25),rgba(0,0,40,0) 18%);pointer-events:none}
+  .full-in{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;color:#fff}
+  .probe{position:absolute;z-index:1;top:calc(4.2rem + env(safe-area-inset-top,0px));right:var(--pad);color:#fff;font-size:.9rem;opacity:.8}
+  @media (max-width:700px){.full-in{flex-direction:column;align-items:flex-start}}
+  .full-in a{color:#fff}
+  body.on-dark .nav a,body.on-dark .mm-b{color:#fff}
   .nav a,.mm-b{transition:color .35s}
+  .lang{margin-left:1em}
+  .lang b{text-decoration:underline;text-underline-offset:.18em;font-weight:inherit}
   .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
   .reveal.on{opacity:1;transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.full img{animation:none}}
 </style>
 </head>
-<body data-ov="about" class="on-hero">
+<body data-ov="about" class="on-dark">
 
 <header class="nav cols" aria-label="Site">
   <a class="home" href="./" data-home>YRD.Works</a>
-  <div class="links"><a href="about/">About</a>    <a href="news/">News</a>    <a href="index/index.html">Index</a>    <a href="contact/">Contact</a></div>
+  <div class="links"><a href="#blick">Überblick</a>    <a href="#projekte">Projekte</a>    <a href="#kollektiv">Kollektiv</a>    <a href="#kontakt">Kontakt</a><span class="lang"><b>DE</b> / EN</span></div>
 </header>
-<!-- Handy: Menue oben rechts statt der Links -->
-<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="./" data-home>Projects</a><a href="about/">About</a><a href="news/">News</a><a href="index/index.html">Index</a><a href="contact/">Contact</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
+<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="#blick">Überblick</a><a href="#projekte">Projekte</a><a href="#kollektiv">Kollektiv</a><a href="#kontakt">Kontakt</a><a href="./" data-home>Alle Projekte</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
 <script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
   function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
   b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
@@ -48,157 +51,163 @@
 
 <main id="c" class="text-ink font-areal font-medium antialiased leading-tight">
 
-  <!-- Einstieg: Vollbild-Video wie bei Muggardt (Probe: Video aus Fotos der Seite geschnitten) -->
-  <section class="hero" id="hero">
+  <!-- 1 Einstieg: Film -->
+  <section class="full hero" id="hero">
     <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
-    <div class="hero-in">
-      <h1 class="text-5xl md:text-8xl leading-[0.95] tracking-tight text-white max-w-[16ch]">Lorem ipsum dolor sit amet.</h1>
-      <a href="#s1" class="text-lg md:text-xl text-white self-end whitespace-nowrap">↓ Lorem ipsum</a>
+    <span class="probe">Probe: Film aus Fotos</span>
+    <div class="full-in">
+      <h1 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[16ch]">Lorem ipsum dolor sit amet.</h1>
+      <a href="#blick" class="text-lg md:text-xl whitespace-nowrap">↓ Lorem ipsum</a>
     </div>
   </section>
 
-  <!-- 01 -->
-  <section id="s1" class="py-24 scroll-mt-16">
-    <div class="grid grid-cols-12 gap-4 mb-12">
-      <p class="col-span-12 md:col-span-3 text-ink/65">01 Lorem ipsum</p>
-      <p class="reveal col-span-12 md:col-span-9 text-3xl md:text-6xl leading-[1.02]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-    </div>
-    <div class="grid grid-cols-12 gap-4">
-      <p class="reveal col-span-12 md:col-start-4 md:col-span-5 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
-    </div>
-  </section>
-
-  <!-- 02 Arbeitsfelder -->
-  <section class="py-16">
-    <div class="grid grid-cols-12 gap-4 mb-12">
-      <p class="col-span-12 md:col-span-3 text-ink/65">02 Lorem ipsum</p>
-      <h2 class="col-span-12 md:col-span-9 text-3xl md:text-5xl">Lorem ipsum dolor sit.</h2>
-    </div>
-    <div class="border-t border-ink/30">
-      <article class="reveal grid grid-cols-12 gap-4 border-b border-ink/30 py-8">
-        <span class="col-span-2 md:col-span-1 text-ink/65">A</span>
-        <h3 class="col-span-10 md:col-span-4 text-2xl md:text-4xl">Lorem ipsum</h3>
-        <p class="col-span-12 md:col-span-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-        <a href="tables/" class="col-span-12 md:col-span-3 block group"><img src="Bilder/2023-tables/hero-900.webp" alt="Tables" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"></a>
-      </article>
-      <article class="reveal grid grid-cols-12 gap-4 border-b border-ink/30 py-8">
-        <span class="col-span-2 md:col-span-1 text-ink/65">B</span>
-        <h3 class="col-span-10 md:col-span-4 text-2xl md:text-4xl">Dolor sit amet</h3>
-        <p class="col-span-12 md:col-span-4 font-normal text-lg">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
-        <a href="oper-offenbach/" class="col-span-12 md:col-span-3 block group"><img src="Bilder/2018-oper-offenbach/01-900.webp" alt="Oper Offenbach" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"></a>
-      </article>
-      <article class="reveal grid grid-cols-12 gap-4 border-b border-ink/30 py-8">
-        <span class="col-span-2 md:col-span-1 text-ink/65">C</span>
-        <h3 class="col-span-10 md:col-span-4 text-2xl md:text-4xl">Consectetur</h3>
-        <p class="col-span-12 md:col-span-4 font-normal text-lg">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</p>
-        <a href="kressmann-halle/" class="col-span-12 md:col-span-3 block group"><img src="Bilder/2016-kressmann-halle/01-900.webp" alt="Kressmann-Halle" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"></a>
-      </article>
-      <article class="reveal grid grid-cols-12 gap-4 border-b border-ink/30 py-8">
-        <span class="col-span-2 md:col-span-1 text-ink/65">D</span>
-        <h3 class="col-span-10 md:col-span-4 text-2xl md:text-4xl">Adipiscing elit</h3>
-        <p class="col-span-12 md:col-span-4 font-normal text-lg">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.</p>
-        <a href="current-tours/" class="col-span-12 md:col-span-3 block group"><img src="Bilder/2022-current-tours/01-900.webp" alt="Current Tours" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"></a>
-      </article>
-    </div>
-  </section>
-
-  <!-- 03 Grafik -->
-  <section class="py-24">
-    <div class="grid grid-cols-12 gap-4 mb-10">
-      <p class="col-span-12 md:col-span-3 text-ink/65">03 Lorem ipsum</p>
-      <h2 class="col-span-12 md:col-span-9 text-3xl md:text-5xl">Lorem ipsum dolor sit amet.</h2>
-    </div>
-    <div class="reveal box aspect-[16/7]"><span>GRAFIK</span></div>
-    <ol class="mt-8 grid grid-cols-1 md:grid-cols-5 border-t border-ink/30">
-      <li class="reveal border-b md:border-b-0 md:border-r border-ink/30 py-6 md:pr-4"><span class="text-ink/65">1</span><h3 class="text-xl md:text-2xl mt-6">Lorem</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet.</p></li>
-      <li class="reveal border-b md:border-b-0 md:border-r border-ink/30 py-6 md:px-4"><span class="text-ink/65">2</span><h3 class="text-xl md:text-2xl mt-6">Ipsum</h3><p class="font-normal mt-2">Consectetur adipiscing elit.</p></li>
-      <li class="reveal border-b md:border-b-0 md:border-r border-ink/30 py-6 md:px-4"><span class="text-ink/65">3</span><h3 class="text-xl md:text-2xl mt-6">Dolor</h3><p class="font-normal mt-2">Sed do eiusmod tempor.</p></li>
-      <li class="reveal border-b md:border-b-0 md:border-r border-ink/30 py-6 md:px-4"><span class="text-ink/65">4</span><h3 class="text-xl md:text-2xl mt-6">Sit</h3><p class="font-normal mt-2">Ut labore et dolore magna.</p></li>
-      <li class="reveal py-6 md:pl-4"><span class="text-ink/65">5</span><h3 class="text-xl md:text-2xl mt-6">Amet</h3><p class="font-normal mt-2">Ut enim ad minim veniam.</p></li>
-    </ol>
-  </section>
-
-  <!-- 04 Plaene -->
-  <section id="s4" class="py-24 scroll-mt-16">
-    <div class="grid grid-cols-12 gap-4 mb-12">
-      <p class="col-span-12 md:col-span-3 text-ink/65">04 Lorem ipsum</p>
-      <h2 class="col-span-12 md:col-span-9 text-3xl md:text-5xl">Lorem ipsum dolor sit amet.</h2>
-    </div>
-    <figure class="reveal mb-16">
-      <div class="box aspect-[16/9]"><span>PLAN</span></div>
-      <figcaption class="mt-3 grid grid-cols-12 gap-4 text-base font-normal">
-        <span class="col-span-12 md:col-span-6">Lorem ipsum, dolor sit amet</span>
-        <span class="col-span-12 md:col-span-6 md:text-right text-ink/65">Lorem · 0000</span>
-      </figcaption>
-    </figure>
-    <div class="grid grid-cols-12 gap-4">
-      <figure class="reveal col-span-12 md:col-span-7">
-        <div class="box aspect-[4/3]"><span>PLAN</span></div>
-        <figcaption class="mt-3 text-base font-normal">Lorem ipsum dolor <span class="text-ink/65">· Lorem · 0000</span></figcaption>
-      </figure>
-      <figure class="reveal col-span-12 md:col-span-5 md:mt-40">
-        <div class="box aspect-[3/4]"><span>PLAN</span></div>
-        <figcaption class="mt-3 text-base font-normal">Lorem ipsum dolor <span class="text-ink/65">· Lorem · 0000</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- 05 Three.js -->
-  <section class="py-24 border-t border-ink/30">
-    <div class="grid grid-cols-12 gap-4">
-      <div class="col-span-12 md:col-span-4">
-        <p class="text-ink/65">05 Lorem ipsum</p>
-        <h2 class="reveal mt-6 text-3xl md:text-5xl">Lorem ipsum dolor sit amet.</h2>
-        <p class="reveal mt-6 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <!-- 2 Auf einen Blick -->
+  <section id="blick" class="pt-24 pb-16 scroll-mt-16">
+    <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
+      <div class="reveal">
+        <p class="text-ink/65 text-base mb-4">Wir gestalten</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Lorem</li><li>Ipsum</li><li>Dolor</li><li>Sit amet</li><li>Consectetur</li><li>Adipiscing</li></ul>
       </div>
-      <div class="reveal box col-span-12 md:col-span-8 aspect-[4/3]"><span>THREE.JS MODEL</span></div>
-    </div>
-  </section>
-
-  <!-- 06 Drei Punkte -->
-  <section class="py-24">
-    <div class="grid grid-cols-12 gap-4">
-      <p class="col-span-12 md:col-span-3 text-ink/65">06 Lorem ipsum</p>
-      <div class="col-span-12 md:col-span-9">
-        <h2 class="reveal text-3xl md:text-5xl">Lorem ipsum dolor sit.</h2>
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8 font-normal text-lg">
-          <p class="reveal border-t border-ink/30 pt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p class="reveal border-t border-ink/30 pt-4">Sed do eiusmod tempor incididunt ut labore et dolore.</p>
-          <p class="reveal border-t border-ink/30 pt-4">Ut enim ad minim veniam, quis nostrud exercitation.</p>
-        </div>
+      <div class="reveal">
+        <p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Lorem</li><li>Ipsum</li><li>Dolor</li><li>Sit amet</li><li>Elit</li></ul>
       </div>
     </div>
+    <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
+      <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
+      <p class="reveal col-span-12 md:col-span-9 text-xl md:text-3xl leading-snug">Jüdisches Museum Frankfurt · Senckenberg Museum · Künstlerhaus Mousonturm · Kulturstiftung des Bundes · Stadt Frankfurt, Stabsstelle Digitalisierung · Node e.V.</p>
+    </div>
   </section>
 
-  <!-- 07 Projekte -->
-  <section class="py-16">
-    <div class="grid grid-cols-12 gap-4 mb-10">
-      <p class="col-span-12 md:col-span-3 text-ink/65">07 Lorem ipsum</p>
-      <a href="./" class="col-span-12 md:col-span-9 md:text-right text-lg">Lorem ipsum →</a>
+  <div id="projekte" class="scroll-mt-0"></div>
+
+  <!-- PROJEKT 1 -->
+  <section class="full">
+    <img src="Bilder/2024-im-angesicht-des-todes/01.webp" alt="Im Angesicht des Todes">
+    <span class="probe">Probe: Foto statt Film</span>
+    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">01 · Jüdisches Museum Frankfurt</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Im Angesicht des Todes</h2></div><a href="im-angesicht-des-todes/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
+  </section>
+  <section class="py-16 grid grid-cols-12 gap-4">
+    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
+      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Jüdisches Museum Frankfurt</dd>
+      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2024</dd>
+      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
+      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2">Ausstellungsarchitektur</dd>
+      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">–</dd>
+    </dl>
+    <div class="col-span-12 md:col-span-8">
+      <p class="reveal text-ink/65 text-base mb-3">Wie es entstanden ist</p>
+      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2024-im-angesicht-des-todes/02.webp" alt="" loading="lazy"></div>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8">
-      <a href="display/" class="reveal block group"><img src="Bilder/2026-display/01-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Display <span class="text-ink/65">2026</span></span></a>
-      <a href="bingenheim/" class="reveal block group"><img src="Bilder/2025-bingenheim/hero-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Bingenheim <span class="text-ink/65">2025</span></span></a>
-      <a href="soups/" class="reveal block group"><img src="Bilder/2023-soups/01-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Soups <span class="text-ink/65">2023</span></span></a>
-      <a href="hole-mound/" class="reveal block group"><img src="Bilder/2023-hole-mound/hero-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Hole/Mound <span class="text-ink/65">2023</span></span></a>
-      <a href="forschungswerkstatt/" class="reveal block group"><img src="Bilder/2022-forschungswerkstatt/01-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Forschungswerkstatt <span class="text-ink/65">2022</span></span></a>
-      <a href="logis/" class="reveal block group"><img src="Bilder/2021-logis/01-900.webp" alt="" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 flex flex-wrap gap-x-3 text-base font-normal">Logis <span class="text-ink/65">2021</span></span></a>
+  </section>
+
+  <!-- PROJEKT 2 -->
+  <section class="full">
+    <img src="Bilder/2022-forschungswerkstatt/01.webp" alt="Forschungswerkstatt" loading="lazy">
+    <span class="probe">Probe: Foto statt Film</span>
+    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">02 · Senckenberg Museum</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Forschungswerkstatt</h2></div><a href="forschungswerkstatt/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
+  </section>
+  <section class="py-16 grid grid-cols-12 gap-4">
+    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
+      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Senckenberg Museum</dd>
+      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2022</dd>
+      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
+      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2">Werkstatt für Kinder und Jugendliche in der Dauerausstellung</dd>
+      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">–</dd>
+    </dl>
+    <div class="col-span-12 md:col-span-8">
+      <p class="reveal text-ink/65 text-base mb-3">Wie es entstanden ist</p>
+      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2022-forschungswerkstatt/02.webp" alt="" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- PROJEKT 3 -->
+  <section class="full">
+    <img src="Bilder/2020-access/01.webp" alt="Access" loading="lazy">
+    <span class="probe">Probe: Foto statt Film</span>
+    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">03 · Senckenberg Museum</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Access</h2></div><a href="access/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
+  </section>
+  <section class="py-16 grid grid-cols-12 gap-4">
+    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
+      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Senckenberg Museum</dd>
+      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2020</dd>
+      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
+      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2">Ausstellungspavillon, Entwicklung und Umsetzung</dd>
+      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Frankfurter Kunstverein</dd>
+    </dl>
+    <div class="col-span-12 md:col-span-8">
+      <p class="reveal text-ink/65 text-base mb-3">Wie es entstanden ist</p>
+      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2020-access/02.webp" alt="" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- PROJEKT 4 -->
+  <section class="full">
+    <img src="Bilder/2018-oper-offenbach/01.webp" alt="Oper Offenbach" loading="lazy">
+    <span class="probe">Probe: Foto statt Film</span>
+    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">04 · Künstlerhaus Mousonturm</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Oper Offenbach</h2></div><a href="oper-offenbach/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
+  </section>
+  <section class="py-16 grid grid-cols-12 gap-4">
+    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
+      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Künstlerhaus Mousonturm, Kulturstiftung des Bundes</dd>
+      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2018</dd>
+      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Offenbach</dd>
+      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2">Vier Skulpturen als Bühnen, Entwicklung und Umsetzung</dd>
+      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Baby of Control, Kulturamt Offenbach</dd>
+    </dl>
+    <div class="col-span-12 md:col-span-8">
+      <p class="reveal text-ink/65 text-base mb-3">Wie es entstanden ist</p>
+      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2018-oper-offenbach/02.webp" alt="" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- PROJEKT 5 -->
+  <section class="full">
+    <img src="Bilder/2026-display/01.webp" alt="Display" loading="lazy">
+    <span class="probe">Probe: Foto statt Film</span>
+    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">05 · Stadt Frankfurt, Node e.V.</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Display</h2></div><a href="display/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
+  </section>
+  <section class="py-16 grid grid-cols-12 gap-4">
+    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
+      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Stadt Frankfurt, Stabsstelle Digitalisierung; Node e.V.</dd>
+      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2025</dd>
+      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
+      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2">Raumkonzept für einen Treffpunkt zu digitalen Themen</dd>
+      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Node e.V.</dd>
+    </dl>
+    <div class="col-span-12 md:col-span-8">
+      <p class="reveal text-ink/65 text-base mb-3">Wie es entstanden ist</p>
+      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2026-display/02.webp" alt="" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- Kollektiv -->
+  <section id="kollektiv" class="py-24 border-t border-ink/30 scroll-mt-16">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-5">
+        <p class="text-ink/65 text-base mb-6">Kollektiv</p>
+        <p class="reveal text-3xl md:text-5xl leading-[1.05]">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+        <p class="reveal mt-6 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+      </div>
+      <div class="reveal box col-span-12 md:col-span-7 aspect-[4/3]"><span>FOTO</span></div>
     </div>
   </section>
 
   <!-- Kontakt -->
-  <section id="kontakt" class="min-h-[80vh] flex flex-col justify-center py-24 scroll-mt-16">
-    <p class="text-ink/65 mb-6">08 Kontakt</p>
+  <section id="kontakt" class="min-h-[70vh] flex flex-col justify-center py-24 scroll-mt-16">
+    <p class="text-ink/65 text-base mb-6">Kontakt</p>
     <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[14ch]">Lorem ipsum dolor sit.</h2>
-    <div class="mt-12 flex flex-wrap gap-3 text-lg">
-      <a href="#" class="rounded-full bg-ink text-white px-6 py-3 hover:opacity-80 transition">Lorem ipsum</a>
-      <a href="#" class="rounded-full border-2 border-ink px-6 py-3 hover:bg-ink hover:text-white transition">Dolor sit</a>
-    </div>
+    <a href="mailto:info@yrd.works" class="mt-10 text-2xl md:text-4xl underline underline-offset-4">info@yrd.works</a>
   </section>
 
 </main>
 
-<!-- Schwebende Leiste wie auf der About-Seite; mittlere Pille heisst hier Corporate -->
 <div class="fbar caption" id="fbar">
   <div class="fb-l"><a href="./" class="arw fback">←<span class="lg"> Back to</span> Projects</a></div>
   <div class="fb-c"><span class="arw fst" data-for="about" aria-current="page">Corporate</span></div>
@@ -206,11 +215,11 @@
 </div>
 
 <script>
-  // Video: Handy bekommt die kleine Fassung, bei reduzierter Bewegung nur das Standbild
   (function(){ var v=document.getElementById('hv'), small=matchMedia('(max-width:900px)').matches;
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches){ v.removeAttribute('autoplay'); return; }
-    v.src='corporate/'+(small?'video-mobil.mp4':'video.mp4'); v.play&&v.play().catch(function(){});
-    var h=document.getElementById('hero'); new IntersectionObserver(function(e){ document.body.classList.toggle('on-hero', e[0].intersectionRatio>0.08); },{threshold:[0,0.08,0.2]}).observe(h);
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ v.src='corporate/'+(small?'video-mobil.mp4':'video.mp4'); v.play&&v.play().catch(function(){}); } else v.removeAttribute('autoplay');
+    var full=[].slice.call(document.querySelectorAll('.full')), on=new Set();
+    var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) on.add(e.target); else on.delete(e.target); }); document.body.classList.toggle('on-dark', on.size>0); },{rootMargin:'0px 0px -94% 0px'});
+    full.forEach(function(f){ o.observe(f); });
   })();
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
