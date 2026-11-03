@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>YRD.Works – Corporate (Iteration 4)</title>
+<title>YRD.Works – Corporate (Iteration 5)</title>
 <base href="../">
 <link rel="stylesheet" href="corporate/tailwind.css">
 <link rel="stylesheet" href="style.css">
@@ -14,7 +14,8 @@
   .box{position:relative;border:1px solid rgba(0,0,255,.4);display:flex;align-items:center;justify-content:center;
       background:linear-gradient(to top right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px)),
                  linear-gradient(to bottom right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px))}
-  .box span{background:#fff;padding:.3em .7em;letter-spacing:.08em}
+  .box{overflow:hidden}
+  .box span{background:#fff;padding:.3em .7em;letter-spacing:.08em;max-width:90%;overflow-wrap:anywhere;text-align:center}
   /* randlose Vollbild-Abschnitte (Video oben, Projekte) */
   .full{position:relative;height:100vh;height:100svh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));overflow:hidden;background:#000}
   .hero{margin-top:calc(-1 * (.9rem + 4.4rem))}
@@ -42,9 +43,9 @@
 
 <header class="nav cols" aria-label="Site">
   <a class="home" href="./" data-home>YRD.Works</a>
-  <div class="links"><a href="#blick">Überblick</a>    <a href="#projekte">Projekte</a>    <a href="#kollektiv">Kollektiv</a>    <a href="#kontakt">Kontakt</a><span class="lang"><b>DE</b> / EN</span></div>
+  <div class="links"><a href="#blick">Überblick</a>    <a href="#kompetenzen">Kompetenzen</a>    <a href="#zusammenarbeit">Zusammenarbeit</a>    <a href="#kontakt">Kontakt</a><span class="lang"><b>DE</b> / EN</span></div>
 </header>
-<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="#blick">Überblick</a><a href="#projekte">Projekte</a><a href="#kollektiv">Kollektiv</a><a href="#kontakt">Kontakt</a><a href="./" data-home>Alle Projekte</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
+<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="#blick">Überblick</a><a href="#kompetenzen">Kompetenzen</a><a href="#zusammenarbeit">Zusammenarbeit</a><a href="#kontakt">Kontakt</a><a href="./" data-home>Alle Projekte</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
 <script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
   function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
   b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
@@ -65,17 +66,13 @@
   </section>
 
   <!-- 2 Auf einen Blick -->
-  <section id="blick" class="pt-24 pb-16 scroll-mt-16">
+  <section id="blick" class="pt-24 pb-8 scroll-mt-16">
     <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
     <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
-      <div class="reveal">
-        <p class="text-ink/65 text-base mb-4">Wir gestalten</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul>
-      </div>
-      <div class="reveal">
-        <p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul>
-      </div>
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir gestalten</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul></div>
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul></div>
     </div>
     <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
       <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
@@ -83,123 +80,95 @@
     </div>
   </section>
 
-  <div id="projekte" class="scroll-mt-0"></div>
-
-  <!-- PROJEKT 1 -->
-  <section class="full">
-    <img src="Bilder/2024-im-angesicht-des-todes/01.webp" alt="Im Angesicht des Todes">
-    <span class="probe">Probe: Foto statt Film</span>
-    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">01 · Jüdisches Museum Frankfurt</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Im Angesicht des Todes</h2></div><a href="im-angesicht-des-todes/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
-  </section>
-  <section class="py-16 grid grid-cols-12 gap-4">
-    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
-      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Jüdisches Museum Frankfurt</dd>
-      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2024</dd>
-      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
-      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2 steps"><span class="on">Konzept</span><span class="on">Planung</span><span class="on">Projektsteuerung</span></dd>
-      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">–</dd>
-    </dl>
-    <div class="col-span-12 md:col-span-8">
-      <p class="reveal text-ink/65 text-base mb-3">Entstehung</p>
-      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2024-im-angesicht-des-todes/02.webp" alt="" loading="lazy"></div>
-    </div>
-  </section>
-
-  <!-- PROJEKT 2 -->
-  <section class="full">
-    <img src="Bilder/2022-forschungswerkstatt/01.webp" alt="Forschungswerkstatt" loading="lazy">
-    <span class="probe">Probe: Foto statt Film</span>
-    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">02 · Senckenberg Museum</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Forschungswerkstatt</h2></div><a href="forschungswerkstatt/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
-  </section>
-  <section class="py-16 grid grid-cols-12 gap-4">
-    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
-      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Senckenberg Museum</dd>
-      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2022</dd>
-      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
-      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2 steps"><span class="on">Konzept</span><span class="on">Planung</span><span class="on">Projektsteuerung</span></dd>
-      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">–</dd>
-    </dl>
-    <div class="col-span-12 md:col-span-8">
-      <p class="reveal text-ink/65 text-base mb-3">Entstehung</p>
-      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2022-forschungswerkstatt/02.webp" alt="" loading="lazy"></div>
-    </div>
-  </section>
-
-  <!-- PROJEKT 3 -->
-  <section class="full">
-    <img src="Bilder/2020-access/01.webp" alt="Access" loading="lazy">
-    <span class="probe">Probe: Foto statt Film</span>
-    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">03 · Senckenberg Museum</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Access</h2></div><a href="access/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
-  </section>
-  <section class="py-16 grid grid-cols-12 gap-4">
-    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
-      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Senckenberg Museum</dd>
-      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2020</dd>
-      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
-      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2 steps"><span class="on">Konzept</span><span class="on">Planung</span><span class="on">Projektsteuerung</span><span class="on">Produktion</span><span class="on">Umsetzung vor Ort</span></dd>
-      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Frankfurter Kunstverein</dd>
-    </dl>
-    <div class="col-span-12 md:col-span-8">
-      <p class="reveal text-ink/65 text-base mb-3">Entstehung</p>
-      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2020-access/02.webp" alt="" loading="lazy"></div>
-    </div>
-  </section>
-
-  <!-- PROJEKT 4 -->
-  <section class="full">
-    <img src="Bilder/2018-oper-offenbach/01.webp" alt="Oper Offenbach" loading="lazy">
-    <span class="probe">Probe: Foto statt Film</span>
-    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">04 · Künstlerhaus Mousonturm</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Oper Offenbach</h2></div><a href="oper-offenbach/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
-  </section>
-  <section class="py-16 grid grid-cols-12 gap-4">
-    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
-      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Künstlerhaus Mousonturm, Kulturstiftung des Bundes</dd>
-      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2018</dd>
-      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Offenbach</dd>
-      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2 steps"><span class="on">Konzept</span><span class="on">Planung</span><span class="on">Projektsteuerung</span><span class="on">Produktion</span><span class="on">Betrieb</span></dd>
-      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Baby of Control, Kulturamt Offenbach</dd>
-    </dl>
-    <div class="col-span-12 md:col-span-8">
-      <p class="reveal text-ink/65 text-base mb-3">Entstehung</p>
-      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2018-oper-offenbach/02.webp" alt="" loading="lazy"></div>
-    </div>
-  </section>
-
-  <!-- PROJEKT 5 -->
-  <section class="full">
-    <img src="Bilder/2026-display/01.webp" alt="Display" loading="lazy">
-    <span class="probe">Probe: Foto statt Film</span>
-    <div class="full-in"><div><p class="text-lg md:text-xl mb-2">05 · Stadt Frankfurt, Node e.V.</p><h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Display</h2></div><a href="display/" class="text-lg md:text-xl whitespace-nowrap">Projektseite →</a></div>
-  </section>
-  <section class="py-16 grid grid-cols-12 gap-4">
-    <dl class="reveal col-span-12 md:col-span-4 grid grid-cols-3 gap-y-2 text-base font-normal border-t border-ink/30 pt-3 self-start">
-      <dt class="text-ink/65">Auftraggeber</dt><dd class="col-span-2">Stadt Frankfurt, Stabsstelle Digitalisierung; Node e.V.</dd>
-      <dt class="text-ink/65">Jahr</dt><dd class="col-span-2">2025</dd>
-      <dt class="text-ink/65">Ort</dt><dd class="col-span-2">Frankfurt</dd>
-      <dt class="text-ink/65">Leistung</dt><dd class="col-span-2 steps"><span class="on">Konzept</span><span class="on">Planung</span><span class="on">Projektsteuerung</span></dd>
-      <dt class="text-ink/65">Partner</dt><dd class="col-span-2">Node e.V.</dd>
-    </dl>
-    <div class="col-span-12 md:col-span-8">
-      <p class="reveal text-ink/65 text-base mb-3">Entstehung</p>
-      <p class="reveal text-xl md:text-2xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.</p>
-      <div class="mt-8 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3]"><span>PLAN</span></div><img class="reveal w-full aspect-[4/3] object-cover" src="Bilder/2026-display/02.webp" alt="" loading="lazy"></div>
-    </div>
-  </section>
-
-  <!-- Kollektiv -->
-  <section id="kollektiv" class="py-24 border-t border-ink/30 scroll-mt-16">
-    <div class="grid grid-cols-12 gap-4">
-      <div class="col-span-12 md:col-span-5">
-        <p class="text-ink/65 text-base mb-6">Kollektiv</p>
-        <p class="reveal text-3xl md:text-5xl leading-[1.05]">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
-        <p class="reveal mt-6 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+  <!-- 3 Kompetenzen -->
+  <section id="kompetenzen" class="pt-24 pb-16 scroll-mt-16">
+    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Kompetenzen</h2>
+    <div class="mt-20 border-t border-ink/30 pt-3"><p class="text-ink/65 text-base">Räume</p></div>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">01</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Räume für Wissensvermittlung entwickeln</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>PLAN</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>FOTO AUFBAU</span></div></div>
       </div>
-      <div class="reveal box col-span-12 md:col-span-7 aspect-[4/3]"><span>FOTO</span></div>
+      <a href="forschungswerkstatt/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2022-forschungswerkstatt/02.webp" alt="Forschungswerkstatt" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Forschungswerkstatt →</span></a>
+    </article>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">02</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Ausstellungsarchitektur planen und bauen</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>PLAN</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>3D-MODELL</span></div></div>
+      </div>
+      <a href="im-angesicht-des-todes/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2024-im-angesicht-des-todes/03.webp" alt="Im Angesicht des Todes" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Im Angesicht des Todes →</span></a>
+    </article>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">03</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Temporäre Orte aufbauen und betreiben</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>FOTO AUFBAU</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>PLAN</span></div></div>
+      </div>
+      <a href="oper-offenbach/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2018-oper-offenbach/03.webp" alt="Oper Offenbach" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Oper Offenbach →</span></a>
+    </article>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">04</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Leerstand und Zwischennutzung aktivieren</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>PLAN</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>FOTO WERKSTATT</span></div></div>
+      </div>
+      <a href="kressmann-halle/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2016-kressmann-halle/01.webp" alt="Kressmann-Halle" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Kressmann-Halle →</span></a>
+    </article><div class="mt-20 border-t border-ink/30 pt-3"><p class="text-ink/65 text-base">Prozesse</p></div>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">05</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Beteiligung und partizipative Formate</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>GRAFIK</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>FOTO</span></div></div>
+      </div>
+      <a href="current-tours/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2022-current-tours/01.webp" alt="Current Tours" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Current Tours →</span></a>
+    </article>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">06</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Planung und Genehmigungen koordinieren</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>PLAN</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>DETAIL</span></div></div>
+      </div>
+      <a href="access/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2020-access/03.webp" alt="Access" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Access →</span></a>
+    </article>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">07</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Projektsteuerung mit Gewerken und Partnern</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>GRAFIK</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>FOTO AUFBAU</span></div></div>
+      </div>
+      <a href="display/" class="reveal block group col-span-12 md:col-span-6"><img src="Bilder/2026-display/03.webp" alt="Display" loading="lazy" class="block w-full aspect-[4/3] object-cover group-hover:opacity-80 transition"><span class="mt-2 block text-base font-normal">Beispiel: Display →</span></a>
+    </article><div class="mt-20 border-t border-ink/30 pt-3"><p class="text-ink/65 text-base">Werkzeuge</p></div>
+    <article class="mt-10 grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6 md:pr-8">
+        <span class="text-ink/65">08</span>
+        <h3 class="reveal mt-2 text-3xl md:text-5xl leading-[1.02]">Digitale Werkzeuge: 3D, Visualisierung, Web</h3>
+        <p class="reveal mt-4 font-normal text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
+        <div class="mt-6 grid grid-cols-2 gap-4"><div class="reveal box aspect-[4/3] md:aspect-square"><span>3D-MODELL</span></div><div class="reveal box aspect-[4/3] md:aspect-square"><span>VISUALISIERUNG</span></div></div>
+      </div>
+      <a href="3d/" class="reveal block col-span-12 md:col-span-6"><div class="box aspect-[4/3]"><span>THREE.JS MODEL</span></div><span class="mt-2 block text-base font-normal">Beispiel: 3D-Ansicht der Website →</span></a>
+    </article>
+  </section>
+
+  <!-- 4 Zusammenarbeit -->
+  <section id="zusammenarbeit" class="pt-24 pb-16 scroll-mt-16">
+    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Zusammenarbeit</h2>
+    <p class="reveal mt-8 text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
+    <ol class="mt-12 grid grid-cols-2 md:grid-cols-6 gap-x-4"><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">1</span><h3 class="text-xl md:text-2xl mt-4">Konzept</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">2</span><h3 class="text-xl md:text-2xl mt-4">Planung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">3</span><h3 class="text-xl md:text-2xl mt-4">Projektsteuerung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">4</span><h3 class="text-xl md:text-2xl mt-4">Produktion</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">5</span><h3 class="text-xl md:text-2xl mt-4">Umsetzung vor Ort</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">6</span><h3 class="text-xl md:text-2xl mt-4">Betrieb</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li></ol>
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 font-normal text-lg">
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">YRD.Works</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Netzwerk</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Auftraggeber</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
     </div>
+    <div class="mt-16 grid grid-cols-12 gap-4"><div class="reveal box col-span-12 md:col-span-7 aspect-[16/9]"><span>FOTO WERKSTATT</span></div><div class="reveal box col-span-12 md:col-span-5 aspect-[4/3] md:mt-24"><span>FOTO AUFBAU</span></div></div>
   </section>
 
   <!-- Kontakt -->
