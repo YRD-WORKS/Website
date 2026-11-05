@@ -69,22 +69,11 @@
   [data-from]{will-change:transform}
   body.on-dark2 .nav a,body.on-dark2 .mm-b{color:#fff}
   @media (prefers-reduced-motion:reduce){[data-from]{transform:none!important;opacity:1!important}}
-  /* leiser (05.11.2026): Typo stark zurückgenommen, größte Stufe ca. 2rem */
-  main [class*="text-8xl"]{font-size:1.6rem!important;line-height:1.1!important;letter-spacing:0!important}
-  main [class*="text-6xl"]{font-size:1.35rem!important;line-height:1.2!important}
-  main [class*="text-5xl"]:not([class*="text-8xl"]){font-size:1.3rem!important;line-height:1.15!important}
-  main [class*="text-4xl"]:not([class*="text-6xl"]){font-size:1.15rem!important;line-height:1.3!important}
-  main [class*="md:text-3xl"]{font-size:1.05rem!important;line-height:1.35!important}
-  main [class*="md:text-2xl"]{font-size:1rem!important;line-height:1.35!important}
-  main .text-lg{font-size:1rem!important}
-  @media (min-width:768px){
-    main [class*="text-8xl"]{font-size:2.1rem!important}
-    main [class*="text-6xl"]{font-size:1.6rem!important}
-    main [class*="text-5xl"]:not([class*="text-8xl"]){font-size:1.6rem!important}
-    main [class*="text-4xl"]:not([class*="text-6xl"]){font-size:1.3rem!important}
-    main [class*="md:text-3xl"]{font-size:1.15rem!important}
-    main [class*="md:text-2xl"]{font-size:1.05rem!important}
-  }
+  /* wie Original (05.11.2026): eine Schriftgröße wie auf yrd.works, Strich 550 vom Original, Labels hellblau wie Year/Location auf den Projektseiten */
+  main{font-weight:inherit}
+  main [class*="text-lg"],main [class*="text-xl"],main [class*="text-2xl"],main [class*="text-3xl"],main [class*="text-4xl"],main [class*="text-5xl"],main [class*="text-6xl"],main [class*="text-8xl"],main .text-base,main .t-h,main .tc-h,main .sl .t-h{font-size:inherit!important;line-height:inherit!important;letter-spacing:normal!important;font-weight:inherit!important}
+  main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
+  main .full-in,main .tc-h,main .t-h{max-width:none}
 </style>
 </head>
 <body data-ov="about" class="on-dark">
