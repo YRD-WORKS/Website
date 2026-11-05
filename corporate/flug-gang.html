@@ -221,7 +221,7 @@
     var vw=innerWidth, vh=innerHeight, mob=vw<=700, P=mob?vw*1.35:vw*.7;
     var w=(mob?.8:.52)*vw, kH=mob?.72:.75, A=(mob?.3:.72)*w, D=P*2.4;   /* längere Wege zwischen den Bildern */
     var g={vw:vw, vh:vh, mob:mob, P:P, cx:vw/2, cy:vh*(mob?.42:.47), w:w, h:w/1.5, kH:kH, A:A, D:D,
-      HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4), yawMax:mob?4:7};
+      HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4), yawMax:0};   /* Bilder stehen gerade, der Blick dreht sich nicht (Ruben 05.11.) */
     g.zh=-(P/kH-P);                          /* Abstand vor dem Bild in Lesestellung */
     g.cz0=P*.95;                             /* hier steht man vor dem ersten Bild: durch den Film hindurch */
     g.z=ps.map(function(_,i){ return g.zh-g.cz0-i*D; });   /* Bildpositionen in der Tiefe */
@@ -290,20 +290,19 @@
      Erst wenn man aufhört, zieht ein sanfter Magnet in die nächste Lesestellung. Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei. ?snap=0 schaltet die Steuerung ab. */
   /* alle Fotos vorab entpacken, damit beim ersten Erscheinen nichts hängt */
   ps.forEach(function(p){ var im=p.querySelector('img'); if(im&&im.decode) im.decode().catch(function(){}); });
-  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=1.1, TAU=0.24, MAG=0.42, IDLE=320;
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=2.0, TAU=0.4, MAG=0.6, IDLE=500, VMAX=0.8, RAD=0.3;   /* 2 Bildschirmhöhen Scrollweg je Kapitel, höchstens 0,8 Kapitel pro Sekunde */
   var magT=null, rest=0, tgt=0, sv=0, raf=0, lastT=0, idleT=-1e9, lastWheel=0, touching=false, NOSNAP=/[?&]snap=0/.test(location.search), rq=0, top0=0;
   function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
   function nearest(s){ return snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }); }
-  /* Magnet mit Richtung: wer mehr als ein Viertel des Wegs gegangen ist, kommt zum nächsten Bild in dieser Richtung, sonst zurück */
-  function magnet(){ if(Math.abs(tgt-rest)<0.25) return nearest(tgt);
-    var c=snaps.filter(function(t){ return tgt>rest ? t>rest+0.01 : t<rest-0.01; }); return c.length ? c.reduce(function(a,b){ return Math.abs(b-tgt)<Math.abs(a-tgt)?b:a; }) : nearest(tgt); }
+  /* Magnet nur in der Nähe eines Bildes: wer zwischen zwei Kapiteln aufhört, bleibt dort stehen */
+  function magnet(){ var n=nearest(tgt); return Math.abs(n-tgt)<RAD ? n : tgt; }
   function clampT(t){ return Math.max(0,Math.min(snaps[LAST],t)); }
   function inside(){ var s=sNow(); return s>-0.02 && s<snaps[LAST]+0.02; }
   function kick(){ if(!raf){ top0=scrollY+sec.getBoundingClientRect().top; lastT=performance.now(); raf=requestAnimationFrame(loop); } }
   function loop(now){
     var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now;
     if(!touching && now-idleT>IDLE){ if(magT===null) magT=magnet(); tgt+=(magT-tgt)*(1-Math.exp(-dt/MAG)); }   /* Magnet, erst nach dem Aufhören */
-    var prev=sv; sv+=(tgt-sv)*(1-Math.exp(-dt/TAU));
+    var prev=sv, st=(tgt-sv)*(1-Math.exp(-dt/TAU)), mx=VMAX*dt; sv+=Math.max(-mx,Math.min(mx,st));   /* Trägheit mit Höchstgeschwindigkeit */
     var done=magT!==null && Math.abs(tgt-sv)<0.0004 && Math.abs(magT-tgt)<0.0004;
     if(done){ sv=tgt=rest=magT; magT=null; }
     if(Math.abs(sv-prev)>1e-5||done){ frame(); scrollTo({top:top0+sv*innerHeight, behavior:'instant'}); }
@@ -313,10 +312,10 @@
   addEventListener('wheel',function(e){
     if(NOSNAP||e.ctrlKey||(!inside()&&!raf)) return;
     var now=performance.now(), gap=now-lastWheel; lastWheel=now; sync();
-    var d=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?innerHeight:1)/(innerHeight*PER);
+    var d=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?innerHeight:1)/(innerHeight*PER); d=Math.max(-0.08,Math.min(0.08,d));
     var atEnd=tgt>=snaps[LAST]-0.002 && Math.abs(sv-tgt)<0.01, atTop=tgt<=0.002;
     if(((atEnd&&d>0)||(atTop&&d<0)) && gap>200 && !raf) return;   /* am Rand: normal weiterscrollen */
-    e.preventDefault(); idleT=now; magT=null; tgt=clampT(tgt+d); kick();
+    e.preventDefault(); idleT=now; magT=null; tgt=clampT(Math.max(sv-0.6,Math.min(sv+0.6,tgt+d))); kick();   /* Ziel läuft dem Raum höchstens 0,6 Kapitel voraus */
   },{passive:false});
   addEventListener('keydown',function(e){
     if(NOSNAP||!inside()) return; var k=e.key, dir=(k==='ArrowDown'||k==='PageDown'||(k===' '&&!e.shiftKey))?1:(k==='ArrowUp'||k==='PageUp'||(k===' '&&e.shiftKey))?-1:0;
