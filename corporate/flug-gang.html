@@ -250,7 +250,7 @@
     ps.forEach(function(p,i){ var sd=i%2?-1:1; put(p,sd*g.A,0,g.z[i],g.w,g.h); put(shs[i],sd*g.A,g.Fl,g.z[i],g.w*1.25,g.h*.9,' rotateX(90deg)'); });
   }
   function frame(){
-    ticking=false; var g=G, s=(-sec.getBoundingClientRect().top)/g.vh, c=cam(s,g);
+    var g=G, s=sv, c=cam(s,g);
     world.style.transform='translateZ('+g.P.toFixed(1)+'px) rotateY('+c.yaw.toFixed(3)+'deg) translateZ('+(-g.P).toFixed(1)+'px) translateZ('+c.cz.toFixed(1)+'px)';
     /* Film: verschwindet, wenn man ihm zu nahe kommt (man geht hindurch) */
     var zf=c.cz; hb.style.opacity=hs.style.opacity=(1-sm((zf-g.P*.35)/(g.P*.35))).toFixed(3); hb.style.visibility=zf>g.P*.75?'hidden':'visible';
@@ -293,19 +293,24 @@
     if(touching||anim||NOSNAP) return;
     var s=sNow(); if(s<-0.05||s>snaps[snaps.length-1]+0.7){ rest=s; return; }
     var dir=s-rest, tgt;
-    if(Math.abs(dir)>0.12){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
+    if(Math.abs(dir)>0.3){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
       tgt=cand.length ? cand.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }) : s; }
     else tgt=snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; });
     rest=tgt;
     if(Math.abs(tgt-s)<0.004||Math.abs(tgt-s)>0.9) { rest=s; return; }
-    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), Dt=420;
-    (function step(now){ var q=Math.min(1,(now-t0)/Dt), e=1-Math.pow(1-q,3); scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
+    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), Dt=700;
+    (function step(now){ var q=Math.min(1,(now-t0)/Dt), e=q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2; scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
   }
-  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,140); } }
+  /* weich folgen: der Raum gleitet der Scrollposition mit kurzer Trägheit hinterher, statt jeden Ruck des Mausrads mitzumachen */
+  var sv=null, raf=0, lastT=0;
+  function loop(now){ var s=(-sec.getBoundingClientRect().top)/innerHeight; if(sv===null) sv=s;
+    var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now; sv+=(s-sv)*(1-Math.exp(-dt/0.15));
+    if(Math.abs(s-sv)<0.0004) sv=s; frame(); raf = sv!==s ? requestAnimationFrame(loop) : 0; }
+  function req(){ if(!raf){ lastT=performance.now(); raf=requestAnimationFrame(loop); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,260); } }
   addEventListener('wheel',stopAnim,{passive:true}); addEventListener('keydown',stopAnim);
   addEventListener('touchstart',function(){ touching=true; stopAnim(); },{passive:true});
-  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,220); },{passive:true});
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ layout(); req(); }); layout(); frame();
+  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,300); },{passive:true});
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ layout(); req(); }); layout(); sv=(-sec.getBoundingClientRect().top)/innerHeight; frame();
 })();
 </script>
 

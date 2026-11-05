@@ -251,7 +251,7 @@
   }
   function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
   function frame(){
-    ticking=false; var g=g0=geo(), s=sNow();
+    var g=g0=geo(), s=sv;
     /* Film: steht vorne, ab s=0.15 geradeaus in den Fluchtpunkt */
     var t=Math.min(1,Math.max(0,(s-0.15)/1.3)), kh=lerpZ(1,g.kF,t*t);
     place(hb,hs,g.cx,g.cy,g.HW,g.HH,kh,Math.min(.5,(1-kh)*.6),DIR==='vor'?1-sm((t-.3)/.4):1,1.1*g.HW,.08*g.HH);   /* nach vorne: der Film verschwindet ganz, im Fluchtpunkt entstehen die Bilder */
@@ -277,20 +277,25 @@
   function snap(){
     if(touching||anim||NOSNAP) return;
     var s=sNow(); if(s<-0.05||s>snaps[snaps.length-1]+0.7){ rest=s; return; }
-    /* wie im Walk: wer ein Stück (über 0,12 Bildschirmhöhen) in eine Richtung gescrollt hat, kommt zum nächsten Bild in dieser Richtung, sonst federt es zurück */
+    /* wie im Walk: wer ein Stück (über 0,3 Bildschirmhöhen) in eine Richtung gescrollt hat, kommt zum nächsten Bild in dieser Richtung, sonst federt es zurück */
     var dir=s-rest, tgt;
-    if(Math.abs(dir)>0.12){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
+    if(Math.abs(dir)>0.3){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
       tgt=cand.length ? cand.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }) : s; }
     else tgt=snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; });
     rest=tgt;
     if(Math.abs(tgt-s)<0.004||Math.abs(tgt-s)>0.9) { rest=s; return; }
-    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), D=320;
-    (function step(now){ var q=Math.min(1,(now-t0)/D), e=1-Math.pow(1-q,3); scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
+    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), Dt=700;
+    (function step(now){ var q=Math.min(1,(now-t0)/Dt), e=q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2; scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
   }
-  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,140); } }
+  /* weich folgen: der Raum gleitet der Scrollposition mit kurzer Trägheit hinterher, statt jeden Ruck des Mausrads mitzumachen */
+  var sv=null, raf=0, lastT=0;
+  function loop(now){ var s=(-sec.getBoundingClientRect().top)/innerHeight; if(sv===null) sv=s;
+    var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now; sv+=(s-sv)*(1-Math.exp(-dt/0.15));
+    if(Math.abs(s-sv)<0.0004) sv=s; frame(); raf = sv!==s ? requestAnimationFrame(loop) : 0; }
+  function req(){ if(!raf){ lastT=performance.now(); raf=requestAnimationFrame(loop); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,260); } }
   addEventListener('wheel',stopAnim,{passive:true}); addEventListener('keydown',stopAnim);
   addEventListener('touchstart',function(){ touching=true; stopAnim(); },{passive:true});
-  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,220); },{passive:true});
+  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,300); },{passive:true});
   /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
   function grid(){
     var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
@@ -303,7 +308,7 @@
     var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
     c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
   }
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); frame();
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); sv=(-sec.getBoundingClientRect().top)/innerHeight; frame();
 })();
 </script>
 
