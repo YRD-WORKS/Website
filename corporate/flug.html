@@ -271,45 +271,53 @@
     ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
     if(act>=0) tx.classList.toggle('r', side<0);   /* Text steht auf der freien Seite */
   }
-  /* Schritt-Steuerung wie im Walk (05.11. abends, statt Einrasten nach dem Scrollen): Solange der Raum steht, übernimmt die Seite das Scrollen.
-     Eine Geste (Mausrad, Trackpad, Wisch, Pfeiltaste) = genau ein Schritt, als eine durchgehende weiche Fahrt; der Nachschwung des Trackpads wird geschluckt.
-     Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei, die Seite läuft normal weiter. ?snap=0 schaltet die Steuerung ab. */
-  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), ci=0, tw=null, consumed=false, lastWheel=0, acc=0, NOSNAP=/[?&]snap=0/.test(location.search), sv=0, rq=0;
+  /* Fließendes Gehen (05.11. spätabends, statt „eine Geste = ein Schritt“): Solange der Raum steht, übernimmt die Seite das Scrollen.
+     Mausrad, Trackpad und Wisch schieben ein Ziel stufenlos vor (PER Bildschirmhöhen Scrollweg je Bild); der Raum gleitet dem Ziel mit Trägheit nach.
+     Erst wenn man aufhört, zieht ein sanfter Magnet in die nächste Lesestellung. Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei. ?snap=0 schaltet die Steuerung ab. */
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=1.1, TAU=0.24, MAG=0.42, IDLE=320;
+  var magT=null, rest=0, tgt=0, sv=0, raf=0, lastT=0, idleT=-1e9, lastWheel=0, touching=false, NOSNAP=/[?&]snap=0/.test(location.search), rq=0, top0=0;
   function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
-  function nearest(s){ var b=0; snaps.forEach(function(t,i){ if(Math.abs(t-s)<Math.abs(snaps[b]-s)) b=i; }); return b; }
-  function inside(){ var s=sNow(); return s>-0.02 && s<snaps[snaps.length-1]+0.02; }
-  function wantsNative(dir){ return (ci>=snaps.length-1 && dir>0) || (ci<=0 && dir<0); }
-  function go(n){
-    n=Math.max(0,Math.min(snaps.length-1,n)); if(n===ci && !tw && Math.abs(sv-snaps[n])<0.002) return; ci=n;
-    var from=sv, to=snaps[n], top=scrollY+sec.getBoundingClientRect().top, t0=performance.now(), D=Math.min(1300,650+Math.abs(to-from)*320);
-    if(tw) cancelAnimationFrame(tw.raf); tw={raf:0};
-    (function step(now){ var q=Math.min(1,(now-t0)/D), e=q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2;
-      sv=from+(to-from)*e; frame(); scrollTo({top:top+sv*innerHeight, behavior:'instant'});
-      if(q<1) tw.raf=requestAnimationFrame(step); else tw=null; })(t0);
+  function nearest(s){ return snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }); }
+  /* Magnet mit Richtung: wer mehr als ein Viertel des Wegs gegangen ist, kommt zum nächsten Bild in dieser Richtung, sonst zurück */
+  function magnet(){ if(Math.abs(tgt-rest)<0.25) return nearest(tgt);
+    var c=snaps.filter(function(t){ return tgt>rest ? t>rest+0.01 : t<rest-0.01; }); return c.length ? c.reduce(function(a,b){ return Math.abs(b-tgt)<Math.abs(a-tgt)?b:a; }) : nearest(tgt); }
+  function clampT(t){ return Math.max(0,Math.min(snaps[LAST],t)); }
+  function inside(){ var s=sNow(); return s>-0.02 && s<snaps[LAST]+0.02; }
+  function kick(){ if(!raf){ top0=scrollY+sec.getBoundingClientRect().top; lastT=performance.now(); raf=requestAnimationFrame(loop); } }
+  function loop(now){
+    var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now;
+    if(!touching && now-idleT>IDLE){ if(magT===null) magT=magnet(); tgt+=(magT-tgt)*(1-Math.exp(-dt/MAG)); }   /* Magnet, erst nach dem Aufhören */
+    var prev=sv; sv+=(tgt-sv)*(1-Math.exp(-dt/TAU));
+    var done=magT!==null && Math.abs(tgt-sv)<0.0004 && Math.abs(magT-tgt)<0.0004;
+    if(done){ sv=tgt=rest=magT; magT=null; }
+    if(Math.abs(sv-prev)>1e-5||done){ frame(); scrollTo({top:top0+sv*innerHeight, behavior:'instant'}); }
+    raf = done ? 0 : requestAnimationFrame(loop);
   }
+  function sync(){ if(!raf){ sv=tgt=sNow(); if(Math.abs(nearest(sv)-sv)<0.01) rest=nearest(sv); } }
   addEventListener('wheel',function(e){
-    if(NOSNAP||!inside()||e.ctrlKey) return;
-    var dir=e.deltaY>0?1:-1, now=performance.now(), gap=now-lastWheel; lastWheel=now; if(gap>220) acc=0;
-    if(!tw && Math.abs(sNow()-snaps[ci])>0.01) ci=nearest(sNow());
-    if(!tw && wantsNative(dir) && (gap>220||!consumed)) { consumed=false; return; }   /* am Ende: normal weiterscrollen */
-    e.preventDefault();
-    if(tw || (consumed && gap<220)) return;                                           /* Nachschwung der letzten Geste schlucken */
-    consumed=false; acc+=e.deltaY; if(Math.abs(acc)>28){ acc=0; consumed=true; go(ci+dir); }
+    if(NOSNAP||e.ctrlKey||(!inside()&&!raf)) return;
+    var now=performance.now(), gap=now-lastWheel; lastWheel=now; sync();
+    var d=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?innerHeight:1)/(innerHeight*PER);
+    var atEnd=tgt>=snaps[LAST]-0.002 && Math.abs(sv-tgt)<0.01, atTop=tgt<=0.002;
+    if(((atEnd&&d>0)||(atTop&&d<0)) && gap>200 && !raf) return;   /* am Rand: normal weiterscrollen */
+    e.preventDefault(); idleT=now; magT=null; tgt=clampT(tgt+d); kick();
   },{passive:false});
   addEventListener('keydown',function(e){
     if(NOSNAP||!inside()) return; var k=e.key, dir=(k==='ArrowDown'||k==='PageDown'||(k===' '&&!e.shiftKey))?1:(k==='ArrowUp'||k==='PageUp'||(k===' '&&e.shiftKey))?-1:0;
-    if(!dir||wantsNative(dir)) return; e.preventDefault(); if(!tw) go(ci+dir);
+    sync(); var i=snaps.indexOf(nearest(tgt)); if(!dir||(i>=LAST&&dir>0)||(i<=0&&dir<0)) return;
+    e.preventDefault(); tgt=snaps[i+dir]; magT=tgt; idleT=-1e9; kick();
   });
-  var ty=null, tdone=false, tnat=null;
-  addEventListener('touchstart',function(e){ if(NOSNAP||!inside()){ ty=null; return; } ty=e.touches[0].clientY; tdone=false; tnat=null; if(!tw&&Math.abs(sNow()-snaps[ci])>0.01) ci=nearest(sNow()); },{passive:true});
+  var ty=null, t0=0, tnat=null, vy=0, lt=0, ly=0;
+  addEventListener('touchstart',function(e){ if(NOSNAP||!inside()){ ty=null; return; } sync(); ty=ly=e.touches[0].clientY; lt=performance.now(); t0=tgt; tnat=null; vy=0; },{passive:true});
   addEventListener('touchmove',function(e){
-    if(ty===null) return; var dy=ty-e.touches[0].clientY, dir=dy>0?1:-1;
-    if(tnat===null && Math.abs(dy)>6) tnat=!tw && wantsNative(dir);
-    if(tnat) return; e.preventDefault();
-    if(!tdone && !tw && Math.abs(dy)>32){ tdone=true; go(ci+dir); }
+    if(ty===null) return; var y=e.touches[0].clientY, dy=ty-y, now=performance.now();
+    if(tnat===null && Math.abs(dy)>6) tnat=(t0>=snaps[LAST]-0.002&&dy>0)||(t0<=0.002&&dy<0);
+    if(tnat) return; e.preventDefault(); touching=true;
+    var d=(ly-y)/(innerHeight*PER*0.7); vy=0.7*vy+0.3*(d/Math.max(.008,(now-lt)/1000)); lt=now; ly=y;
+    idleT=now; magT=null; tgt=clampT(t0+dy/(innerHeight*PER*0.7)); kick();
   },{passive:false});
-  addEventListener('touchend',function(){ ty=null; },{passive:true});
-  function req(){ if(tw||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=sNow(); frame(); }); }
+  addEventListener('touchend',function(){ if(ty!==null&&!tnat){ tgt=clampT(tgt+vy*0.25); idleT=performance.now(); kick(); } ty=null; touching=false; },{passive:true});
+  function req(){ if(raf||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=tgt=sNow(); frame(); }); }
   /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
   function grid(){
     var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
@@ -322,7 +330,7 @@
     var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
     c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
   }
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); sv=sNow(); ci=nearest(sv); frame();
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); sv=tgt=rest=sNow(); frame();
 })();
 </script>
 
