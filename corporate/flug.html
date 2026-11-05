@@ -74,38 +74,30 @@
   main [class*="text-lg"],main [class*="text-xl"],main [class*="text-2xl"],main [class*="text-3xl"],main [class*="text-4xl"],main [class*="text-5xl"],main [class*="text-6xl"],main [class*="text-8xl"],main .text-base,main .t-h,main .tc-h,main .sl .t-h{font-size:inherit!important;line-height:inherit!important;letter-spacing:normal!important;font-weight:inherit!important}
   main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
   main .full-in,main .tc-h,main .t-h{max-width:none}
-  /* Kopfzeile wie im Original (05.11.2026): auf dem Desktop steht YRD.Works oben auf der Seite und scrollt mit weg, wie auf About- und Projektseiten; so läuft kein Text darunter durch */
-  @media (min-width:701px){.nav{position:absolute}}
-  /* Probe Flug (05.11.2026): Man steht still und schaut in den Raum. Jedes Bild kommt von hinten (größer als der Bildschirm), hält kurz auf Lesedistanz und fliegt dann in die Tiefe; am Ende stehen alle klein am Fluchtpunkt. Text liegt flach vorne und wechselt still. */
-  .flug{position:relative;height:calc((var(--n) + 2) * 100vh);height:calc((var(--n) + 2) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad))}
-  .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+  /* Probe Flug (05.11.2026, Umbau): ein Raum mit einem Fluchtpunkt wie der 3D-Raum. Film vorne in der Mitte, fährt geradeaus in die Tiefe; Bilder laufen auf einer Geraden von der Seite in den Fluchtpunkt, halten kurz auf Lesegröße, laufen in derselben Richtung weiter. Boden-Raster, Schatten, Nebel ins Weiß. */
+  .flug{position:relative;height:calc((var(--n) + 3.4) * 100vh);height:calc((var(--n) + 3.4) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#fff;isolation:isolate}
   .fspace{position:absolute;inset:0}
-  .fp{position:absolute;left:0;top:0;width:52vw;aspect-ratio:3/2;display:block;opacity:0;will-change:transform,opacity;transform-origin:50% 50%;background:#eee}
+  .fgrid{position:absolute;inset:0;width:100%;height:100%}
+  .fp,.hbox{position:absolute;left:0;top:0;display:block;will-change:transform;transform-origin:50% 50%}
+  .fp{aspect-ratio:3/2;width:52vw;background:#eee;opacity:0;visibility:hidden}
   .fp img{display:block;width:100%;height:100%;object-fit:cover}
-  .fp::after{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fog,0);pointer-events:none}
+  .fp::after,.hbox::before{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fog,0);pointer-events:none;z-index:2}
   .fp.plan{background:#fff;outline:1px solid rgba(0,0,255,.15);outline-offset:-1px}
   .fp.plan img{object-fit:contain}
-  .ftext{position:absolute;z-index:2;left:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));width:min(30ch,24vw)}
+  .hbox{overflow:hidden;background:#000}
+  .hbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hbox::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%);pointer-events:none}
+  .hbox .full-in{left:1.2rem;right:1.2rem;bottom:1.2rem;z-index:1}
+  .fsh{position:absolute;left:0;top:0;pointer-events:none;background:radial-gradient(closest-side,rgba(10,10,60,.16),rgba(10,10,60,0));will-change:transform,opacity}
+  .fstage .probe{color:var(--ink);top:calc(4.2rem + env(safe-area-inset-top,0px));transition:opacity .3s}
+  .ftext{position:absolute;z-index:5000;left:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));width:min(30ch,24vw)}
+  .ftext.r{left:auto;right:var(--pad)}
   .ft{position:absolute;left:0;bottom:0;width:100%;display:flex;flex-direction:column;gap:.35em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;pointer-events:none}
   .ft.on{opacity:1;transform:none;pointer-events:auto}
   .ft .t-p{max-width:none}
-  @media (max-width:700px){
-    .ftext{width:auto;right:var(--pad)}
-  }
-  @media (prefers-reduced-motion:reduce){.flug{height:auto}.fstage{position:relative;height:auto;overflow:visible}.fspace{position:relative;display:grid;gap:1rem}.fp{position:relative;opacity:1;transform:none!important;width:100%}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
-  /* Probe Flug: Film oben kleiner, mit weißem Rand (ca. 70 %), Schatten am Boden wie im 3D-Raum; beim Scrollen fährt er nach hinten weg */
-  .hwrap{position:relative;height:180vh;height:180svh;margin-top:calc(-1 * (.9rem + 4.4rem))}
-  .full.hero{position:sticky;top:0;margin-top:0;background:#fff;overflow:hidden}
-  .full.hero::after{display:none}
-  .hbox{position:absolute;left:15%;right:15%;top:15%;bottom:15%;overflow:hidden;background:#000;transform-origin:50% 50%;will-change:transform,opacity}
-  .hbox::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%);pointer-events:none}
-  .full.hero .hbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .full.hero .full-in{left:1.2rem;right:1.2rem;bottom:1.2rem}
-  .full.hero .probe{color:var(--ink)}
-  .hsh,.fsh{position:absolute;left:0;top:0;pointer-events:none;background:radial-gradient(closest-side,rgba(10,10,60,.16),rgba(10,10,60,0));will-change:transform,opacity}
-  .hsh{width:87.5%;height:9%;left:6.25%;top:calc(50% + 35% * 1.1 - 4.5%);transform-origin:50% 50%}
-  .fgrid{position:absolute;inset:0;width:100%;height:100%}
-  @media (prefers-reduced-motion:reduce){.hwrap{height:auto}.full.hero{position:relative}}
+  @media (max-width:700px){ .ftext,.ftext.r{width:auto;left:var(--pad);right:var(--pad)} }
+  @media (prefers-reduced-motion:reduce){.flug{height:auto;margin-top:0}.fstage{position:relative;height:auto;overflow:visible}.fgrid,.fsh{display:none}.fspace{position:relative;display:grid;gap:1rem}.fp,.hbox{position:relative;opacity:1;visibility:visible;transform:none!important;width:100%}.hbox{aspect-ratio:16/9}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
 </style>
 </head>
 <body data-ov="about">
@@ -124,43 +116,18 @@
 
 <main id="c" style="overflow-x:clip" class="text-ink font-areal font-medium antialiased leading-tight">
 
-  <!-- 1 Einstieg: Film -->
-  <div class="hwrap" id="hwrap">
-  <section class="full hero" id="hero">
-    <div class="hsh" id="hsh"></div>
-    <div class="hbox" id="hbox">
-      <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
-      <div class="full-in">
+  <!-- 1 Raum (Probe Flug): Film und Bilder in einem Raum mit einem Fluchtpunkt -->
+  <section id="kompetenzen" class="flug" style="--n:8">
+    <div class="fstage" id="fstage">
+      <canvas class="fgrid" id="fgrid"></canvas>
+      <div class="fspace">
+      <div class="fsh" id="hsh"></div><div class="hbox" id="hbox">
+        <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
+        <div class="full-in">
       <h1 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[16ch]">Lorem ipsum dolor sit amet.</h1>
-      <a href="#blick" class="text-lg md:text-xl whitespace-nowrap">↓ Lorem ipsum</a>
+      <a href="#zusammenarbeit" class="text-lg md:text-xl whitespace-nowrap">↓ Lorem ipsum</a>
     </div>
-    </div>
-    <span class="probe">Probe: Inhalte kommen von der Seite und fliegen in die Tiefe</span>
-  </section>
-  </div>
-
-  <!-- 2 Auf einen Blick -->
-  <section id="blick" class="pt-24 pb-8 scroll-mt-16">
-    <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
-      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir gestalten</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul></div>
-      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul></div>
-    </div>
-    <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
-      <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
-      <p class="reveal col-span-12 md:col-span-9 text-xl md:text-3xl leading-snug">Jüdisches Museum Frankfurt · Senckenberg Museum · Künstlerhaus Mousonturm · Kulturstiftung des Bundes · Stadt Frankfurt, Stabsstelle Digitalisierung · Node e.V.</p>
-    </div>
-  </section>
-
-  <!-- 3 Kompetenzen (Probe Flug): Bilder kommen von hinten, halten kurz und fliegen in die Tiefe -->
-  <section id="kompetenzen" class="scroll-mt-16">
-    <h2 class="k-head text-5xl md:text-8xl leading-[0.95] tracking-tight">Kompetenzen</h2>
-    <div class="flug" id="flug" style="--n:8">
-      <div class="fstage">
-        <canvas class="fgrid" id="fgrid"></canvas>
-        <div class="fspace">
+      </div>
       <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
       <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
       <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp" loading="lazy"></a>
@@ -169,8 +136,8 @@
       <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp" loading="lazy"></a>
       <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp" loading="lazy"></a>
       <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp" loading="lazy"></a>
-        </div>
-        <div class="ftext">
+      </div>
+      <div class="ftext">
       <div class="ft"><span class="t-n">01 · Räume</span><span class="t-h">Räume für Wissensvermittlung entwickeln</span><p class="t-p font-normal">Wir entwerfen Orte, an denen Wissen nicht nur gezeigt, sondern gemeinsam erarbeitet wird. Im Senckenberg Naturmuseum haben wir aus einem ehemaligen Pausenraum eine Forschungswerkstatt gemacht, in der sich Publikum und Forschende begegnen.</p><a class="t-x font-normal" href="forschungswerkstatt/">Beispiel: Forschungswerkstatt →</a></div>
       <div class="ft"><span class="t-n">02 · Räume</span><span class="t-h">Ausstellungsarchitektur mit eigener Haltung</span><p class="t-p font-normal">Wir bauen keine Kulisse, sondern eine Gestaltung, die selbst Teil des Inhalts wird. Für das Jüdische Museum Frankfurt haben wir die Architektur einer Wechselausstellung auf rund 600 Quadratmetern umgesetzt.</p><a class="t-x font-normal" href="im-angesicht-des-todes/">Beispiel: Im Angesicht des Todes →</a></div>
       <div class="ft"><span class="t-n">03 · Stadt</span><span class="t-h">Wandel sichtbar machen</span><p class="t-p font-normal">Wenn sich Orte verändern, machen wir den Übergang erfahrbar, statt ihn zu überspringen. Vor dem Neubau der HfG am Offenbacher Hafen haben wir den Umbruch in sieben öffentlichen Veranstaltungen zum Thema gemacht.</p><a class="t-x font-normal" href="transition-1-7/">Beispiel: Transition 1-7 →</a></div>
@@ -179,8 +146,8 @@
       <div class="ft"><span class="t-n">06 · Umsetzung</span><span class="t-h">Groß denken, selbst bauen</span><p class="t-p font-normal">Wir planen und bauen auch große Strukturen selbst. Für das Senckenberg Naturmuseum und den Frankfurter Kunstverein entstand ein 21 Meter langer Holzbau, der ein Jahr lang eine Ausstellung beherbergte.</p><a class="t-x font-normal" href="access/">Beispiel: Access →</a></div>
       <div class="ft"><span class="t-n">07 · Umsetzung</span><span class="t-h">Vom Konzept bis zur Eröffnung aus einer Hand</span><p class="t-p font-normal">Wir entwerfen, steuern die Gewerke und begleiten die Umsetzung bis zum Schluss. Für Display, einen Raum für digitale Praxis der Stadt Frankfurt und von NODE e.V., entstanden Raumkonzept, Möbelsystem und Licht.</p><a class="t-x font-normal" href="display/">Beispiel: Display →</a></div>
       <div class="ft"><span class="t-n">Probe · Plan</span><span class="t-h">Fliegendes Künstler*innenzimmer, Grundriss und Deckenspiegel</span><p class="t-p font-normal">Ausschnitt aus Blatt FLK-AP-01, M 1:50.</p><a class="t-x font-normal" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener">Planset als PDF →</a></div>
-        </div>
       </div>
+      <span class="probe" id="probe">Probe: ein Raum, alles läuft in den Fluchtpunkt</span>
     </div>
   </section>
 
@@ -195,6 +162,21 @@
       <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Auftraggeber</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
     </div>
     <div class="mt-16 grid grid-cols-12 gap-4"><div class="reveal box col-span-12 md:col-span-7 aspect-[16/9]"><span>FOTO WERKSTATT</span></div><div class="reveal box col-span-12 md:col-span-5 aspect-[4/3] md:mt-24"><span>FOTO AUFBAU</span></div></div>
+  </section>
+
+  <!-- Auf einen Blick (vorerst am Ende) -->
+  <section id="blick" class="pt-24 pb-8 scroll-mt-16">
+    <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir gestalten</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul></div>
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul></div>
+    </div>
+    <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
+      <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
+      <p class="reveal col-span-12 md:col-span-9 text-xl md:text-3xl leading-snug">Jüdisches Museum Frankfurt · Senckenberg Museum · Künstlerhaus Mousonturm · Kulturstiftung des Bundes · Stadt Frankfurt, Stabsstelle Digitalisierung · Node e.V.</p>
+    </div>
   </section>
 
   <!-- Kontakt -->
@@ -222,7 +204,7 @@
   (function(){ var v=document.getElementById('hv'), small=matchMedia('(max-width:900px)').matches;
     var tall=matchMedia('(max-width:900px) and (orientation:portrait)').matches; v.poster='corporate/'+(tall?'poster-mobil.jpg':'poster.jpg');
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ v.src='corporate/'+(tall?'video-mobil.mp4':'video.mp4'); v.play&&v.play().catch(function(){}); } else v.removeAttribute('autoplay');
-    var full=[].slice.call(document.querySelectorAll('.full:not(.hero)')), on=new Set();
+    var full=[].slice.call(document.querySelectorAll('.full')), on=new Set();
     var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) on.add(e.target); else on.delete(e.target); }); document.body.classList.toggle('on-dark', on.size>0); },{rootMargin:'0px 0px -94% 0px'});
     full.forEach(function(f){ o.observe(f); });
   })();
@@ -232,80 +214,72 @@
 
 <script>
 (function(){
-  /* Probe Flug: Position jedes Bildes hängt nur an der Scrollposition, läuft also beim Hochscrollen rückwärts.
-     u = Fortschritt in Bildschirmhöhen relativ zum eigenen Einsatz: -0.7..0 kommt von hinten, 0..0.35 hält, 0.35..1.5 fliegt in die Tiefe, danach bleibt es am Fluchtpunkt. */
+  /* Probe Flug: alles hängt nur an der Scrollposition s (in Bildschirmhöhen), läuft beim Hochscrollen rückwärts.
+     Projektion wie eine Kamera: Größe k = P/(P-z); Mitte = Fluchtpunkt + seitlicher Versatz X·k. Ein Bild mit festem Versatz läuft so auf einer Geraden in den Fluchtpunkt und wechselt nie die Richtung. */
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { document.querySelectorAll('.ft').forEach(function(t){t.classList.add('on');}); return; }
-  var flug=document.getElementById('flug'), ps=[].slice.call(flug.querySelectorAll('.fp')), shs=[].slice.call(flug.querySelectorAll('.fsh')), cvs=document.getElementById('fgrid'), ts=[].slice.call(flug.querySelectorAll('.ft'));
-  var P=1000, ZB=520, ZF=-4200, ticking=false;
-  /* Versatz je Bild im Raum (Anteil der Bildbreite / -höhe), damit sie sich in der Ferne zu einer lockeren Gruppe sammeln statt genau übereinander */
-  var off=[[-.08,-.06],[.14,.08],[-.04,.14],[.16,-.10],[-.10,.04],[.06,-.14],[-.06,-.12],[.12,.12],[0,0]];
+  var sec=document.getElementById('kompetenzen'), stage=document.getElementById('fstage');
+  var ps=[].slice.call(sec.querySelectorAll('.fp')), shs=[].slice.call(sec.querySelectorAll('.fspace > .fsh')).slice(1), ts=[].slice.call(sec.querySelectorAll('.ft'));
+  var hb=document.getElementById('hbox'), hs=document.getElementById('hsh'), tx=sec.querySelector('.ftext'), pr=document.getElementById('probe'), cvs=document.getElementById('fgrid');
+  var P=1000, ticking=false;
   function sm(t){ t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); }
-  function zOf(u){
-    if(u<=-0.5) return null;
-    if(u<0) return ZB*Math.pow(-u/0.5,1.4);            /* kommt schräg von der Seite: etwas näher als Lesedistanz, gleitet seitlich herein */
-    if(u<0.3) return 0;
-    if(u<1.5) { var t=(u-0.3)/1.2; return ZF*(t*t*.6+t*.4); } /* weg: erst langsam, dann schneller */
-    return ZF;
+  function geo(){ var vw=innerWidth, vh=innerHeight, mob=vw<=700;
+    return {vw:vw, vh:vh, mob:mob, cx:vw/2, cy:vh*(mob?.42:.47),
+      w:(mob?.8:.52)*vw, Xf:mob?.3:.72, kA:mob?1.6:2.2, kH:mob?.72:.75, kF:.1,
+      HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4) }; }
+  function zk(k){ return P-P/k; }
+  /* Weg eines Bildes: u<-0.6 noch nicht da, bis 0 von der Seite herein (bremst), bis 0.3 steht es, dann weiter in die Tiefe (beschleunigt) */
+  function kOf(u,g){
+    if(u<=-0.6) return null;
+    if(u<0){ var a=-u/0.6; return g.kH+(g.kA-g.kH)*a*a; }
+    if(u<0.3) return g.kH;
+    var t=Math.min(1,(u-0.3)/1.3), zH=zk(g.kH), zF=zk(g.kF); return P/(P-(zH+(zF-zH)*t*t));
   }
+  function place(el,sh,cx,cy,W,H,k,fog,op,shW,shH,Fl){
+    el.style.width=W+'px'; if(el===hb) el.style.height=H+'px';
+    el.style.transform='translate3d('+(cx-W/2).toFixed(1)+'px,'+(cy-H/2).toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
+    el.style.zIndex=String(10+Math.round(k*1000)); el.style.opacity=op.toFixed(3); el.style.setProperty('--fog',fog.toFixed(3));
+    var sw=shW*k, shh=shH*k, sy=g0.cy+Fl*k;
+    sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(cx-sw/2).toFixed(1)+'px,'+(sy-shh/2).toFixed(1)+'px,0)';
+    sh.style.opacity=(op*(1-fog)).toFixed(3); sh.style.zIndex=String(9+Math.round(k*1000));
+  }
+  var g0=geo();
   function frame(){
-    ticking=false;
-    var vw=innerWidth, vh=innerHeight, mob=vw<=700;
-    var r=flug.getBoundingClientRect(), s=(-r.top)/vh-0.5; /* erstes Bild kommt von hinten, sobald die Bühne oben steht */
-    var w=(mob?.8:.52)*vw, h=w/1.5;
-    var cx=mob?vw/2:vw*.6, cy=mob?vh*.36:vh*.45;     /* Fluchtpunkt = Mitte des Bildes auf Lesedistanz */
-    var act=-1, best=9, x0=0;
+    ticking=false; var g=g0=geo();
+    var s=(-sec.getBoundingClientRect().top)/g.vh;
+    /* Film: steht vorne, ab s=0.15 geradeaus in den Fluchtpunkt */
+    var t=Math.min(1,Math.max(0,(s-0.15)/1.3)), kh=P/(P-zk(g.kF)*t*t);
+    place(hb,hs,g.cx,g.cy,g.HW,g.HH,kh,Math.min(.5,(1-kh)*.6),1,1.1*g.HW,.08*g.HH,g.Fl);
+    pr.style.opacity = s>0.12 ? 0 : 1;
+    var act=-1, best=9, side=1;
     ps.forEach(function(p,i){
-      var u=s-i, z=zOf(u);
-      var sh=shs[i];
-      if(z===null){ p.style.opacity=0; p.style.visibility='hidden'; sh.style.opacity=0; return; }
-      p.style.visibility='visible'; p.style.width=w+'px';
-      var k=P/(P-z), o=off[i%off.length], wx=o[0]*w*(mob?.3:1), wy=0;   /* alle Bilder auf Augenhöhe wie im 3D-Raum */
-      /* seitlicher Einflug, abwechselnd links und rechts: das Bild steht anfangs ganz außerhalb des Bildschirms und gleitet herein, der Bildschirm ist nie ganz gefüllt */
-      if(u<0){ var a=Math.pow(-u/0.5,1.2), c0=cx+wx*k, side=(i%2?-1:1);
-        x0=a*(side>0 ? vw + w*k/2 - c0 + 8 : -(w*k/2) - c0 - 8); } else x0=0;
-      var x=cx+wx*k-w/2+x0, y=cy+wy*k-h/2;
-      var op = 1, fog = z<0 ? Math.min(.5, (1-k)*.62) : 0;   /* nach hinten leicht verblassen, wie Nebel ins Weiß */
-      p.style.setProperty('--fog', fog.toFixed(3));
-      p.style.opacity=Math.max(0,Math.min(1,op)).toFixed(3);
-      p.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
-      p.style.zIndex=String(Math.round(10000+z));
-      /* Schatten auf dem Boden unter dem Bild (wie im 3D-Raum: Bildmitte auf Augenhöhe, Boden 0,78 Bildhöhen darunter) */
-      var sw=w*1.25*k, shh=h*.13*k, scx=cx+wx*k+x0, scy=cy+h*.775*k;
-      sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(scx-sw/2).toFixed(1)+'px,'+(scy-shh/2).toFixed(1)+'px,0)';
-      sh.style.opacity=(1-fog).toFixed(3); sh.style.zIndex=String(Math.round(10000+z)-1);
-      p.style.pointerEvents = (u>-0.05 && u<0.45) ? 'auto' : 'none';
-      var d=Math.abs(u-0.1); if(u>-0.06 && u<0.65 && d<best){ best=d; act=i; }
+      var sh=shs[i], u=s-0.85-i, k=kOf(u,g);
+      if(k===null){ p.style.visibility='hidden'; sh.style.opacity=0; return; }
+      p.style.visibility='visible';
+      var sd=(i%2?-1:1), X=sd*g.Xf*g.w, h=g.w/1.5;
+      var op=u<0 ? sm((u+0.6)/0.18) : 1, fog=k<g.kH ? Math.min(.5,(1-k/g.kH)*.6) : 0;
+      place(p,sh,g.cx+X*k,g.cy,g.w,h,k,fog,op,1.25*g.w,.13*h,g.Fl);
+      p.style.pointerEvents=(u>-0.05&&u<0.4)?'auto':'none';
+      var d=Math.abs(u-0.12); if(u>-0.12&&u<0.6&&d<best){ best=d; act=i; side=sd; }
     });
     ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
+    if(act>=0) tx.classList.toggle('r', side<0);   /* Text steht auf der freien Seite */
   }
-  /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt wie die Bilder */
+  /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
   function grid(){
-    var vw=innerWidth, vh=innerHeight, mob=vw<=700, dpr=Math.min(2,devicePixelRatio||1);
-    cvs.width=vw*dpr; cvs.height=vh*dpr; var g=cvs.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,vw,vh);
-    var w=(mob?.8:.52)*vw, h=w/1.5, cx=mob?vw/2:vw*.6, cy=mob?vh*.36:vh*.45, F=h*.775, st=h/2;
-    g.strokeStyle='rgba(0,0,255,.07)'; g.lineWidth=1; g.beginPath();
-    var kmax=(vh-cy)/F*1.05;
-    for(var n=-40;n<=40;n++){ var wx=n*st; g.moveTo(cx,cy); g.lineTo(cx+wx*kmax, cy+F*kmax); }
-    for(var m=-12;m<60;m++){ var z=-m*st, k=P/(P-z); if(k>kmax||k<.04) continue; var y=cy+F*k; g.moveTo(0,y); g.lineTo(vw,y); }
-    g.stroke();
-    /* zum Horizont hin verblasst das Raster im Weiß, wie der Nebel im 3D-Raum */
-    var fg=g.createLinearGradient(0,cy,0,cy+(vh-cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
-    g.fillStyle=fg; g.fillRect(0,cy-2,vw,(vh-cy)*.45+2);
+    var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
+    cvs.width=g.vw*dpr; cvs.height=g.vh*dpr; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,g.vw,g.vh);
+    var st=g.w/3, kmax=(g.vh-g.cy)/g.Fl*1.05;
+    c.strokeStyle='rgba(0,0,255,.07)'; c.lineWidth=1; c.beginPath();
+    for(var n=-60;n<=60;n++){ c.moveTo(g.cx,g.cy); c.lineTo(g.cx+n*st*kmax, g.cy+g.Fl*kmax); }
+    for(var m=-12;m<80;m++){ var k=P/(P+m*st); if(k>kmax||k<.04) continue; var y=g.cy+g.Fl*k; c.moveTo(0,y); c.lineTo(g.vw,y); }
+    c.stroke();
+    var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
+    c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
   }
-  grid(); addEventListener('resize',grid);
-  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); hero(); } }
-  /* Film oben: beim Scrollen fährt er nach hinten in die Tiefe und verblasst im Weiß, der Schatten wandert mit */
-  var hw=document.getElementById('hwrap'), hb=document.getElementById('hbox'), hs=document.getElementById('hsh');
-  function hero(){
-    var vh=innerHeight, t=Math.min(1,Math.max(0,(-hw.getBoundingClientRect().top)/(vh*.8)));
-    var z=-3800*(t*t*.5+t*.5), k=P/(P-z), op=1-sm((t-.55)/.45);
-    hb.style.transform='scale('+k.toFixed(4)+')'; hb.style.opacity=op.toFixed(3);
-    /* Schatten: Boxmitte auf Augenhöhe, Boden 0,55 Boxhöhen darunter */
-    var bh=vh*.7, dy=bh*.55*k - bh*.55;
-    hs.style.transform='translate3d(0,'+dy.toFixed(1)+'px,0) scale('+k.toFixed(4)+')'; hs.style.opacity=op.toFixed(3);
-  }
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',req); frame(); hero();
+  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); frame();
 })();
 </script>
+
 </body>
 </html>
