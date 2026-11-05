@@ -74,6 +74,8 @@
   main [class*="text-lg"],main [class*="text-xl"],main [class*="text-2xl"],main [class*="text-3xl"],main [class*="text-4xl"],main [class*="text-5xl"],main [class*="text-6xl"],main [class*="text-8xl"],main .text-base,main .t-h,main .tc-h,main .sl .t-h{font-size:inherit!important;line-height:inherit!important;letter-spacing:normal!important;font-weight:inherit!important}
   main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
   main .full-in,main .tc-h,main .t-h{max-width:none}
+  /* Kopfzeile wie im Original (05.11.2026): auf dem Desktop steht YRD.Works oben auf der Seite und scrollt mit weg, wie auf About- und Projektseiten; so läuft kein Text darunter durch */
+  @media (min-width:701px){.nav{position:absolute}}
 </style>
 </head>
 <body data-ov="about" class="on-dark">
