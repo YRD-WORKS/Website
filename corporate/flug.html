@@ -92,12 +92,19 @@
     .ftext{width:auto;right:var(--pad)}
   }
   @media (prefers-reduced-motion:reduce){.flug{height:auto}.fstage{position:relative;height:auto;overflow:visible}.fspace{position:relative;display:grid;gap:1rem}.fp{position:relative;opacity:1;transform:none!important;width:100%}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
-  /* Probe Flug: Film oben kleiner, mit weißem Rand (ca. 70 % des Bildschirms) */
-  .full.hero{background:#fff}
-  .full.hero video,.full.hero::after{inset:15%;width:auto;height:auto}
-  .full.hero video{width:70%;height:70%}
-  .full.hero .full-in{left:calc(15% + 1.2rem);right:calc(15% + 1.2rem);bottom:calc(15% + 1.2rem)}
+  /* Probe Flug: Film oben kleiner, mit weißem Rand (ca. 70 %), Schatten am Boden wie im 3D-Raum; beim Scrollen fährt er nach hinten weg */
+  .hwrap{position:relative;height:180vh;height:180svh;margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .full.hero{position:sticky;top:0;margin-top:0;background:#fff;overflow:hidden}
+  .full.hero::after{display:none}
+  .hbox{position:absolute;left:15%;right:15%;top:15%;bottom:15%;overflow:hidden;background:#000;transform-origin:50% 50%;will-change:transform,opacity}
+  .hbox::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%);pointer-events:none}
+  .full.hero .hbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .full.hero .full-in{left:1.2rem;right:1.2rem;bottom:1.2rem}
   .full.hero .probe{color:var(--ink)}
+  .hsh,.fsh{position:absolute;left:0;top:0;pointer-events:none;background:radial-gradient(closest-side,rgba(10,10,60,.16),rgba(10,10,60,0));will-change:transform,opacity}
+  .hsh{width:87.5%;height:9%;left:6.25%;top:calc(50% + 35% * 1.1 - 4.5%);transform-origin:50% 50%}
+  .fgrid{position:absolute;inset:0;width:100%;height:100%}
+  @media (prefers-reduced-motion:reduce){.hwrap{height:auto}.full.hero{position:relative}}
 </style>
 </head>
 <body data-ov="about">
@@ -117,14 +124,19 @@
 <main id="c" style="overflow-x:clip" class="text-ink font-areal font-medium antialiased leading-tight">
 
   <!-- 1 Einstieg: Film -->
+  <div class="hwrap" id="hwrap">
   <section class="full hero" id="hero">
-    <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
-    <span class="probe">Probe: Inhalte kommen von der Seite und fliegen in die Tiefe</span>
-    <div class="full-in">
+    <div class="hsh" id="hsh"></div>
+    <div class="hbox" id="hbox">
+      <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
+      <div class="full-in">
       <h1 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[16ch]">Lorem ipsum dolor sit amet.</h1>
       <a href="#blick" class="text-lg md:text-xl whitespace-nowrap">↓ Lorem ipsum</a>
     </div>
+    </div>
+    <span class="probe">Probe: Inhalte kommen von der Seite und fliegen in die Tiefe</span>
   </section>
+  </div>
 
   <!-- 2 Auf einen Blick -->
   <section id="blick" class="pt-24 pb-8 scroll-mt-16">
@@ -146,15 +158,16 @@
     <h2 class="k-head text-5xl md:text-8xl leading-[0.95] tracking-tight">Kompetenzen</h2>
     <div class="flug" id="flug" style="--n:8">
       <div class="fstage">
+        <canvas class="fgrid" id="fgrid"></canvas>
         <div class="fspace">
-      <a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
-      <a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
-      <a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp" loading="lazy"></a>
-      <a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp" loading="lazy"></a>
-      <a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp" loading="lazy"></a>
-      <a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp" loading="lazy"></a>
-      <a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp" loading="lazy"></a>
-      <a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
+      <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
+      <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp" loading="lazy"></a>
         </div>
         <div class="ftext">
       <div class="ft"><span class="t-n">01 · Räume</span><span class="t-h">Räume für Wissensvermittlung entwickeln</span><p class="t-p font-normal">Wir entwerfen Orte, an denen Wissen nicht nur gezeigt, sondern gemeinsam erarbeitet wird. Im Senckenberg Naturmuseum haben wir aus einem ehemaligen Pausenraum eine Forschungswerkstatt gemacht, in der sich Publikum und Forschende begegnen.</p><a class="t-x font-normal" href="forschungswerkstatt/">Beispiel: Forschungswerkstatt →</a></div>
@@ -221,7 +234,7 @@
   /* Probe Flug: Position jedes Bildes hängt nur an der Scrollposition, läuft also beim Hochscrollen rückwärts.
      u = Fortschritt in Bildschirmhöhen relativ zum eigenen Einsatz: -0.7..0 kommt von hinten, 0..0.35 hält, 0.35..1.5 fliegt in die Tiefe, danach bleibt es am Fluchtpunkt. */
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { document.querySelectorAll('.ft').forEach(function(t){t.classList.add('on');}); return; }
-  var flug=document.getElementById('flug'), ps=[].slice.call(flug.querySelectorAll('.fp')), ts=[].slice.call(flug.querySelectorAll('.ft'));
+  var flug=document.getElementById('flug'), ps=[].slice.call(flug.querySelectorAll('.fp')), shs=[].slice.call(flug.querySelectorAll('.fsh')), cvs=document.getElementById('fgrid'), ts=[].slice.call(flug.querySelectorAll('.ft'));
   var P=1000, ZB=520, ZF=-4200, ticking=false;
   /* Versatz je Bild im Raum (Anteil der Bildbreite / -höhe), damit sie sich in der Ferne zu einer lockeren Gruppe sammeln statt genau übereinander */
   var off=[[-.08,-.06],[.14,.08],[-.04,.14],[.16,-.10],[-.10,.04],[.06,-.14],[-.06,-.12],[.12,.12],[0,0]];
@@ -242,9 +255,10 @@
     var act=-1, best=9, x0=0;
     ps.forEach(function(p,i){
       var u=s-i, z=zOf(u);
-      if(z===null){ p.style.opacity=0; p.style.visibility='hidden'; return; }
+      var sh=shs[i];
+      if(z===null){ p.style.opacity=0; p.style.visibility='hidden'; sh.style.opacity=0; return; }
       p.style.visibility='visible'; p.style.width=w+'px';
-      var k=P/(P-z), o=off[i%off.length], wx=o[0]*w*(mob?.3:1), wy=o[1]*h*(mob?.5:1);
+      var k=P/(P-z), o=off[i%off.length], wx=o[0]*w*(mob?.3:1), wy=0;   /* alle Bilder auf Augenhöhe wie im 3D-Raum */
       /* seitlicher Einflug, abwechselnd links und rechts: das Bild steht anfangs ganz außerhalb des Bildschirms und gleitet herein, der Bildschirm ist nie ganz gefüllt */
       if(u<0){ var a=Math.pow(-u/0.5,1.2), c0=cx+wx*k, side=(i%2?-1:1);
         x0=a*(side>0 ? vw + w*k/2 - c0 + 8 : -(w*k/2) - c0 - 8); } else x0=0;
@@ -253,13 +267,42 @@
       p.style.opacity=Math.max(0,Math.min(1,op)).toFixed(3);
       p.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
       p.style.zIndex=String(Math.round(10000+z));
+      /* Schatten auf dem Boden unter dem Bild (wie im 3D-Raum: Bildmitte auf Augenhöhe, Boden 0,78 Bildhöhen darunter) */
+      var sw=w*1.25*k, shh=h*.13*k, scx=cx+wx*k+x0, scy=cy+h*.775*k;
+      sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(scx-sw/2).toFixed(1)+'px,'+(scy-shh/2).toFixed(1)+'px,0)';
+      sh.style.opacity=p.style.opacity; sh.style.zIndex=String(Math.round(10000+z)-1);
       p.style.pointerEvents = (u>-0.05 && u<0.45) ? 'auto' : 'none';
       var d=Math.abs(u-0.1); if(u>-0.06 && u<0.65 && d<best){ best=d; act=i; }
     });
     ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
   }
-  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',req); frame();
+  /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt wie die Bilder */
+  function grid(){
+    var vw=innerWidth, vh=innerHeight, mob=vw<=700, dpr=Math.min(2,devicePixelRatio||1);
+    cvs.width=vw*dpr; cvs.height=vh*dpr; var g=cvs.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,vw,vh);
+    var w=(mob?.8:.52)*vw, h=w/1.5, cx=mob?vw/2:vw*.6, cy=mob?vh*.36:vh*.45, F=h*.775, st=h/2;
+    g.strokeStyle='rgba(0,0,255,.07)'; g.lineWidth=1; g.beginPath();
+    var kmax=(vh-cy)/F*1.05;
+    for(var n=-40;n<=40;n++){ var wx=n*st; g.moveTo(cx,cy); g.lineTo(cx+wx*kmax, cy+F*kmax); }
+    for(var m=-12;m<60;m++){ var z=-m*st, k=P/(P-z); if(k>kmax||k<.04) continue; var y=cy+F*k; g.moveTo(0,y); g.lineTo(vw,y); }
+    g.stroke();
+    /* zum Horizont hin verblasst das Raster im Weiß, wie der Nebel im 3D-Raum */
+    var fg=g.createLinearGradient(0,cy,0,cy+(vh-cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle=fg; g.fillRect(0,cy-2,vw,(vh-cy)*.45+2);
+  }
+  grid(); addEventListener('resize',grid);
+  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); hero(); } }
+  /* Film oben: beim Scrollen fährt er nach hinten in die Tiefe und verblasst im Weiß, der Schatten wandert mit */
+  var hw=document.getElementById('hwrap'), hb=document.getElementById('hbox'), hs=document.getElementById('hsh');
+  function hero(){
+    var vh=innerHeight, t=Math.min(1,Math.max(0,(-hw.getBoundingClientRect().top)/(vh*.8)));
+    var z=-3800*(t*t*.5+t*.5), k=P/(P-z), op=1-sm((t-.55)/.45);
+    hb.style.transform='scale('+k.toFixed(4)+')'; hb.style.opacity=op.toFixed(3);
+    /* Schatten: Boxmitte auf Augenhöhe, Boden 0,55 Boxhöhen darunter */
+    var bh=vh*.7, dy=bh*.55*k - bh*.55;
+    hs.style.transform='translate3d(0,'+dy.toFixed(1)+'px,0) scale('+k.toFixed(4)+')'; hs.style.opacity=op.toFixed(3);
+  }
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',req); frame(); hero();
 })();
 </script>
 </body>
