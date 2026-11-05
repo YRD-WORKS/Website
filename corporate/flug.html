@@ -82,6 +82,7 @@
   .fspace{position:absolute;inset:0}
   .fp{position:absolute;left:0;top:0;width:52vw;aspect-ratio:3/2;display:block;opacity:0;will-change:transform,opacity;transform-origin:50% 50%;background:#eee}
   .fp img{display:block;width:100%;height:100%;object-fit:cover}
+  .fp::after{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fog,0);pointer-events:none}
   .fp.plan{background:#fff;outline:1px solid rgba(0,0,255,.15);outline-offset:-1px}
   .fp.plan img{object-fit:contain}
   .ftext{position:absolute;z-index:2;left:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));width:min(30ch,24vw)}
@@ -263,14 +264,15 @@
       if(u<0){ var a=Math.pow(-u/0.5,1.2), c0=cx+wx*k, side=(i%2?-1:1);
         x0=a*(side>0 ? vw + w*k/2 - c0 + 8 : -(w*k/2) - c0 - 8); } else x0=0;
       var x=cx+wx*k-w/2+x0, y=cy+wy*k-h/2;
-      var op = u<0 ? 1 : (z<0 ? 1-.35*sm(-z/-ZF*1.4) : 1);
+      var op = 1, fog = z<0 ? Math.min(.5, (1-k)*.62) : 0;   /* nach hinten leicht verblassen, wie Nebel ins Weiß */
+      p.style.setProperty('--fog', fog.toFixed(3));
       p.style.opacity=Math.max(0,Math.min(1,op)).toFixed(3);
       p.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
       p.style.zIndex=String(Math.round(10000+z));
       /* Schatten auf dem Boden unter dem Bild (wie im 3D-Raum: Bildmitte auf Augenhöhe, Boden 0,78 Bildhöhen darunter) */
       var sw=w*1.25*k, shh=h*.13*k, scx=cx+wx*k+x0, scy=cy+h*.775*k;
       sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(scx-sw/2).toFixed(1)+'px,'+(scy-shh/2).toFixed(1)+'px,0)';
-      sh.style.opacity=p.style.opacity; sh.style.zIndex=String(Math.round(10000+z)-1);
+      sh.style.opacity=(1-fog).toFixed(3); sh.style.zIndex=String(Math.round(10000+z)-1);
       p.style.pointerEvents = (u>-0.05 && u<0.45) ? 'auto' : 'none';
       var d=Math.abs(u-0.1); if(u>-0.06 && u<0.65 && d<best){ best=d; act=i; }
     });
