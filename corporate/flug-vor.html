@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="de" data-dir="vor">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>YRD.Works – Corporate (Probe Flug nach vorne)</title>
+<base href="../">
+<link rel="stylesheet" href="corporate/tailwind.css">
+<link rel="stylesheet" href="style.css">
+<style>
+  .nav .links a{text-decoration:none!important}
+  body[data-ov] main{visibility:visible!important}
+  .box{position:relative;border:1px solid rgba(0,0,255,.4);display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(to top right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px)),
+                 linear-gradient(to bottom right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px))}
+  .box{overflow:hidden}
+  .box span{background:#fff;padding:.3em .7em;letter-spacing:.08em;max-width:90%;overflow-wrap:anywhere;text-align:center}
+  /* randlose Vollbild-Abschnitte (Video oben, Projekte) */
+  .full{position:relative;height:100vh;height:100svh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));overflow:hidden;background:#000}
+  .hero{margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .full video,.full img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .full img{animation:kb 20s ease-in-out infinite alternate}
+  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
+  .full::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%),linear-gradient(to bottom,rgba(0,0,40,.25),rgba(0,0,40,0) 18%);pointer-events:none}
+  .full-in{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;color:#fff}
+  .probe{position:absolute;z-index:1;top:calc(4.2rem + env(safe-area-inset-top,0px));right:var(--pad);color:#fff;font-size:.9rem;opacity:.8}
+  @media (max-width:700px){.full-in{flex-direction:column;align-items:flex-start}}
+  .full-in a{color:#fff}
+  body.on-dark .nav a,body.on-dark .mm-b{color:#fff}
+  .nav a,.mm-b{transition:color .35s}
+  .lang{margin-left:1em}
+  .lang b{text-decoration:underline;text-underline-offset:.18em;font-weight:inherit}
+  /* Leistung: je Projekt nur die Schritte von YRD.Works */
+  .steps{display:flex;flex-wrap:wrap;gap:.3em .3em}
+  .steps span{border-radius:999px;padding:.05em .55em;background:rgb(0,0,255);color:#fff}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
+  .reveal.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.full img{animation:none}}
+
+  /* Probe Schieben: Inhalte fahren von links, rechts und unten ins Bild */
+  .k-head{padding-top:6rem}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;align-items:end;margin-top:22vh}
+  .row a{color:inherit;text-decoration:none!important}
+  .m{position:relative;overflow:hidden;background:#eee}
+  .m img{display:block;width:100%;height:100%;object-fit:cover}
+  .t{display:flex;flex-direction:column;gap:.35em;padding-bottom:.2em}
+  .t-n{color:rgba(0,0,255,.65)}
+  .t-h{font-size:clamp(1.3rem,1.8vw,1.6rem);line-height:.98;letter-spacing:-.01em}
+  .t-p{font-size:1.05rem;line-height:1.3;max-width:38ch;margin:.5em 0 .3em}
+  .sl .t-p{max-width:46ch}
+  .t-x{font-size:1.05rem}
+  .t-x:hover{text-decoration:underline;text-underline-offset:.18em}
+  .c1-8{grid-column:1/9}.c9-12{grid-column:9/13}.c1-4{grid-column:1/5}.c5-12{grid-column:5/13}
+  .c1-6{grid-column:1/7}.c7-12{grid-column:7/13}.c1-7{grid-column:1/8}.c8-12{grid-column:8/13}.c3-10{grid-column:3/11}
+  .r1{grid-row:1}.top{align-self:start}
+  .a32{aspect-ratio:3/2}.a43{aspect-ratio:4/3}.a45{aspect-ratio:4/5}.a169{aspect-ratio:16/9}
+  @media (max-width:700px){.row>*{grid-column:1/13!important;grid-row:auto!important}.row{margin-top:14vh;row-gap:1.2rem}}
+  /* randlos, schiebt sich von unten über das vorige Bild */
+  .stack{margin-top:22vh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad))}
+  .sl{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#000;color:#fff}
+  .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .sl::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.55),rgba(0,0,40,0) 50%);pointer-events:none}
+  .sl .t{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px))}
+  .sl .t-n{color:rgba(255,255,255,.8)}
+  .sl .t-h{font-size:clamp(1.4rem,2.2vw,2.1rem);max-width:22ch;line-height:.95}
+  .sl a{color:#fff}
+  .gap{height:30vh}
+  [data-from]{will-change:transform}
+  body.on-dark2 .nav a,body.on-dark2 .mm-b{color:#fff}
+  @media (prefers-reduced-motion:reduce){[data-from]{transform:none!important;opacity:1!important}}
+  /* wie Original (05.11.2026): eine Schriftgröße wie auf yrd.works, Strich 550 vom Original, Labels hellblau wie Year/Location auf den Projektseiten */
+  main{font-weight:inherit}
+  main [class*="text-lg"],main [class*="text-xl"],main [class*="text-2xl"],main [class*="text-3xl"],main [class*="text-4xl"],main [class*="text-5xl"],main [class*="text-6xl"],main [class*="text-8xl"],main .text-base,main .t-h,main .tc-h,main .sl .t-h{font-size:inherit!important;line-height:inherit!important;letter-spacing:normal!important;font-weight:inherit!important}
+  main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
+  main .full-in,main .tc-h,main .t-h{max-width:none}
+  /* Probe Flug (05.11.2026, Umbau): ein Raum mit einem Fluchtpunkt wie der 3D-Raum. Film vorne in der Mitte, fährt geradeaus in die Tiefe; Bilder laufen auf einer Geraden von der Seite in den Fluchtpunkt, halten kurz auf Lesegröße, laufen in derselben Richtung weiter. Boden-Raster, Schatten, Nebel ins Weiß. */
+  .flug{position:relative;height:calc((var(--n) + 3.8) * 100vh);height:calc((var(--n) + 3.8) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#fff;isolation:isolate}
+  .fspace{position:absolute;inset:0}
+  .fgrid{position:absolute;inset:0;width:100%;height:100%}
+  .fp,.hbox{position:absolute;left:0;top:0;display:block;will-change:transform;transform-origin:50% 50%}
+  .fp{aspect-ratio:3/2;width:52vw;background:#eee;opacity:0;visibility:hidden}
+  .fp img{display:block;width:100%;height:100%;object-fit:cover}
+  .fp::after,.hbox::before{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fog,0);pointer-events:none;z-index:2}
+  .fp.plan{background:#fff;outline:1px solid rgba(0,0,255,.15);outline-offset:-1px}
+  .fp.plan img{object-fit:contain}
+  .hbox{overflow:hidden;background:#000}
+  .hbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hbox::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%);pointer-events:none}
+  .hbox .full-in{left:1.2rem;right:1.2rem;bottom:1.2rem;z-index:1}
+  .fsh{position:absolute;left:0;top:0;pointer-events:none;background:radial-gradient(closest-side,rgba(10,10,60,.16),rgba(10,10,60,0));will-change:transform,opacity}
+  .fstage .probe{color:var(--ink);top:calc(4.2rem + env(safe-area-inset-top,0px));transition:opacity .3s}
+  .ftext{position:absolute;z-index:5000;left:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));width:min(30ch,24vw)}
+  .ftext.r{left:auto;right:var(--pad)}
+  .ft{position:absolute;left:0;bottom:0;width:100%;display:flex;flex-direction:column;gap:.35em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;pointer-events:none}
+  .ft.on{opacity:1;transform:none;pointer-events:auto}
+  .ft .t-p{max-width:none}
+  @media (max-width:700px){ .ftext,.ftext.r{width:auto;left:var(--pad);right:var(--pad)} }
+  @media (prefers-reduced-motion:reduce){.flug{height:auto;margin-top:0}.fstage{position:relative;height:auto;overflow:visible}.fgrid,.fsh{display:none}.fspace{position:relative;display:grid;gap:1rem}.fp,.hbox{position:relative;opacity:1;visibility:visible;transform:none!important;width:100%}.hbox{aspect-ratio:16/9}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
+</style>
+</head>
+<body data-ov="about">
+
+<header class="nav cols" aria-label="Site">
+  <a class="home" href="./" data-home>YRD.Works</a>
+  <div class="links"><a href="about/">About</a>    <a href="news/">News</a>    <a href="index/index.html">Index</a>    <a href="contact/">Contact</a></div>
+</header>
+<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="./" data-home>Projects</a><a href="about/">About</a><a href="news/">News</a><a href="index/index.html">Index</a><a href="contact/">Contact</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
+<script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
+  function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
+  b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
+  l.addEventListener('click',function(e){ if(e.target.closest('a')||e.target.closest('.mm-x')) set(false); });
+  document.addEventListener('click',function(e){ if(!l.hidden&&!m.contains(e.target)) set(false); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); }); })();</script>
+
+<main id="c" style="overflow-x:clip" class="text-ink font-areal font-medium antialiased leading-tight">
+
+  <!-- 1 Raum (Probe Flug): Film und Bilder in einem Raum mit einem Fluchtpunkt -->
+  <section id="kompetenzen" class="flug" style="--n:8">
+    <div class="fstage" id="fstage">
+      <canvas class="fgrid" id="fgrid"></canvas>
+      <div class="fspace">
+      <div class="fsh" id="hsh"></div><div class="hbox" id="hbox">
+        <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
+      </div>
+      <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
+      <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
+      <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp" loading="lazy"></a>
+      </div>
+      <div class="ftext">
+      <div class="ft"><span class="t-n">01 · Räume</span><span class="t-h">Räume für Wissensvermittlung entwickeln</span><p class="t-p font-normal">Wir entwerfen Orte, an denen Wissen nicht nur gezeigt, sondern gemeinsam erarbeitet wird. Im Senckenberg Naturmuseum haben wir aus einem ehemaligen Pausenraum eine Forschungswerkstatt gemacht, in der sich Publikum und Forschende begegnen.</p><a class="t-x font-normal" href="forschungswerkstatt/">Beispiel: Forschungswerkstatt →</a></div>
+      <div class="ft"><span class="t-n">02 · Räume</span><span class="t-h">Ausstellungsarchitektur mit eigener Haltung</span><p class="t-p font-normal">Wir bauen keine Kulisse, sondern eine Gestaltung, die selbst Teil des Inhalts wird. Für das Jüdische Museum Frankfurt haben wir die Architektur einer Wechselausstellung auf rund 600 Quadratmetern umgesetzt.</p><a class="t-x font-normal" href="im-angesicht-des-todes/">Beispiel: Im Angesicht des Todes →</a></div>
+      <div class="ft"><span class="t-n">03 · Stadt</span><span class="t-h">Wandel sichtbar machen</span><p class="t-p font-normal">Wenn sich Orte verändern, machen wir den Übergang erfahrbar, statt ihn zu überspringen. Vor dem Neubau der HfG am Offenbacher Hafen haben wir den Umbruch in sieben öffentlichen Veranstaltungen zum Thema gemacht.</p><a class="t-x font-normal" href="transition-1-7/">Beispiel: Transition 1-7 →</a></div>
+      <div class="ft"><span class="t-n">04 · Stadt</span><span class="t-h">Leerstand nutzbar machen</span><p class="t-p font-normal">Wir machen aus leeren Gebäuden Orte, die gebraucht werden. Eine ehemalige Montagehalle im Offenbacher Hafen haben wir umgebaut und zehn Jahre lang als Ausstellungshalle betrieben.</p><a class="t-x font-normal" href="kressmann-halle/">Beispiel: Kressmann-Halle →</a></div>
+      <div class="ft"><span class="t-n">05 · Menschen</span><span class="t-h">Menschen zusammenbringen</span><p class="t-p font-normal">Beteiligung entsteht bei uns durch gemeinsames Tun. Im Auftrag der Stadt Offenbach haben wir im leerstehenden Rathaus-Pavillon eine temporäre Küche mit Gastraum gebaut, rund um einen 100-Liter-Suppentopf.</p><a class="t-x font-normal" href="soups/">Beispiel: Soups →</a></div>
+      <div class="ft"><span class="t-n">06 · Umsetzung</span><span class="t-h">Groß denken, selbst bauen</span><p class="t-p font-normal">Wir planen und bauen auch große Strukturen selbst. Für das Senckenberg Naturmuseum und den Frankfurter Kunstverein entstand ein 21 Meter langer Holzbau, der ein Jahr lang eine Ausstellung beherbergte.</p><a class="t-x font-normal" href="access/">Beispiel: Access →</a></div>
+      <div class="ft"><span class="t-n">07 · Umsetzung</span><span class="t-h">Vom Konzept bis zur Eröffnung aus einer Hand</span><p class="t-p font-normal">Wir entwerfen, steuern die Gewerke und begleiten die Umsetzung bis zum Schluss. Für Display, einen Raum für digitale Praxis der Stadt Frankfurt und von NODE e.V., entstanden Raumkonzept, Möbelsystem und Licht.</p><a class="t-x font-normal" href="display/">Beispiel: Display →</a></div>
+      <div class="ft"><span class="t-n">Probe · Plan</span><span class="t-h">Fliegendes Künstler*innenzimmer, Grundriss und Deckenspiegel</span><p class="t-p font-normal">Ausschnitt aus Blatt FLK-AP-01, M 1:50.</p><a class="t-x font-normal" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener">Planset als PDF →</a></div>
+      </div>
+      <span class="probe" id="probe">Probe: ein Raum, alles kommt aus dem Fluchtpunkt</span>
+    </div>
+  </section>
+
+  <!-- 4 Zusammenarbeit -->
+  <section id="zusammenarbeit" class="pt-24 pb-16 scroll-mt-16">
+    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Zusammenarbeit</h2>
+    <p class="reveal mt-8 text-2xl md:text-4xl max-w-[30ch]">Viele unserer Auftraggeber kommen wieder: Das Senckenberg Naturmuseum, das Jüdische Museum Frankfurt und das Künstlerhaus Mousonturm haben uns mehrfach beauftragt.</p>
+    <ol class="mt-12 grid grid-cols-2 md:grid-cols-6 gap-x-4"><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">1</span><h3 class="text-xl md:text-2xl mt-4">Konzept</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">2</span><h3 class="text-xl md:text-2xl mt-4">Planung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">3</span><h3 class="text-xl md:text-2xl mt-4">Projektsteuerung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">4</span><h3 class="text-xl md:text-2xl mt-4">Produktion</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">5</span><h3 class="text-xl md:text-2xl mt-4">Umsetzung vor Ort</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">6</span><h3 class="text-xl md:text-2xl mt-4">Betrieb</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li></ol>
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 font-normal text-lg">
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">YRD.Works</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Netzwerk</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
+      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Auftraggeber</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
+    </div>
+    <div class="mt-16 grid grid-cols-12 gap-4"><div class="reveal box col-span-12 md:col-span-7 aspect-[16/9]"><span>FOTO WERKSTATT</span></div><div class="reveal box col-span-12 md:col-span-5 aspect-[4/3] md:mt-24"><span>FOTO AUFBAU</span></div></div>
+  </section>
+
+  <!-- Auf einen Blick (vorerst am Ende) -->
+  <section id="blick" class="pt-24 pb-8 scroll-mt-16">
+    <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir gestalten</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul></div>
+      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
+        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul></div>
+    </div>
+    <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
+      <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
+      <p class="reveal col-span-12 md:col-span-9 text-xl md:text-3xl leading-snug">Jüdisches Museum Frankfurt · Senckenberg Museum · Künstlerhaus Mousonturm · Kulturstiftung des Bundes · Stadt Frankfurt, Stabsstelle Digitalisierung · Node e.V.</p>
+    </div>
+  </section>
+
+  <!-- Kontakt -->
+  <section id="kontakt" class="min-h-[70vh] flex flex-col justify-center py-24 scroll-mt-16">
+    <p class="text-ink/65 text-base mb-6">Kontakt</p>
+    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[14ch]">Lorem ipsum dolor sit.</h2>
+    <a href="mailto:info@yrd.works" class="mt-10 text-2xl md:text-4xl underline underline-offset-4">info@yrd.works</a>
+  </section>
+
+  <!-- 5 Ende: normales Portfolio -->
+  <section id="alle" class="pt-24 pb-24 scroll-mt-16">
+    <p class="text-ink/65 text-base mb-6">Alle Projekte</p>
+    <div class="grid" id="grid"><a class="tile" href="display/" data-i="0"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2026-display/01.webp" srcset="Bilder/2026-display/01-900.webp 900w, Bilder/2026-display/01.webp 1497w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Display</span><span class="n">2026</span></div></a><a class="tile" href="bingenheim/" data-i="1"><div class="phw"><img class="ph" alt="" src="Bilder/2025-bingenheim/hero.webp" srcset="Bilder/2025-bingenheim/hero-900.webp 900w, Bilder/2025-bingenheim/hero.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Bingenheim</span><span class="n">2025</span></div></a><a class="tile" href="transition-1-7/" data-i="2"><div class="phw"><img class="ph" alt="" src="Bilder/2024-transition-1-7/01.webp" srcset="Bilder/2024-transition-1-7/01-900.webp 900w, Bilder/2024-transition-1-7/01.webp 1333w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Transition 1-7</span><span class="n">2024</span></div></a><a class="tile" href="im-angesicht-des-todes/" data-i="3"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2024-im-angesicht-des-todes/01.webp" srcset="Bilder/2024-im-angesicht-des-todes/01-900.webp 900w, Bilder/2024-im-angesicht-des-todes/01.webp 1333w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Im Angesicht des Todes</span><span class="n">2024</span></div></a><a class="tile" href="tables/" data-i="4"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-tables/hero.webp" srcset="Bilder/2023-tables/hero-900.webp 900w, Bilder/2023-tables/hero.webp 1392w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Tables</span><span class="n">2023</span></div></a><a class="tile" href="hole-mound/" data-i="5"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-hole-mound/hero.webp" srcset="Bilder/2023-hole-mound/hero-900.webp 900w, Bilder/2023-hole-mound/hero.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Hole/Mound</span><span class="n">2023</span></div></a><a class="tile" href="soups/" data-i="6"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-soups/01.webp" srcset="Bilder/2023-soups/01-900.webp 900w, Bilder/2023-soups/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Soups</span><span class="n">2023</span></div></a><a class="tile" href="steady-burn/" data-i="7"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-steady-burn/hero.webp" srcset="Bilder/2022-steady-burn/hero-900.webp 900w, Bilder/2022-steady-burn/hero.webp 1778w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Steady Burn</span><span class="n">2022</span></div></a><a class="tile" href="forschungswerkstatt/" data-i="8"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-forschungswerkstatt/01.webp" srcset="Bilder/2022-forschungswerkstatt/01-900.webp 900w, Bilder/2022-forschungswerkstatt/01.webp 1503w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Forschungswerkstatt</span><span class="n">2022</span></div></a><a class="tile" href="current-tours/" data-i="9"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-current-tours/01.webp" srcset="Bilder/2022-current-tours/01-900.webp 900w, Bilder/2022-current-tours/01.webp 1501w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Current Tours</span><span class="n">2021</span></div></a><a class="tile" href="bread-dispenser/" data-i="10"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2021-bread-dispenser/01.webp" srcset="Bilder/2021-bread-dispenser/01-900.webp 900w, Bilder/2021-bread-dispenser/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Bread Dispenser</span><span class="n">2021</span></div></a><a class="tile" href="logis/" data-i="11"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2021-logis/01.webp" srcset="Bilder/2021-logis/01-900.webp 900w, Bilder/2021-logis/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Logis</span><span class="n">2020</span></div></a><a class="tile" href="canned-99-63/" data-i="12"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2020-canned-99-63/01.webp" srcset="Bilder/2020-canned-99-63/01-900.webp 900w, Bilder/2020-canned-99-63/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Canned (99/63)</span><span class="n">2020</span></div></a><a class="tile" href="access/" data-i="13"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2020-access/01.webp" srcset="Bilder/2020-access/01-900.webp 900w, Bilder/2020-access/01.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Access</span><span class="n">2020</span></div></a><a class="tile" href="doubles/" data-i="14"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2019-doubles/01.webp" srcset="Bilder/2019-doubles/01-900.webp 900w, Bilder/2019-doubles/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Doubles</span><span class="n">2019</span></div></a><a class="tile" href="copy-service/" data-i="15"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2019-copy-service/hero.webp" srcset="Bilder/2019-copy-service/hero-900.webp 900w, Bilder/2019-copy-service/hero.webp 1200w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Copy Service</span><span class="n">2019</span></div></a><a class="tile" href="white-out/" data-i="16"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-white-out/hero.webp" srcset="Bilder/2018-white-out/hero-900.webp 900w, Bilder/2018-white-out/hero.webp 1200w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">White Out</span><span class="n">2018</span></div></a><a class="tile" href="oper-offenbach/" data-i="17"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-oper-offenbach/01.webp" srcset="Bilder/2018-oper-offenbach/01-900.webp 900w, Bilder/2018-oper-offenbach/01.webp 1779w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Oper Offenbach</span><span class="n">2018</span></div></a><a class="tile" href="not-not-pizza/" data-i="18"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-not-not-pizza/01.webp" srcset="Bilder/2018-not-not-pizza/01-900.webp 900w, Bilder/2018-not-not-pizza/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Not Not Pizza</span><span class="n">2018</span></div></a><a class="tile" href="insight-out/" data-i="19"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-insight-out/01.webp" srcset="Bilder/2018-insight-out/01-900.webp 900w, Bilder/2018-insight-out/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Insight Out</span><span class="n">2018</span></div></a><a class="tile" href="1-offenbacher-seefestspiele/" data-i="20"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-offenbacher-seefestspiele/hero.webp" srcset="Bilder/2017-offenbacher-seefestspiele/hero-900.webp 900w, Bilder/2017-offenbacher-seefestspiele/hero.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">1. Offenbacher Seefestspiele</span><span class="n">2017</span></div></a><a class="tile" href="messerschmiede/" data-i="21"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-messerschmiede/01.webp" srcset="Bilder/2017-messerschmiede/01-900.webp 900w, Bilder/2017-messerschmiede/01.webp 1502w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Messerschmiede</span><span class="n">2017</span></div></a><a class="tile" href="eins-zu-eins/" data-i="22"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-eins-zu-eins/01.webp" srcset="Bilder/2017-eins-zu-eins/01-900.webp 900w, Bilder/2017-eins-zu-eins/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Eins zu Eins</span><span class="n">2017</span></div></a><a class="tile" href="busy-sculpture/" data-i="23"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-busy-sculpture/01.webp" srcset="Bilder/2017-busy-sculpture/01-900.webp 900w, Bilder/2017-busy-sculpture/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Busy Sculpture</span><span class="n">2017</span></div></a><a class="tile" href="sirenen/" data-i="24"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-sirenen/01.webp" srcset="Bilder/2016-sirenen/01-900.webp 900w, Bilder/2016-sirenen/01.webp 1788w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Sirenen</span><span class="n">2016</span></div></a><a class="tile" href="scale-scale-scale/" data-i="25"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-scale-scale-scale/01.webp" srcset="Bilder/2016-scale-scale-scale/01-900.webp 900w, Bilder/2016-scale-scale-scale/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Scale Scale Scale</span><span class="n">2016</span></div></a><a class="tile" href="kressmann-halle/" data-i="26"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-kressmann-halle/01.webp" srcset="Bilder/2016-kressmann-halle/01-900.webp 900w, Bilder/2016-kressmann-halle/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Kressmann-Halle</span><span class="n">2016</span></div></a><a class="tile" href="pool/" data-i="27"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2015-pool/01.webp" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Pool</span><span class="n">2015</span></div></a><a class="tile" href="hafenmeisterei/" data-i="28"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-hafenmeisterei/01.webp" srcset="Bilder/2014-hafenmeisterei/01-900.webp 900w, Bilder/2014-hafenmeisterei/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Hafenmeisterei</span><span class="n">2015</span></div></a><a class="tile" href="pelican-bay/" data-i="29"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-pelican-bay/01.webp" srcset="Bilder/2014-pelican-bay/01-900.webp 900w, Bilder/2014-pelican-bay/01.webp 1780w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Pelican Bay</span><span class="n">2014</span></div></a><a class="tile" href="makoko/" data-i="30"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-makoko/01.webp" srcset="Bilder/2014-makoko/01-900.webp 900w, Bilder/2014-makoko/01.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Makoko</span><span class="n">2014</span></div></a><a class="tile" href="holzhausen/" data-i="31"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-holzhausen/01.webp" srcset="Bilder/2014-holzhausen/01-900.webp 900w, Bilder/2014-holzhausen/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Holzhausen</span><span class="n">2014</span></div></a><a class="tile" href="holzhausenstrasse/" data-i="32"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2012-holzhausenstrasse/01.webp" srcset="Bilder/2012-holzhausenstrasse/01-900.webp 900w, Bilder/2012-holzhausenstrasse/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Holzhausenstraße</span><span class="n">2012</span></div></a></div>
+  </section>
+
+</main>
+
+<div class="fbar caption" id="fbar">
+  <div class="fb-l"><a href="./" class="arw fback">←<span class="lg"> Back to</span> Projects</a></div>
+  <div class="fb-c"><span class="arw fst" data-for="about" aria-current="page">Corporate</span></div>
+  <div class="fb-r"><span class="flegal"><a href="impressum/" data-for="impressum">Impressum</a>    <a href="datenschutz/" data-for="datenschutz">Datenschutz</a></span></div>
+</div>
+
+<script>
+  (function(){ var v=document.getElementById('hv'), small=matchMedia('(max-width:900px)').matches;
+    var tall=matchMedia('(max-width:900px) and (orientation:portrait)').matches; v.poster='corporate/'+(tall?'poster-mobil.jpg':'poster.jpg');
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ v.src='corporate/'+(tall?'video-mobil.mp4':'video.mp4'); v.play&&v.play().catch(function(){}); } else v.removeAttribute('autoplay');
+    var full=[].slice.call(document.querySelectorAll('.full')), on=new Set();
+    var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) on.add(e.target); else on.delete(e.target); }); document.body.classList.toggle('on-dark', on.size>0); },{rootMargin:'0px 0px -94% 0px'});
+    full.forEach(function(f){ o.observe(f); });
+  })();
+  const io = new IntersectionObserver(es => es.forEach(e => { e.target.classList.toggle('on', e.isIntersecting); }), { threshold: .15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+<script>
+(function(){
+  /* Probe Flug: alles hängt nur an der Scrollposition s (in Bildschirmhöhen), läuft beim Hochscrollen rückwärts.
+     Projektion wie eine Kamera: Größe k = P/(P-z); Mitte = Fluchtpunkt + seitlicher Versatz X·k. Ein Bild mit festem Versatz läuft so auf einer Geraden durch den Fluchtpunkt und wechselt nie die Richtung.
+     DIR 'weg': Bilder kommen von der Seite und laufen in den Fluchtpunkt. DIR 'vor': Bilder kommen aus dem Fluchtpunkt und laufen zur Seite hinaus. */
+  var DIR=document.documentElement.dataset.dir||'weg';
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { document.querySelectorAll('.ft').forEach(function(t){t.classList.add('on');}); return; }
+  var sec=document.getElementById('kompetenzen');
+  var ps=[].slice.call(sec.querySelectorAll('.fp')), shs=[].slice.call(sec.querySelectorAll('.fspace > .fsh')).slice(1), ts=[].slice.call(sec.querySelectorAll('.ft'));
+  var hb=document.getElementById('hbox'), hs=document.getElementById('hsh'), tx=sec.querySelector('.ftext'), pr=document.getElementById('probe'), cvs=document.getElementById('fgrid');
+  var P=1000, ticking=false, HOLD=0.4, S0=DIR==='vor'?1.0:0.85;
+  function sm(t){ t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); }
+  function geo(){ var vw=innerWidth, vh=innerHeight, mob=vw<=700;
+    return {vw:vw, vh:vh, mob:mob, cx:vw/2, cy:vh*(mob?.42:.47),
+      w:(mob?.8:.52)*vw, Xf:mob?.3:.72, kA:mob?1.6:2.2, kH:mob?.72:.75, kF:.1,
+      HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4) }; }
+  function zk(k){ return P-P/k; }
+  function lerpZ(k1,k2,t){ return P/(P-(zk(k1)+(zk(k2)-zk(k1))*t)); }
+  /* Weg eines Bildes in Abhängigkeit von u (0 = erreicht die Lesestellung, bis HOLD steht es dort) */
+  function kOf(u,g){
+    if(DIR==='vor'){
+      if(u<=-1) return null;
+      if(u<0){ var a=1+u; return lerpZ(g.kF,g.kH,1-(1-a)*(1-a)); }          /* aus dem Fluchtpunkt heran, bremst */
+      if(u<HOLD) return g.kH;
+      if(u<HOLD+0.8){ var b=(u-HOLD)/0.8; return lerpZ(g.kH,g.kA,b*b); }    /* weiter zur Seite hinaus, beschleunigt */
+      return null;
+    }
+    if(u<=-0.6) return null;
+    if(u<0){ var c=-u/0.6; return g.kH+(g.kA-g.kH)*c*c; }                 /* von der Seite herein, bremst */
+    if(u<HOLD) return g.kH;
+    var t=Math.min(1,(u-HOLD)/1.3); return lerpZ(g.kH,g.kF,t*t);           /* weiter in den Fluchtpunkt, beschleunigt */
+  }
+  var g0=geo();
+  function place(el,sh,cx,cy,W,H,k,fog,op,shW,shH){
+    el.style.width=W+'px'; if(el===hb) el.style.height=H+'px';
+    el.style.transform='translate3d('+(cx-W/2).toFixed(1)+'px,'+(cy-H/2).toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
+    el.style.zIndex=String(10+Math.round(k*1000)); el.style.opacity=op.toFixed(3); el.style.setProperty('--fog',fog.toFixed(3));
+    var sw=shW*k, shh=shH*k, sy=g0.cy+g0.Fl*k;
+    sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(cx-sw/2).toFixed(1)+'px,'+(sy-shh/2).toFixed(1)+'px,0)';
+    sh.style.opacity=(op*(1-fog)).toFixed(3); sh.style.zIndex=String(9+Math.round(k*1000));
+  }
+  function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
+  function frame(){
+    ticking=false; var g=g0=geo(), s=sNow();
+    /* Film: steht vorne, ab s=0.15 geradeaus in den Fluchtpunkt */
+    var t=Math.min(1,Math.max(0,(s-0.15)/1.3)), kh=lerpZ(1,g.kF,t*t);
+    place(hb,hs,g.cx,g.cy,g.HW,g.HH,kh,Math.min(.5,(1-kh)*.6),DIR==='vor'?1-sm((t-.3)/.4):1,1.1*g.HW,.08*g.HH);   /* nach vorne: der Film verschwindet ganz, im Fluchtpunkt entstehen die Bilder */
+    pr.style.opacity = s>0.12 ? 0 : 1;
+    var act=-1, best=9, side=1;
+    ps.forEach(function(p,i){
+      var sh=shs[i], u=s-S0-i, k=kOf(u,g);
+      if(k===null){ p.style.visibility='hidden'; sh.style.opacity=0; return; }
+      p.style.visibility='visible';
+      var sd=(i%2?-1:1), X=sd*g.Xf*g.w, h=g.w/1.5;
+      var op = DIR==='vor' ? (u>HOLD ? 1-sm((u-HOLD-0.15)/0.3) : 1) : (u<0 ? sm((u+0.6)/0.18) : 1);
+      var fog = k<g.kH ? Math.min(.5,(1-k/g.kH)*.6) : 0;
+      place(p,sh,g.cx+X*k,g.cy,g.w,h,k,fog,op,1.25*g.w,.13*h);
+      p.style.pointerEvents=(u>-0.05&&u<HOLD+0.1)?'auto':'none';
+      var d=Math.abs(u-HOLD/2); if(u>-0.12&&u<HOLD+0.25&&d<best){ best=d; act=i; side=sd; }
+    });
+    ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
+    if(act>=0) tx.classList.toggle('r', side<0);   /* Text steht auf der freien Seite */
+  }
+  /* Einrasten wie im Walk: hört das Scrollen auf, gleitet die Seite in rund 0,3 s in die nächste Lesestellung (Film vorne oder Bild in der Mitte seiner Haltephase) */
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), tmr=0, anim=0, touching=false, rest=0, NOSNAP=/[?&]snap=0/.test(location.search);
+  function stopAnim(){ if(anim){ cancelAnimationFrame(anim); anim=0; } }
+  function snap(){
+    if(touching||anim||NOSNAP) return;
+    var s=sNow(); if(s<-0.05||s>snaps[snaps.length-1]+0.7){ rest=s; return; }
+    /* wie im Walk: wer ein Stück (über 0,12 Bildschirmhöhen) in eine Richtung gescrollt hat, kommt zum nächsten Bild in dieser Richtung, sonst federt es zurück */
+    var dir=s-rest, tgt;
+    if(Math.abs(dir)>0.12){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
+      tgt=cand.length ? cand.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }) : s; }
+    else tgt=snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; });
+    rest=tgt;
+    if(Math.abs(tgt-s)<0.004||Math.abs(tgt-s)>0.9) { rest=s; return; }
+    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), D=320;
+    (function step(now){ var q=Math.min(1,(now-t0)/D), e=1-Math.pow(1-q,3); scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
+  }
+  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,140); } }
+  addEventListener('wheel',stopAnim,{passive:true}); addEventListener('keydown',stopAnim);
+  addEventListener('touchstart',function(){ touching=true; stopAnim(); },{passive:true});
+  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,220); },{passive:true});
+  /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
+  function grid(){
+    var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
+    cvs.width=g.vw*dpr; cvs.height=g.vh*dpr; c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,g.vw,g.vh);
+    var st=g.w/3, kmax=(g.vh-g.cy)/g.Fl*1.05;
+    c.strokeStyle='rgba(0,0,255,.07)'; c.lineWidth=1; c.beginPath();
+    for(var n=-60;n<=60;n++){ c.moveTo(g.cx,g.cy); c.lineTo(g.cx+n*st*kmax, g.cy+g.Fl*kmax); }
+    for(var m=-12;m<80;m++){ var k=P/(P+m*st); if(k>kmax||k<.04) continue; var y=g.cy+g.Fl*k; c.moveTo(0,y); c.lineTo(g.vw,y); }
+    c.stroke();
+    var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
+    c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
+  }
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); frame();
+})();
+</script>
+
+</body>
+</html>

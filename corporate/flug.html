@@ -75,7 +75,7 @@
   main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
   main .full-in,main .tc-h,main .t-h{max-width:none}
   /* Probe Flug (05.11.2026, Umbau): ein Raum mit einem Fluchtpunkt wie der 3D-Raum. Film vorne in der Mitte, fährt geradeaus in die Tiefe; Bilder laufen auf einer Geraden von der Seite in den Fluchtpunkt, halten kurz auf Lesegröße, laufen in derselben Richtung weiter. Boden-Raster, Schatten, Nebel ins Weiß. */
-  .flug{position:relative;height:calc((var(--n) + 3.4) * 100vh);height:calc((var(--n) + 3.4) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .flug{position:relative;height:calc((var(--n) + 3.8) * 100vh);height:calc((var(--n) + 3.8) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
   .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#fff;isolation:isolate}
   .fspace{position:absolute;inset:0}
   .fgrid{position:absolute;inset:0;width:100%;height:100%}
@@ -123,10 +123,6 @@
       <div class="fspace">
       <div class="fsh" id="hsh"></div><div class="hbox" id="hbox">
         <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
-        <div class="full-in">
-      <h1 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[16ch]">Lorem ipsum dolor sit amet.</h1>
-      <a href="#zusammenarbeit" class="text-lg md:text-xl whitespace-nowrap">↓ Lorem ipsum</a>
-    </div>
       </div>
       <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
       <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
@@ -215,55 +211,86 @@
 <script>
 (function(){
   /* Probe Flug: alles hängt nur an der Scrollposition s (in Bildschirmhöhen), läuft beim Hochscrollen rückwärts.
-     Projektion wie eine Kamera: Größe k = P/(P-z); Mitte = Fluchtpunkt + seitlicher Versatz X·k. Ein Bild mit festem Versatz läuft so auf einer Geraden in den Fluchtpunkt und wechselt nie die Richtung. */
+     Projektion wie eine Kamera: Größe k = P/(P-z); Mitte = Fluchtpunkt + seitlicher Versatz X·k. Ein Bild mit festem Versatz läuft so auf einer Geraden durch den Fluchtpunkt und wechselt nie die Richtung.
+     DIR 'weg': Bilder kommen von der Seite und laufen in den Fluchtpunkt. DIR 'vor': Bilder kommen aus dem Fluchtpunkt und laufen zur Seite hinaus. */
+  var DIR=document.documentElement.dataset.dir||'weg';
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { document.querySelectorAll('.ft').forEach(function(t){t.classList.add('on');}); return; }
-  var sec=document.getElementById('kompetenzen'), stage=document.getElementById('fstage');
+  var sec=document.getElementById('kompetenzen');
   var ps=[].slice.call(sec.querySelectorAll('.fp')), shs=[].slice.call(sec.querySelectorAll('.fspace > .fsh')).slice(1), ts=[].slice.call(sec.querySelectorAll('.ft'));
   var hb=document.getElementById('hbox'), hs=document.getElementById('hsh'), tx=sec.querySelector('.ftext'), pr=document.getElementById('probe'), cvs=document.getElementById('fgrid');
-  var P=1000, ticking=false;
+  var P=1000, ticking=false, HOLD=0.4, S0=DIR==='vor'?1.0:0.85;
   function sm(t){ t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); }
   function geo(){ var vw=innerWidth, vh=innerHeight, mob=vw<=700;
     return {vw:vw, vh:vh, mob:mob, cx:vw/2, cy:vh*(mob?.42:.47),
       w:(mob?.8:.52)*vw, Xf:mob?.3:.72, kA:mob?1.6:2.2, kH:mob?.72:.75, kF:.1,
       HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4) }; }
   function zk(k){ return P-P/k; }
-  /* Weg eines Bildes: u<-0.6 noch nicht da, bis 0 von der Seite herein (bremst), bis 0.3 steht es, dann weiter in die Tiefe (beschleunigt) */
+  function lerpZ(k1,k2,t){ return P/(P-(zk(k1)+(zk(k2)-zk(k1))*t)); }
+  /* Weg eines Bildes in Abhängigkeit von u (0 = erreicht die Lesestellung, bis HOLD steht es dort) */
   function kOf(u,g){
+    if(DIR==='vor'){
+      if(u<=-1) return null;
+      if(u<0){ var a=1+u; return lerpZ(g.kF,g.kH,1-(1-a)*(1-a)); }          /* aus dem Fluchtpunkt heran, bremst */
+      if(u<HOLD) return g.kH;
+      if(u<HOLD+0.8){ var b=(u-HOLD)/0.8; return lerpZ(g.kH,g.kA,b*b); }    /* weiter zur Seite hinaus, beschleunigt */
+      return null;
+    }
     if(u<=-0.6) return null;
-    if(u<0){ var a=-u/0.6; return g.kH+(g.kA-g.kH)*a*a; }
-    if(u<0.3) return g.kH;
-    var t=Math.min(1,(u-0.3)/1.3), zH=zk(g.kH), zF=zk(g.kF); return P/(P-(zH+(zF-zH)*t*t));
+    if(u<0){ var c=-u/0.6; return g.kH+(g.kA-g.kH)*c*c; }                 /* von der Seite herein, bremst */
+    if(u<HOLD) return g.kH;
+    var t=Math.min(1,(u-HOLD)/1.3); return lerpZ(g.kH,g.kF,t*t);           /* weiter in den Fluchtpunkt, beschleunigt */
   }
-  function place(el,sh,cx,cy,W,H,k,fog,op,shW,shH,Fl){
+  var g0=geo();
+  function place(el,sh,cx,cy,W,H,k,fog,op,shW,shH){
     el.style.width=W+'px'; if(el===hb) el.style.height=H+'px';
     el.style.transform='translate3d('+(cx-W/2).toFixed(1)+'px,'+(cy-H/2).toFixed(1)+'px,0) scale('+k.toFixed(4)+')';
     el.style.zIndex=String(10+Math.round(k*1000)); el.style.opacity=op.toFixed(3); el.style.setProperty('--fog',fog.toFixed(3));
-    var sw=shW*k, shh=shH*k, sy=g0.cy+Fl*k;
+    var sw=shW*k, shh=shH*k, sy=g0.cy+g0.Fl*k;
     sh.style.width=sw+'px'; sh.style.height=shh+'px'; sh.style.transform='translate3d('+(cx-sw/2).toFixed(1)+'px,'+(sy-shh/2).toFixed(1)+'px,0)';
     sh.style.opacity=(op*(1-fog)).toFixed(3); sh.style.zIndex=String(9+Math.round(k*1000));
   }
-  var g0=geo();
+  function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
   function frame(){
-    ticking=false; var g=g0=geo();
-    var s=(-sec.getBoundingClientRect().top)/g.vh;
+    ticking=false; var g=g0=geo(), s=sNow();
     /* Film: steht vorne, ab s=0.15 geradeaus in den Fluchtpunkt */
-    var t=Math.min(1,Math.max(0,(s-0.15)/1.3)), kh=P/(P-zk(g.kF)*t*t);
-    place(hb,hs,g.cx,g.cy,g.HW,g.HH,kh,Math.min(.5,(1-kh)*.6),1,1.1*g.HW,.08*g.HH,g.Fl);
+    var t=Math.min(1,Math.max(0,(s-0.15)/1.3)), kh=lerpZ(1,g.kF,t*t);
+    place(hb,hs,g.cx,g.cy,g.HW,g.HH,kh,Math.min(.5,(1-kh)*.6),DIR==='vor'?1-sm((t-.3)/.4):1,1.1*g.HW,.08*g.HH);   /* nach vorne: der Film verschwindet ganz, im Fluchtpunkt entstehen die Bilder */
     pr.style.opacity = s>0.12 ? 0 : 1;
     var act=-1, best=9, side=1;
     ps.forEach(function(p,i){
-      var sh=shs[i], u=s-0.85-i, k=kOf(u,g);
+      var sh=shs[i], u=s-S0-i, k=kOf(u,g);
       if(k===null){ p.style.visibility='hidden'; sh.style.opacity=0; return; }
       p.style.visibility='visible';
       var sd=(i%2?-1:1), X=sd*g.Xf*g.w, h=g.w/1.5;
-      var op=u<0 ? sm((u+0.6)/0.18) : 1, fog=k<g.kH ? Math.min(.5,(1-k/g.kH)*.6) : 0;
-      place(p,sh,g.cx+X*k,g.cy,g.w,h,k,fog,op,1.25*g.w,.13*h,g.Fl);
-      p.style.pointerEvents=(u>-0.05&&u<0.4)?'auto':'none';
-      var d=Math.abs(u-0.12); if(u>-0.12&&u<0.6&&d<best){ best=d; act=i; side=sd; }
+      var op = DIR==='vor' ? (u>HOLD ? 1-sm((u-HOLD-0.15)/0.3) : 1) : (u<0 ? sm((u+0.6)/0.18) : 1);
+      var fog = k<g.kH ? Math.min(.5,(1-k/g.kH)*.6) : 0;
+      place(p,sh,g.cx+X*k,g.cy,g.w,h,k,fog,op,1.25*g.w,.13*h);
+      p.style.pointerEvents=(u>-0.05&&u<HOLD+0.1)?'auto':'none';
+      var d=Math.abs(u-HOLD/2); if(u>-0.12&&u<HOLD+0.25&&d<best){ best=d; act=i; side=sd; }
     });
     ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
     if(act>=0) tx.classList.toggle('r', side<0);   /* Text steht auf der freien Seite */
   }
+  /* Einrasten wie im Walk: hört das Scrollen auf, gleitet die Seite in rund 0,3 s in die nächste Lesestellung (Film vorne oder Bild in der Mitte seiner Haltephase) */
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), tmr=0, anim=0, touching=false, rest=0, NOSNAP=/[?&]snap=0/.test(location.search);
+  function stopAnim(){ if(anim){ cancelAnimationFrame(anim); anim=0; } }
+  function snap(){
+    if(touching||anim||NOSNAP) return;
+    var s=sNow(); if(s<-0.05||s>snaps[snaps.length-1]+0.7){ rest=s; return; }
+    /* wie im Walk: wer ein Stück (über 0,12 Bildschirmhöhen) in eine Richtung gescrollt hat, kommt zum nächsten Bild in dieser Richtung, sonst federt es zurück */
+    var dir=s-rest, tgt;
+    if(Math.abs(dir)>0.12){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
+      tgt=cand.length ? cand.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }) : s; }
+    else tgt=snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; });
+    rest=tgt;
+    if(Math.abs(tgt-s)<0.004||Math.abs(tgt-s)>0.9) { rest=s; return; }
+    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), D=320;
+    (function step(now){ var q=Math.min(1,(now-t0)/D), e=1-Math.pow(1-q,3); scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
+  }
+  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,140); } }
+  addEventListener('wheel',stopAnim,{passive:true}); addEventListener('keydown',stopAnim);
+  addEventListener('touchstart',function(){ touching=true; stopAnim(); },{passive:true});
+  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,220); },{passive:true});
   /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
   function grid(){
     var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
@@ -276,7 +303,6 @@
     var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
     c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
   }
-  function req(){ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }
   addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); frame();
 })();
 </script>
