@@ -75,7 +75,7 @@
   main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
   main .full-in,main .tc-h,main .t-h{max-width:none}
   /* Probe Flug (05.11.2026, Umbau): ein Raum mit einem Fluchtpunkt wie der 3D-Raum. Film vorne in der Mitte, fährt geradeaus in die Tiefe; Bilder laufen auf einer Geraden von der Seite in den Fluchtpunkt, halten kurz auf Lesegröße, laufen in derselben Richtung weiter. Boden-Raster, Schatten, Nebel ins Weiß. */
-  .flug{position:relative;height:calc((var(--n) + 3.8) * 100vh);height:calc((var(--n) + 3.8) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
+  .flug{position:relative;height:calc((var(--n) + 2.4) * 100vh);height:calc((var(--n) + 2.4) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
   .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#fff;isolation:isolate}
   .fspace{position:absolute;inset:0}
   .fgrid{position:absolute;inset:0;width:100%;height:100%}
@@ -271,31 +271,45 @@
     ts.forEach(function(t,i){ t.classList.toggle('on', i===act); });
     if(act>=0) tx.classList.toggle('r', side<0);   /* Text steht auf der freien Seite */
   }
-  /* Einrasten wie im Walk: hört das Scrollen auf, gleitet die Seite in rund 0,3 s in die nächste Lesestellung (Film vorne oder Bild in der Mitte seiner Haltephase) */
-  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), tmr=0, anim=0, touching=false, rest=0, NOSNAP=/[?&]snap=0/.test(location.search);
-  function stopAnim(){ if(anim){ cancelAnimationFrame(anim); anim=0; } }
-  function snap(){
-    if(touching||anim||NOSNAP) return;
-    var s=sNow(); if(s<-0.05||s>snaps[snaps.length-1]+0.7){ rest=s; return; }
-    /* wie im Walk: wer ein Stück (über 0,3 Bildschirmhöhen) in eine Richtung gescrollt hat, kommt zum nächsten Bild in dieser Richtung, sonst federt es zurück */
-    var dir=s-rest, tgt;
-    if(Math.abs(dir)>0.3){ var cand=snaps.filter(function(t){ return dir>0 ? t>rest+0.01 : t<rest-0.01; });
-      tgt=cand.length ? cand.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }) : s; }
-    else tgt=snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; });
-    rest=tgt;
-    if(Math.abs(tgt-s)<0.004||Math.abs(tgt-s)>0.9) { rest=s; return; }
-    var y0=scrollY, y1=scrollY+(tgt-s)*innerHeight, t0=performance.now(), Dt=700;
-    (function step(now){ var q=Math.min(1,(now-t0)/Dt), e=q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2; scrollTo(0,y0+(y1-y0)*e); anim = q<1 ? requestAnimationFrame(step) : 0; })(t0);
+  /* Schritt-Steuerung wie im Walk (05.11. abends, statt Einrasten nach dem Scrollen): Solange der Raum steht, übernimmt die Seite das Scrollen.
+     Eine Geste (Mausrad, Trackpad, Wisch, Pfeiltaste) = genau ein Schritt, als eine durchgehende weiche Fahrt; der Nachschwung des Trackpads wird geschluckt.
+     Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei, die Seite läuft normal weiter. ?snap=0 schaltet die Steuerung ab. */
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), ci=0, tw=null, consumed=false, lastWheel=0, acc=0, NOSNAP=/[?&]snap=0/.test(location.search), sv=0, rq=0;
+  function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
+  function nearest(s){ var b=0; snaps.forEach(function(t,i){ if(Math.abs(t-s)<Math.abs(snaps[b]-s)) b=i; }); return b; }
+  function inside(){ var s=sNow(); return s>-0.02 && s<snaps[snaps.length-1]+0.02; }
+  function wantsNative(dir){ return (ci>=snaps.length-1 && dir>0) || (ci<=0 && dir<0); }
+  function go(n){
+    n=Math.max(0,Math.min(snaps.length-1,n)); if(n===ci && !tw && Math.abs(sv-snaps[n])<0.002) return; ci=n;
+    var from=sv, to=snaps[n], top=scrollY+sec.getBoundingClientRect().top, t0=performance.now(), D=Math.min(1300,650+Math.abs(to-from)*320);
+    if(tw) cancelAnimationFrame(tw.raf); tw={raf:0};
+    (function step(now){ var q=Math.min(1,(now-t0)/D), e=q<.5?4*q*q*q:1-Math.pow(-2*q+2,3)/2;
+      sv=from+(to-from)*e; frame(); scrollTo({top:top+sv*innerHeight, behavior:'instant'});
+      if(q<1) tw.raf=requestAnimationFrame(step); else tw=null; })(t0);
   }
-  /* weich folgen: der Raum gleitet der Scrollposition mit kurzer Trägheit hinterher, statt jeden Ruck des Mausrads mitzumachen */
-  var sv=null, raf=0, lastT=0;
-  function loop(now){ var s=(-sec.getBoundingClientRect().top)/innerHeight; if(sv===null) sv=s;
-    var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now; sv+=(s-sv)*(1-Math.exp(-dt/0.15));
-    if(Math.abs(s-sv)<0.0004) sv=s; frame(); raf = sv!==s ? requestAnimationFrame(loop) : 0; }
-  function req(){ if(!raf){ lastT=performance.now(); raf=requestAnimationFrame(loop); } if(!anim){ clearTimeout(tmr); tmr=setTimeout(snap,260); } }
-  addEventListener('wheel',stopAnim,{passive:true}); addEventListener('keydown',stopAnim);
-  addEventListener('touchstart',function(){ touching=true; stopAnim(); },{passive:true});
-  addEventListener('touchend',function(){ touching=false; clearTimeout(tmr); tmr=setTimeout(snap,300); },{passive:true});
+  addEventListener('wheel',function(e){
+    if(NOSNAP||!inside()||e.ctrlKey) return;
+    var dir=e.deltaY>0?1:-1, now=performance.now(), gap=now-lastWheel; lastWheel=now; if(gap>220) acc=0;
+    if(!tw && Math.abs(sNow()-snaps[ci])>0.01) ci=nearest(sNow());
+    if(!tw && wantsNative(dir) && (gap>220||!consumed)) { consumed=false; return; }   /* am Ende: normal weiterscrollen */
+    e.preventDefault();
+    if(tw || (consumed && gap<220)) return;                                           /* Nachschwung der letzten Geste schlucken */
+    consumed=false; acc+=e.deltaY; if(Math.abs(acc)>28){ acc=0; consumed=true; go(ci+dir); }
+  },{passive:false});
+  addEventListener('keydown',function(e){
+    if(NOSNAP||!inside()) return; var k=e.key, dir=(k==='ArrowDown'||k==='PageDown'||(k===' '&&!e.shiftKey))?1:(k==='ArrowUp'||k==='PageUp'||(k===' '&&e.shiftKey))?-1:0;
+    if(!dir||wantsNative(dir)) return; e.preventDefault(); if(!tw) go(ci+dir);
+  });
+  var ty=null, tdone=false, tnat=null;
+  addEventListener('touchstart',function(e){ if(NOSNAP||!inside()){ ty=null; return; } ty=e.touches[0].clientY; tdone=false; tnat=null; if(!tw&&Math.abs(sNow()-snaps[ci])>0.01) ci=nearest(sNow()); },{passive:true});
+  addEventListener('touchmove',function(e){
+    if(ty===null) return; var dy=ty-e.touches[0].clientY, dir=dy>0?1:-1;
+    if(tnat===null && Math.abs(dy)>6) tnat=!tw && wantsNative(dir);
+    if(tnat) return; e.preventDefault();
+    if(!tdone && !tw && Math.abs(dy)>32){ tdone=true; go(ci+dir); }
+  },{passive:false});
+  addEventListener('touchend',function(){ ty=null; },{passive:true});
+  function req(){ if(tw||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=sNow(); frame(); }); }
   /* feines Boden-Raster wie im 3D-Raum, fluchtet zum selben Punkt */
   function grid(){
     var g=geo(), dpr=Math.min(2,devicePixelRatio||1), c=cvs.getContext('2d');
@@ -308,7 +322,7 @@
     var fg=c.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
     c.fillStyle=fg; c.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
   }
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); sv=(-sec.getBoundingClientRect().top)/innerHeight; frame();
+  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ grid(); req(); }); grid(); sv=sNow(); ci=nearest(sv); frame();
 })();
 </script>
 
