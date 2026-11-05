@@ -220,8 +220,8 @@
   function sm(t){ t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); }
   function geo(){
     var vw=innerWidth, vh=innerHeight, mob=vw<=700, P=mob?vw*1.35:vw*.7;
-    var pad=PADW(), w=(mob?.9:.58)*vw, kH=1, A=mob?0:(vw/2-pad-w/2), D=P*2.4;   /* Lesestellung groß (k=1), Bild bündig am Seitenrand; 3D nur auf dem Weg dazwischen */
-    var g={vw:vw, vh:vh, mob:mob, pad:pad, P:P, cx:vw/2, cy:vh*(mob?.36:.5), w:w, h:w/1.5, kH:kH, A:A, D:D,
+    var pad=PADW(), gut=pad, w=mob?vw-2*pad:vw/2-pad-gut/2, kH=1, A=mob?0:(vw/2-pad-w/2), D=P*2.4;   /* Lesestellung: Bild füllt eine Bildschirmhälfte (Rand außen, Steg in der Mitte); 3D nur auf dem Weg dazwischen */
+    var g={vw:vw, vh:vh, mob:mob, pad:pad, gut:gut, P:P, cx:vw/2, cy:vh*(mob?.36:.5), w:w, h:w/1.5, kH:kH, A:A, D:D,
       HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4), yawMax:0};   /* Bilder stehen gerade, der Blick dreht sich nicht (Ruben 05.11.) */
     g.zh=-(P/kH-P);                          /* Abstand vor dem Bild in Lesestellung */
     g.cz0=P*.95;                             /* hier steht man vor dem ersten Bild: durch den Film hindurch */
@@ -248,8 +248,8 @@
   /* Text: oben bündig mit dem Bild, mittig im freien Feld auf der anderen Seite; fährt von dieser Seite herein */
   function textPos(g,side){
     if(g.mob){ tx.style.left=g.pad+'px'; tx.style.width=(g.vw-2*g.pad)+'px'; tx.style.top=(g.cy+g.h/2+18)+'px'; return; }
-    var gap=g.vw*.04, free=g.vw-2*g.pad-g.w-gap, tw=Math.min(free*.8, 440), x0=side>0 ? g.pad : g.pad+g.w+gap;
-    tx.style.width=tw+'px'; tx.style.left=(x0+(free-tw)/2)+'px'; tx.style.top=(g.cy-g.h/2)+'px';
+    var tw=Math.min(g.w, 440);   /* Text in der anderen Hälfte, am Steg ausgerichtet */
+    tx.style.width=tw+'px'; tx.style.left=(side>0 ? g.vw/2-g.gut/2-tw : g.vw/2+g.gut/2)+'px'; tx.style.top=(g.cy-g.h/2)+'px';
   }
   var tside=0;
   function layout(){
@@ -268,7 +268,7 @@
     var act=-1, best=9, side=1;
     ps.forEach(function(p,i){
       var zc=g.z[i]+c.cz, sd=i%2?-1:1, dist=-zc;                     /* Abstand des Bildes vor der Bildebene */
-      var gone=zc>g.P*.3, op=1-sm((zc-g.P*.03)/(g.P*.2));   /* vorbeigehende Bilder lösen sich früh auf */
+      var gone=zc>g.P*.3, op=(1-sm((zc-g.P*.03)/(g.P*.2)))*sm((zc+g.D*.9)/(g.D*.5));   /* vorbeigehende Bilder lösen sich früh auf; das nächste Bild erscheint erst auf dem Weg, in der Lesestellung ist es nicht zu sehen */
       var fog=Math.min(.55,Math.max(0,(dist-(-g.zh))/(g.D*5))*.75);
       p.style.visibility=shs[i].style.visibility=gone?'hidden':'visible';
       p.style.opacity=op.toFixed(3); p.style.setProperty('--fog',fog.toFixed(3)); shs[i].style.opacity=(op*(1-fog)).toFixed(3);
