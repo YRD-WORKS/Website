@@ -126,12 +126,12 @@
       </div>
       <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
       <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
-      <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp" loading="lazy"></a>
-      <div class="fsh"></div><a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp" loading="lazy"></a>
-      <div class="fsh"></div><a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp" loading="lazy"></a>
-      <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp" loading="lazy"></a>
-      <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp" loading="lazy"></a>
-      <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp" loading="lazy"></a>
+      <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp"></a>
+      <div class="fsh"></div><a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp"></a>
+      <div class="fsh"></div><a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp"></a>
+      <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp"></a>
+      <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp"></a>
+      <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp"></a>
       </div>
       <div class="ftext">
       <div class="ft"><span class="t-n">01 · Räume</span><span class="t-h">Räume für Wissensvermittlung entwickeln</span><p class="t-p font-normal">Wir entwerfen Orte, an denen Wissen nicht nur gezeigt, sondern gemeinsam erarbeitet wird. Im Senckenberg Naturmuseum haben wir aus einem ehemaligen Pausenraum eine Forschungswerkstatt gemacht, in der sich Publikum und Forschende begegnen.</p><a class="t-x font-normal" href="forschungswerkstatt/">Beispiel: Forschungswerkstatt →</a></div>
@@ -274,6 +274,8 @@
   /* Fließendes Gehen (05.11. spätabends, statt „eine Geste = ein Schritt“): Solange der Raum steht, übernimmt die Seite das Scrollen.
      Mausrad, Trackpad und Wisch schieben ein Ziel stufenlos vor (PER Bildschirmhöhen Scrollweg je Bild); der Raum gleitet dem Ziel mit Trägheit nach.
      Erst wenn man aufhört, zieht ein sanfter Magnet in die nächste Lesestellung. Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei. ?snap=0 schaltet die Steuerung ab. */
+  /* alle Fotos vorab entpacken, damit beim ersten Erscheinen nichts hängt */
+  ps.forEach(function(p){ var im=p.querySelector('img'); if(im&&im.decode) im.decode().catch(function(){}); });
   var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=1.1, TAU=0.24, MAG=0.42, IDLE=320;
   var magT=null, rest=0, tgt=0, sv=0, raf=0, lastT=0, idleT=-1e9, lastWheel=0, touching=false, NOSNAP=/[?&]snap=0/.test(location.search), rq=0, top0=0;
   function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
