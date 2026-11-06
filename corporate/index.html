@@ -322,6 +322,11 @@
   var tside=0;
   function layout(){
     var g=G=geo(); tside=0;
+    /* Handy (Ruben 06.11.): Bevor der Text auf der Tafel abgeschnitten wird, rückt das Bild nach oben, aber nur so weit, dass es unter YRD.Works ganz zu sehen bleibt. Gilt für alle Kapitel gleich (längster Text), damit nichts springt. */
+    if(g.mob){ var mi=14, rem=parseFloat(getComputedStyle(document.documentElement).fontSize), mb=g.vh-5.6*rem;
+      tx.style.width=(g.vw-2*g.pad-2*mi)+'px'; var th=0; ts.forEach(function(t){ th=Math.max(th,t.scrollHeight); });
+      var hm=document.querySelector('.nav .home'), top=(hm?hm.getBoundingClientRect().bottom:3*rem)+g.gut;
+      var need=mb-2*mi-th-g.gut-g.h/2, lo=top+g.h/2; g.cy=Math.min(g.cy,Math.max(lo,need)); }
     space.style.perspective=g.P+'px'; space.style.perspectiveOrigin=g.cx+'px '+g.cy+'px';
     world.style.left=g.cx+'px'; world.style.top=g.cy+'px';
     var fy=g.mob?g.vh*.08:0; put(hb,0,fy,0,g.HW,g.HH); put(hs,0,g.Fl,0,g.HW*1.1,g.HH*.5,' rotateX(90deg)');
