@@ -604,6 +604,7 @@
     if(!touching && now-idleT>IDLE && magT===null){ magT=magnet(); rest=tgt=magT; }   /* Magnet, erst nach dem Aufhören; das angesteuerte Kapitel gilt sofort als Ausgangspunkt der nächsten Geste */
     sv=spring(sv,tgt,magT!==null?ST_MAG:ST,dt);
     var done=magT!==null && Math.abs(tgt-sv)<0.0004 && Math.abs(magT-tgt)<0.0004 && Math.abs(vel)<0.01;
+    if(!done && !strip && !touching && magT!==null && Math.abs(magT-sv)<0.003 && Math.abs(magT-tgt)<0.003 && Math.abs(vel)<0.05) done=true;   /* Reihe schon bereitlegen, wenn das Bild praktisch steht (vorher erst nach knapp 3 s) */
     if(done){ sv=tgt=rest=magT; magT=null; VMAX=0.8; vel=0; var ni=snaps.indexOf(rest)-1; if(ni>=0&&!strip&&!touching) openStrip(ni,true); }
     if(Math.abs(sv-prev)>1e-5||done){ frame(); scrollTo({top:top0+sv*innerHeight, behavior:'instant'}); }
     raf = done ? 0 : requestAnimationFrame(loop);
@@ -611,6 +612,7 @@
   function sync(){ if(!raf){ sv=tgt=sNow(); vel=0; if(Math.abs(nearest(sv)-sv)<0.01) rest=nearest(sv); } }
   addEventListener('wheel',function(e){
     if(NOSNAP||e.ctrlKey||(!inside()&&!raf)) return;
+    if(!strip && Math.abs(e.deltaX)>Math.abs(e.deltaY) && quietOpen()){ e.preventDefault(); strip.scrollLeft+=e.deltaX; return; }   /* seitlich, bevor die Reihe bereitliegt: sofort öffnen und schieben */
     var now=performance.now(), gap=now-lastWheel; lastWheel=now; sync();
     var d=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?innerHeight:1)/(innerHeight*PER); d=Math.max(-0.08,Math.min(0.08,d));
     var atEnd=tgt>=snaps[LAST]-0.002 && Math.abs(sv-tgt)<0.01, atTop=tgt<=0.002;
@@ -634,6 +636,7 @@
   addEventListener('touchstart',function(e){ if(NOSNAP||!inside()||(strip&&!strip.quiet)){ ty=null; return; } if(!strip) sync(); tx0=e.touches[0].clientX; ty=ly=e.touches[0].clientY; lt=performance.now(); t0=tgt; tnat=null; vy=0; },{passive:true});
   addEventListener('touchmove',function(e){
     if(ty===null) return; var y=e.touches[0].clientY, dy=ty-y, now=performance.now();
+    if(tnat===null && !strip && Math.abs(e.touches[0].clientX-tx0)>6 && Math.abs(e.touches[0].clientX-tx0)>Math.abs(dy)) quietOpen();   /* seitlich, bevor die Reihe bereitliegt: sofort öffnen */
     if(tnat===null && strip && Math.max(Math.abs(dy),Math.abs(e.touches[0].clientX-tx0))>6){   /* Reihe still bereit: seitlich = Reihe schieben (nativ), senkrecht = weiter im Raum */
       if(Math.abs(e.touches[0].clientX-tx0)>Math.abs(dy)){ tnat=true; hsw={x0:strip.scrollLeft}; }
       else {
@@ -650,6 +653,9 @@
       var b=snaps.indexOf(nearest(t0)), dir=(Math.abs(tdy)>36||Math.abs(vy)>0.6) ? (tdy>0?1:-1) : 0, n=Math.max(0,Math.min(LAST,b+dir));
       tgt=magT=rest=snaps[n]; if(dir) VMAX=1.6; idleT=-1e9; kick(); }
     ty=null; touching=false; tdy=0; },{passive:true});
+  /* Reihe sofort still öffnen, wenn man nah an einem Kapitel steht (seitliche Geste, bevor sie von selbst bereitliegt) */
+  function quietOpen(){ var n=nearest(sv), ni=snaps.indexOf(n)-1; if(ni<0||Math.abs(sv-n)>0.2||strip) return false;
+    if(raf){ cancelAnimationFrame(raf); raf=0; } var top=scrollY+sec.getBoundingClientRect().top; sv=tgt=rest=n; magT=null; vel=0; VMAX=0.8; frame(); scrollTo({top:top+n*innerHeight, behavior:'instant'}); openStrip(ni,true); return !!strip; }
   function req(){ if(raf||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=tgt=sNow(); frame(); }); }
   addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ closeStack(true); closeStrip(true); layout(); req(); }); layout(); sv=tgt=rest=sNow(); frame();
 })();
