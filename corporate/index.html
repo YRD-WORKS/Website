@@ -144,6 +144,8 @@
   }
   @media (max-width:700px){ .ftext{width:auto} }
   @media (prefers-reduced-motion:reduce){.flug{height:auto;margin-top:0}.fstage{position:relative;height:auto;overflow:visible}.fgrid,.fsh{display:none}.fspace,.world{position:relative;display:grid;gap:1rem;width:auto;height:auto;transform:none!important}.fp,.hbox{position:relative;transform:none!important;width:100%!important;height:auto!important;aspect-ratio:3/2}.hbox{aspect-ratio:16/9}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
+  .fcount{position:absolute;z-index:5250;margin:0;opacity:0;pointer-events:none;transition:opacity .3s}
+  .fcount.on{opacity:1;pointer-events:auto}
 </style>
 </head>
 <body data-ov="about">
@@ -308,7 +310,7 @@
     var fts=[taf].concat(ts); fts.forEach(function(e){ e.style.transition='none'; });
     sec.style.setProperty('--tin', ((side>0?-1:1)*(g.mob?g.vw:(g.w+g.pad+40))).toFixed(0)+'px');   /* Tafel links kommt von links, rechts von rechts */
     if(g.mob){   /* Handy: Tafel unter dem Bild, gleicher Rand wie das Bild (wie die 2D-Liste), endet über der Leiste; Text mit Abstand zur Kontur */
-      var mt=g.cy+g.h/2+g.gut, mi=14, mb=g.vh-(5.6*parseFloat(getComputedStyle(document.documentElement).fontSize));
+      var mt=g.cy+g.h/2+g.gut+CNTH, mi=14, mb=g.vh-(5.6*parseFloat(getComputedStyle(document.documentElement).fontSize));
       taf.style.setProperty('--gut','0px'); tf.left=g.pad+'px'; tf.width=(g.vw-2*g.pad)+'px'; tf.top=mt+'px'; tf.height=Math.max(80,mb-mt)+'px';
       tx.style.left=(g.pad+mi)+'px'; tx.style.width=(g.vw-2*g.pad-2*mi)+'px'; tx.style.top=(mt+mi)+'px'; tx.style.height=''; return; }
     /* Tafel: so groß wie das Bild, in der anderen Hälfte gespiegelt (vom Seitenrand bis zum Steg) */
@@ -326,7 +328,7 @@
     if(g.mob){ var mi=14, rem=parseFloat(getComputedStyle(document.documentElement).fontSize), mb=g.vh-5.6*rem;
       tx.style.width=(g.vw-2*g.pad-2*mi)+'px'; var th=0; ts.forEach(function(t){ th=Math.max(th,t.scrollHeight); });
       var hm=document.querySelector('.nav .home'), top=(hm?hm.getBoundingClientRect().bottom:3*rem)+g.gut;
-      var need=mb-2*mi-th-g.gut-g.h/2, lo=top+g.h/2; g.cy=Math.min(g.cy,Math.max(lo,need)); }
+      var need=mb-2*mi-th-g.gut-CNTH-g.h/2, lo=top+g.h/2; g.cy=Math.min(g.cy,Math.max(lo,need)); }
     space.style.perspective=g.P+'px'; space.style.perspectiveOrigin=g.cx+'px '+g.cy+'px';
     world.style.left=g.cx+'px'; world.style.top=g.cy+'px';
     var fy=g.mob?g.vh*.08:0; put(hb,0,fy,0,g.HW,g.HH); put(hs,0,g.Fl,0,g.HW*1.1,g.HH*.5,' rotateX(90deg)');
@@ -376,7 +378,7 @@
   /* Strecke (Ruben 06.11.): Klick aufs Bild in der Lesestellung macht das Thema horizontal scrollbar wie die Projekte in 2D.
      Bild und Tafel werden zu einer Reihe, dahinter folgen die übrigen Bilder des Projekts in gleicher Höhe. Mausrad und Wischen schieben die Reihe;
      am Anfang zurück oder am Ende weiter, Esc oder ein Klick aufs Bild schließen sie. Die Bilder der Reihe führen ins Projekt. */
-  var hopen=-1, strip=null, hlast=0, hclosing=0;
+  var hopen=-1, strip=null, hlast=0, hclosing=0, CNTH=26;   /* Platz für den Bildzähler unter dem Bild auf dem Handy */
   /* Ruben 06.11. morgens: Mischung aus 2D und 3D. In der Lesestellung liegt die Reihe schon still bereit (quiet): Bild und Tafel stehen dort, wo sie im Raum stehen, die übrigen Bilder des Projekts schließen außerhalb des Bildschirms an (Rand = Steg). Seitlich wischen schiebt sofort, hoch und runter geht es im Raum weiter. */
   function openStrip(i,quiet){
     var g=G, p=ps[i], src=p.querySelector('img').getAttribute('src'), mm=src.match(/Bilder\/([^/]+)\/(\d+)\.webp/); if(!mm||!MORE[mm[1]]) return;
@@ -650,6 +652,25 @@
   function quietOpen(){ var n=nearest(sv), ni=snaps.indexOf(n)-1; if(ni<0||Math.abs(sv-n)>0.2||strip) return false;
     if(raf){ cancelAnimationFrame(raf); raf=0; } var top=scrollY+sec.getBoundingClientRect().top; sv=tgt=rest=n; magT=null; vel=0; VMAX=0.8; frame(); scrollTo({top:top+n*innerHeight, behavior:'instant'}); openStrip(ni,true); return !!strip; }
   function req(){ if(raf||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=tgt=sNow(); frame(); }); }
+  /* Bildzähler mit Pfeilen wie in der 2D-Projektansicht (Ruben 06.11.): unter dem Bild links, zeigt, dass man seitlich weiterkommt */
+  var cnt=document.createElement('div'); cnt.className='proj-count caption fcount'; cnt.innerHTML='<button type="button" class="gp" data-d="-1" aria-label="Vorheriges Bild">\u2190</button><span class="gn"></span><button type="button" class="gp" data-d="1" aria-label="Nächstes Bild">\u2192</button>';
+  sec.querySelector('.fstage').appendChild(cnt);
+  function cntInfo(){ var n=nearest(sv), i=snaps.indexOf(n)-1; if(i<0||Math.abs(sv-n)>0.06) return null;
+    var m=ps[i].querySelector('img').getAttribute('src').match(/Bilder\/([^/]+)\//); if(!m||!MORE[m[1]]) return null; return {i:i, n:MORE[m[1]]}; }
+  function cntUpdate(){ var g=G, c=cntInfo(); if(!c){ cnt.classList.remove('on'); return; }
+    var sd=(RIGHT||!(c.i%2))?1:-1, x=g.mob?g.pad:(sd>0?g.vw/2+g.gut/2:g.pad);
+    cnt.style.left=x+'px'; cnt.style.top=(g.cy+g.h/2+(g.mob?6:10))+'px';
+    var r=(strip&&hopen===c.i)?strip:null, st=g.w+g.gut, max=r?r.scrollWidth-r.clientWidth:1, sl=r?r.scrollLeft:0, end=r&&sl>=max-2;
+    var k=end?c.n:Math.min(c.n,Math.round(sl/st)+1);
+    cnt.querySelector('.gn').textContent=k+' / '+c.n; cnt.querySelector('[data-d="-1"]').disabled=sl<=2; cnt.querySelector('[data-d="1"]').disabled=!!end;
+    cnt.classList.add('on'); }
+  cnt.addEventListener('click',function(e){ var b=e.target.closest('.gp'); if(!b||b.disabled) return; e.preventDefault(); e.stopPropagation();
+    var fresh=!strip; if(fresh) quietOpen(); var r=strip; if(!r) return;
+    function run(){ var st=G.w+G.gut, max=r.scrollWidth-r.clientWidth, to=Math.max(0,Math.min(max,(Math.round(r.scrollLeft/st)+(+b.dataset.d))*st)), from=r.scrollLeft, t1=performance.now();
+      (function sl(now){ var q=Math.min(1,(now-t1)/420), ee=1-Math.pow(1-q,3); r.scrollLeft=from+(to-from)*ee; if(q<1) requestAnimationFrame(sl); })(t1); }
+    if(fresh) requestAnimationFrame(function(){ requestAnimationFrame(run); }); else run(); });   /* frisch geöffnete Reihe erst einen Moment auslegen lassen */
+  document.addEventListener('scroll',function(e){ if(strip&&e.target===strip) cntUpdate(); },true);
+  var frame0=frame; frame=function(){ frame0(); cntUpdate(); };
   addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ closeStack(true); closeStrip(true); layout(); req(); }); layout(); sv=tgt=rest=sNow(); frame();
 })();
 </script>
