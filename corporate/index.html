@@ -547,18 +547,20 @@
      Erst wenn man aufhört, zieht ein sanfter Magnet in die nächste Lesestellung. Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei. ?snap=0 schaltet die Steuerung ab. */
   /* alle Fotos vorab entpacken, damit beim ersten Erscheinen nichts hängt */
   ps.forEach(function(p){ var im=p.querySelector('img'); if(im&&im.decode) im.decode().catch(function(){}); });
-  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=2.0, TAU=0.4, MAG=0.6, IDLE=500, VMAX=0.8, RAD=0.3;   /* 2 Bildschirmhöhen Scrollweg je Kapitel, höchstens 0,8 Kapitel pro Sekunde */
+  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=2.0, TAU=0.4, MAG=0.6, IDLE=700, VMAX=0.8, RAD=0.3;   /* 2 Bildschirmhöhen Scrollweg je Kapitel, höchstens 0,8 Kapitel pro Sekunde */
   var magT=null, rest=0, tgt=0, sv=0, raf=0, lastT=0, idleT=-1e9, lastWheel=0, touching=false, NOSNAP=/[?&]snap=0/.test(location.search), rq=0, top0=0;
   function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
   function nearest(s){ return snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }); }
-  /* Magnet nur in der Nähe eines Bildes: wer zwischen zwei Kapiteln aufhört, bleibt dort stehen */
-  function magnet(){ var n=nearest(tgt); return Math.abs(n-tgt)<RAD ? n : tgt; }
+  /* Magnet: nah an einem Bild rastet es dort ein; wer vom letzten Kapitel aus schon ein Stück (über 0,12) losgegangen ist und dann aufhört, wird zum nächsten Kapitel in dieser Richtung weitergeführt. Der Zwischenzustand bleibt kurz sichtbar (IDLE), dann geht es automatisch weiter. */
+  function magnet(){ var n=nearest(tgt), d=tgt-rest; if(Math.abs(d)<0.12) return n;
+    var c=snaps.filter(function(t){ return d>0 ? t>rest+0.01 : t<rest-0.01; }); if(!c.length) return n;
+    return d>0 ? Math.min.apply(null,c.filter(function(t){ return t>=tgt-0.01; }).concat([Math.max.apply(null,c)])) : Math.max.apply(null,c.filter(function(t){ return t<=tgt+0.01; }).concat([Math.min.apply(null,c)])); }
   function clampT(t){ return Math.max(0,Math.min(snaps[LAST],t)); }
   function inside(){ var s=sNow(); return s>-0.02 && s<snaps[LAST]+0.02; }
   function kick(){ if(!raf){ top0=scrollY+sec.getBoundingClientRect().top; lastT=performance.now(); raf=requestAnimationFrame(loop); } }
   function loop(now){
     var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now;
-    if(!touching && now-idleT>IDLE){ if(magT===null) magT=magnet(); tgt+=(magT-tgt)*(1-Math.exp(-dt/MAG)); }   /* Magnet, erst nach dem Aufhören */
+    if(!touching && now-idleT>IDLE){ if(magT===null){ magT=magnet(); rest=magT; }   /* das angesteuerte Kapitel gilt sofort als Ausgangspunkt der nächsten Geste */ tgt+=(magT-tgt)*(1-Math.exp(-dt/MAG)); }   /* Magnet, erst nach dem Aufhören */
     var prev=sv, st=(tgt-sv)*(1-Math.exp(-dt/TAU)), mx=VMAX*dt; sv+=Math.max(-mx,Math.min(mx,st));   /* Trägheit mit Höchstgeschwindigkeit */
     var done=magT!==null && Math.abs(tgt-sv)<0.0004 && Math.abs(magT-tgt)<0.0004;
     if(done){ sv=tgt=rest=magT; magT=null; VMAX=0.8; }
@@ -577,7 +579,7 @@
   addEventListener('keydown',function(e){
     if(NOSNAP||!inside()) return; var k=e.key, dir=(k==='ArrowDown'||k==='PageDown'||(k===' '&&!e.shiftKey))?1:(k==='ArrowUp'||k==='PageUp'||(k===' '&&e.shiftKey))?-1:0;
     sync(); var i=snaps.indexOf(nearest(tgt)); if(!dir||(i>=LAST&&dir>0)||(i<=0&&dir<0)) return;
-    e.preventDefault(); tgt=snaps[i+dir]; magT=tgt; idleT=-1e9; kick();
+    e.preventDefault(); tgt=snaps[i+dir]; magT=rest=tgt; idleT=-1e9; kick();
   });
   var ty=null, t0=0, tnat=null, vy=0, lt=0, ly=0;
   addEventListener('touchstart',function(e){ if(NOSNAP||!inside()||strip){ ty=null; return; } sync(); ty=ly=e.touches[0].clientY; lt=performance.now(); t0=tgt; tnat=null; vy=0; },{passive:true});
