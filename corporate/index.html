@@ -1,679 +1,383 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
-<title>YRD.Works – Corporate (Probe Gang)</title>
-<base href="../">
-<link rel="stylesheet" href="corporate/tailwind.css">
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works – Corporate</title>
+<!-- Probe 07.11.2026: Landing der Corporate-Seite als Fotostapel. DE-Saetze = bestaetigter Einstieg (Corporate-Geruest), EN = Entwurf Claude, ungeprueft. -->
 <style>
-  .nav .links a{text-decoration:none!important}
-  body[data-ov] main{visibility:visible!important}
-  .box{position:relative;border:1px solid rgba(0,0,255,.4);display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(to top right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px)),
-                 linear-gradient(to bottom right,transparent calc(50% - .5px),rgba(0,0,255,.18) 50%,transparent calc(50% + .5px))}
-  .box{overflow:hidden}
-  .box span{background:#fff;padding:.3em .7em;letter-spacing:.08em;max-width:90%;overflow-wrap:anywhere;text-align:center}
-  /* randlose Vollbild-Abschnitte (Video oben, Projekte) */
-  .full{position:relative;height:100vh;height:100svh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));overflow:hidden;background:#000}
-  .hero{margin-top:calc(-1 * (.9rem + 4.4rem))}
-  .full video,.full img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .full img{animation:kb 20s ease-in-out infinite alternate}
-  @keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
-  .full::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.5),rgba(0,0,40,0) 45%),linear-gradient(to bottom,rgba(0,0,40,.25),rgba(0,0,40,0) 18%);pointer-events:none}
-  .full-in{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;color:#fff}
-  .probe{position:absolute;z-index:1;top:calc(4.2rem + env(safe-area-inset-top,0px));right:var(--pad);color:#fff;font-size:.9rem;opacity:.8}
-  @media (max-width:700px){.full-in{flex-direction:column;align-items:flex-start}}
-  .full-in a{color:#fff}
-  body.on-dark .nav a,body.on-dark .mm-b{color:#fff}
-  .nav a,.mm-b{transition:color .35s}
-  .lang{margin-left:1em}
-  .lang b{text-decoration:underline;text-underline-offset:.18em;font-weight:inherit}
-  /* Leistung: je Projekt nur die Schritte von YRD.Works */
-  .steps{display:flex;flex-wrap:wrap;gap:.3em .3em}
-  .steps span{border-radius:999px;padding:.05em .55em;background:rgb(0,0,255);color:#fff}
-  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.2,.7,.2,1),transform .6s cubic-bezier(.2,.7,.2,1)}
-  .reveal.on{opacity:1;transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.full img{animation:none}}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{
+  --bg:#fff; --ink:rgb(0,0,255); --ink-4:rgba(0,0,255,.65); --line:rgba(0,0,255,.3);
+  --base:clamp(10px,.88vw,22px); --pad:max(16px,1rem); font-size:var(--base);
+  --fb-b:1rem; --fb-h:3.2rem; --fb-in:1.3rem;
+  --t-fast:.2s; --t-mid:.35s; --e-out:cubic-bezier(.2,.7,.2,1);
+}
+@media (max-width:700px){ :root{ --base:10px; font-size:15px; --pad:16px } }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--ink);font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1.3rem;font-weight:550;line-height:1.22;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.caption{font-size:1.05rem;font-weight:420}
+.n{color:var(--ink-4)}
 
-  /* Probe Schieben: Inhalte fahren von links, rechts und unten ins Bild */
-  .k-head{padding-top:6rem}
-  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;align-items:end;margin-top:22vh}
-  .row a{color:inherit;text-decoration:none!important}
-  .m{position:relative;overflow:hidden;background:#eee}
-  .m img{display:block;width:100%;height:100%;object-fit:cover}
-  .t{display:flex;flex-direction:column;gap:.35em;padding-bottom:.2em}
-  .t-n{color:rgba(0,0,255,.65)}
-  .t-h{font-size:clamp(1.3rem,1.8vw,1.6rem);line-height:.98;letter-spacing:-.01em}
-  .t-p{font-size:1.05rem;line-height:1.3;max-width:38ch;margin:.5em 0 .3em}
-  .sl .t-p{max-width:46ch}
-  .t-x{font-size:1.05rem}
-  .t-x:hover{text-decoration:underline;text-underline-offset:.18em}
-  .c1-8{grid-column:1/9}.c9-12{grid-column:9/13}.c1-4{grid-column:1/5}.c5-12{grid-column:5/13}
-  .c1-6{grid-column:1/7}.c7-12{grid-column:7/13}.c1-7{grid-column:1/8}.c8-12{grid-column:8/13}.c3-10{grid-column:3/11}
-  .r1{grid-row:1}.top{align-self:start}
-  .a32{aspect-ratio:3/2}.a43{aspect-ratio:4/3}.a45{aspect-ratio:4/5}.a169{aspect-ratio:16/9}
-  @media (max-width:700px){.row>*{grid-column:1/13!important;grid-row:auto!important}.row{margin-top:14vh;row-gap:1.2rem}}
-  /* randlos, schiebt sich von unten über das vorige Bild */
-  .stack{margin-top:22vh;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad))}
-  .sl{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#000;color:#fff}
-  .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .sl::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,40,.55),rgba(0,0,40,0) 50%);pointer-events:none}
-  .sl .t{position:absolute;z-index:1;left:var(--pad);right:var(--pad);bottom:calc(5.5rem + env(safe-area-inset-bottom,0px))}
-  .sl .t-n{color:rgba(255,255,255,.8)}
-  .sl .t-h{font-size:clamp(1.4rem,2.2vw,2.1rem);max-width:22ch;line-height:.95}
-  .sl a{color:#fff}
-  .gap{height:30vh}
-  [data-from]{will-change:transform}
-  body.on-dark2 .nav a,body.on-dark2 .mm-b{color:#fff}
-  @media (prefers-reduced-motion:reduce){[data-from]{transform:none!important;opacity:1!important}}
-  /* wie Original (05.11.2026): eine Schriftgröße wie auf yrd.works, Strich 550 vom Original, Labels hellblau wie Year/Location auf den Projektseiten */
-  main{font-weight:inherit}
-  main [class*="text-lg"],main [class*="text-xl"],main [class*="text-2xl"],main [class*="text-3xl"],main [class*="text-4xl"],main [class*="text-5xl"],main [class*="text-6xl"],main [class*="text-8xl"],main .text-base,main .t-h,main .tc-h,main .sl .t-h{font-size:inherit!important;line-height:inherit!important;letter-spacing:normal!important;font-weight:inherit!important}
-  main .text-ink\/65,main [class*="text-ink/65"]{color:var(--ink-4)!important;font-size:1.05rem!important;font-weight:420!important;line-height:1.22!important}
-  main .full-in,main .tc-h,main .t-h{max-width:none}
-  /* Probe Gang (05.11.2026): Man geht selbst durch den Raum. Bilder und Film stehen fest wie in einer Allee, nur die Kamera bewegt sich; der Boden läuft mit, beim Einrasten wendet sich der Blick leicht zum Bild. Echte 3D-Perspektive (CSS 3D), Boden-Raster mit derselben Rechnung im Canvas. */
-  .flug{position:relative;height:calc((var(--n) + 2.4) * 100vh);height:calc((var(--n) + 2.4) * 100svh);margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));margin-top:calc(-1 * (.9rem + 4.4rem))}
-  .fstage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#fff;isolation:isolate}
-  .fgrid{position:absolute;inset:0;width:100%;height:100%}
-  .fspace{position:absolute;inset:0}
-  .world{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;will-change:transform}
-  .fp,.hbox,.fsh{position:absolute;left:0;top:0;display:block;transform-origin:50% 50%;backface-visibility:hidden}
-  .fp{background:#eee}
-  .fp img{display:block;width:100%;height:100%;object-fit:cover}
-  .fp::after,.hbox::before{content:"";position:absolute;inset:0;background:#fff;opacity:var(--fog,0);pointer-events:none;z-index:2}
-  .fs{transition:transform .8s cubic-bezier(.2,.7,.2,1),opacity .45s ease;cursor:pointer}   /* Staffel hinter dem geklickten Bild (06.11.) */
-  .fp:not(.plan){cursor:pointer}
-  .fp.plan{background:#fff;outline:1px solid rgba(0,0,255,.15);outline-offset:-1px}
-  .fp.plan img{object-fit:contain}
-  .hbox{overflow:hidden;background:#000}
-  .hbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .fsh{pointer-events:none;background:radial-gradient(closest-side,rgba(10,10,60,.16),rgba(10,10,60,0))}
-  .fstage .probe{color:var(--ink);top:calc(4.2rem + env(safe-area-inset-top,0px));transition:opacity .3s;z-index:6000}
-  .ftafel{position:absolute;z-index:4999;left:0;top:0;width:0;height:0;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,255,.15);opacity:0;transform:translateX(var(--tin,0px));transition:opacity .3s ease,transform .8s cubic-bezier(.2,.7,.2,1);pointer-events:none}   /* Ruben 06.11.: fährt mit dem Text seitwärts von außen herein (--tin aus textPos); feine Kontur wie bei den Plänen; Text steht auf einer weißen Tafel, die den Raum dahinter verdeckt */
-  .ftafel.on{opacity:1;transform:none}
-  .ftafel::before{content:"";position:absolute;top:0;bottom:0;right:calc(-1 * var(--gut,0px));width:var(--gut,0px);background:#fff}
-  .ftafel.tr::before{right:auto;left:calc(-1 * var(--gut,0px))}
-  .ftext{position:absolute;z-index:5000;left:var(--pad);top:30vh;width:30ch}
-  .ft{position:absolute;left:0;top:0;width:100%;display:flex;flex-direction:column;gap:.35em;opacity:0;transform:translateX(-70px);transition:opacity .5s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);pointer-events:none}
-  .ftext.r .ft{transform:translateX(70px)}
-  .ftext .ft,.ftext.r .ft{transform:translateX(var(--tin,-70px));transition:opacity .3s ease,transform .8s cubic-bezier(.2,.7,.2,1)}   /* Text fährt mit der Tafel */
-  .fbar .fb-c .fst{display:none!important} .fdots{margin-left:0}   /* Ruben 06.11.: "Corporate" aus der Mitte, dort nur die Kapitelpunkte */
-  .ftext .ft.on{transform:none}
-  .ft.on{opacity:1;transform:none;pointer-events:auto}
-  .ft .t-p{max-width:none}
-  /* Satzproben auf den Tafeln (Ruben 06.11.): jede Tafel ein anderer Satz, beim Durchgehen vergleichen. Kennung unten rechts. */
-  .tsh{transition:opacity .5s}
-  @media (max-width:700px){ #fbar .fb-c .fst{display:none!important} .fdots{gap:0} .fdots button{padding:.35em .22em} .ft .t-p2{display:none} .ft .t-h{font-size:1.25rem!important;line-height:1.1!important} }   /* Handy: ohne Corporate-Pille, Punkte passen in die Leiste, nur der erste Absatz */
-  .fveil{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5300;transition:opacity .35s ease}
-  .fveil.on{opacity:1;transition:opacity .18s ease}
-  .fstage.nt,.fstage.nt *{transition:none!important}
-  /* Kapitelpunkte in der Leiste (Ruben 06.11.): je Kapitel ein Punkt, gefüllt = schon gesehen, Ring = hier stehst du; Klick fährt hin */
-  .fdots{display:inline-flex;align-items:center;gap:.2em;margin-left:.5em}
-  .fdots button{appearance:none;border:0;background:none;padding:.35em .3em;margin:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .fdots i{display:block;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:transparent;transition:background .3s,transform .3s,box-shadow .3s}
-  .fdots button.seen i{background:var(--ink)}
-  .fdots button.cur i{background:var(--ink);transform:scale(1.45);box-shadow:inset 0 0 0 1px var(--ink),0 0 0 2px var(--bg),0 0 0 3px var(--ink)}
-  @media (hover:hover) and (pointer:fine){ .fdots button:hover i{background:rgba(0,0,255,.35)} .fdots button.seen:hover i,.fdots button.cur:hover i{background:var(--ink)} }
-  /* Strecke: Bild und Tafel als horizontale Reihe wie die Projekte in 2D (Ruben 06.11.) */
-  .hrow{position:absolute;left:0;right:0;z-index:5200;display:flex;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain;box-sizing:border-box}
-  .hrow::-webkit-scrollbar{display:none}
-  .hrow>*{flex:0 0 auto;height:100%;position:relative;display:block}
-  .hhero{background:#eee;cursor:pointer} .hhero img{display:block;width:100%;height:100%;object-fit:cover}
-  .htafel{background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,255,.15)}
-  .hx{opacity:0;transition:opacity .5s ease} .hx.on{opacity:1} .hx img{display:block;height:100%;width:auto;max-width:none}
-  .fp.hid,.ftafel.hid,.ftext.hid{visibility:hidden!important}
-  .ft .t-n .nn,.ft .t-n .cat,.ft .t-n .sep{font:inherit}
-  .ft .satz{display:none}
-  @media (min-width:701px){
-    .ftext .ft{height:100%}
-    .ft .satz{display:block;position:absolute;right:0;bottom:0;font-size:.8rem;color:rgba(0,0,255,.4)}
-    .ftext .s1 .t-h{margin-top:auto;max-width:24ch} .ftext .s1 .t-p{max-width:42ch;margin:.7em 0 .5em}
-    .ftext .s2 .t-h{font-size:clamp(1.6rem,2.3vw,2.3rem)!important;line-height:.95!important;letter-spacing:-.02em!important;max-width:22ch;margin-top:.7em} .ftext .s2 .t-p{margin:.6em 0 0;font-size:1.15rem;line-height:1.3;max-width:48ch} .ftext .s2 .t-p:first-of-type{margin-top:auto} .ftext .s2 .t-x{margin-top:.9em}
-    .ftext .s3 .t-h,.ftext .s3 .t-p{font-size:clamp(1.4rem,2vw,1.9rem)!important;line-height:1.12!important;max-width:27ch} .ftext .s3 .t-h{margin-top:1.1em} .ftext .s3 .t-p{margin:.25em 0 0} .ftext .s3 .t-x{margin-top:auto}
-    .ftext .s4 .t-n .nn{display:block;font-size:clamp(5rem,9vw,9rem);line-height:.8;letter-spacing:-.04em} .ftext .s4 .t-n .sep{display:none} .ftext .s4 .t-n .cat{display:block;margin-top:.7em}
-    .ftext .s4 .t-h{margin-top:auto;max-width:24ch} .ftext .s4 .t-p{max-width:40ch;margin:.7em 0 .5em}
-    .ftext .s5{justify-content:center} .ftext .s5 .t-h{font-size:clamp(1.5rem,2.2vw,2.1rem)!important;line-height:1.02!important;margin-top:.9em;max-width:22ch} .ftext .s5 .t-p{font-size:1.2rem;line-height:1.35;max-width:38ch;margin:.8em 0}
-    .ftext .ft.s6{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr auto auto;column-gap:2rem;row-gap:0}
-    .ftext .s6 .t-n{grid-column:1/3;grid-row:1} .ftext .s6 .t-h{grid-column:1;grid-row:3/5;align-self:end;font-size:clamp(1.6rem,2.4vw,2.3rem)!important;line-height:.98!important} .ftext .s6 .t-p{grid-column:2;grid-row:3;align-self:end;margin:0} .ftext .s6 .t-x{grid-column:2;grid-row:4;margin-top:.7em}
-    .ftext .s7 .t-h{margin-top:auto;max-width:24ch} .ftext .s7 .t-p{max-width:42ch;margin:.7em 0 .5em}
-    .ftext .s7 .fakt{margin-top:1.1em;padding-top:.6em;border-top:1px solid rgba(0,0,255,.25);display:grid;grid-template-columns:7em 1fr;gap:.25em 1rem;font-size:.95rem;max-width:42ch} .ftext .s7 .fakt span:nth-child(odd){color:rgba(0,0,255,.65)}
-    .ftext .s8 .t-h{font-size:clamp(2rem,3.2vw,3.3rem)!important;line-height:.95!important;letter-spacing:-.02em!important;margin-top:1.3em;max-width:18ch} .ftext .s8 .t-p{font-size:1.2rem;line-height:1.3;margin-top:1em;max-width:36ch}
-  }
-  @media (max-width:700px){ .ftext{width:auto} }
-  @media (prefers-reduced-motion:reduce){.flug{height:auto;margin-top:0}.fstage{position:relative;height:auto;overflow:visible}.fgrid,.fsh{display:none}.fspace,.world{position:relative;display:grid;gap:1rem;width:auto;height:auto;transform:none!important}.fp,.hbox{position:relative;transform:none!important;width:100%!important;height:auto!important;aspect-ratio:3/2}.hbox{aspect-ratio:16/9}.ftext{position:relative;width:auto;bottom:auto;margin-top:2rem}.ft{position:relative;opacity:1;transform:none;margin-bottom:2rem}}
-  .fcount{position:absolute;z-index:5250;margin:0;opacity:0;pointer-events:none;transition:opacity .3s}
-  .fcount.on{opacity:1;pointer-events:auto}
+.nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;padding:var(--pad);pointer-events:none}
+.nav a{pointer-events:auto}
+.nav .links{display:flex;gap:1em}
+@media (hover:hover){ .nav a:hover{text-decoration:underline;text-underline-offset:.18em} }
+
+/* Raum mit Bodenraster wie auf der 3D-Seite */
+#scene{position:fixed;inset:0;perspective:1600px;perspective-origin:50% 36%;overflow:hidden}
+#rig{position:absolute;left:50%;top:66%;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-700px) rotateX(-18deg) rotateY(45deg)}
+#floor{position:absolute;left:-3500px;top:-3500px;width:7000px;height:7000px;transform:rotateX(90deg);
+  background-image:linear-gradient(rgba(0,0,255,.16) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,255,.16) 1.5px,transparent 1.5px);background-size:80px 80px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 35%,transparent 100%);mask-image:radial-gradient(closest-side,#000 35%,transparent 100%)}
+#stack{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card .pic{position:absolute;left:0;bottom:0;transform-origin:50% 100%;transition:transform var(--t-mid) var(--e-out)}
+.card img,.card video{display:block;height:var(--h);width:auto;user-select:none;-webkit-user-drag:none;background:rgba(0,0,255,.08)}
+.card .sh{position:absolute;left:-8%;bottom:-40px;width:116%;height:80px;transform:translateY(-2px) rotateX(90deg);background:radial-gradient(closest-side,rgba(0,0,60,.3),transparent);pointer-events:none}
+.card .pic .sl{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s var(--e-out)}
+.card .pic .sl.cur{opacity:1}
+.card .vtag{position:absolute;right:8px;bottom:8px;font-size:11px;font-weight:420;line-height:1;padding:.3em .55em .25em;border-radius:10em;background:rgba(255,255,255,.9);color:var(--ink)}
+.card.on .pic{transform:translateY(-20px) scale(1.1)}
+.card{cursor:pointer}
+.card.on{cursor:default}
+@media (hover:hover){ .card:not(.on):hover .pic{transform:translateY(-8px)} }
+.card .pic{transition:transform .5s var(--e-out)}
+
+/* Text: DE oben links, EN unten rechts */
+.say{position:fixed;z-index:9;width:min(38rem,46vw);background:rgba(255,255,255,.95);padding:.5rem .7rem;margin:-.5rem -.7rem;pointer-events:none;transition:opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out)}
+.say.out{opacity:0}
+#de{left:var(--pad);top:4.2rem}
+#de.out{transform:translateY(-8px)}
+#en{right:var(--pad);bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem)}
+#en.out{transform:translateY(8px)}
+.say .s{display:block;font-size:clamp(1.6rem,2.6vw,3.2rem);line-height:1.05}
+.say .c{display:block;margin-top:.7rem}
+@media (max-width:700px){ .say{width:auto;right:var(--pad);left:var(--pad)} .say .s{font-size:1.5rem} #de{top:3.2rem} }
+/* ?unten: beide Texte unten nebeneinander, kleiner (Kapiteltitel-Groesse); ?ohneraster: Boden ohne Raster (Ruben 07.11.) */
+html.unten .say{top:auto;bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem);width:min(30rem,40vw)}
+html.unten #de{left:var(--pad);right:auto;top:auto;bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem)}
+html.unten #en{right:var(--pad);left:auto}
+html.unten .say .s{font-size:1.9rem;line-height:1.1}
+html.unten #de.out{transform:translateY(8px)}
+@media (max-width:700px){ html.unten .say{width:auto} html.unten #de{bottom:calc(var(--fb-b) + var(--fb-h) + 7rem)} html.unten .say .s{font-size:1.2rem} }
+html.ohneraster #floor{background:none}
+/* ?vorschlag: Raster nur im Ueberblick, beim Lesen blendet es aus; EN als zweite Stimme heller; Bildunterschrift einmal in der Leiste; Hinweis zum Start */
+html.vorschlag #floor{transition:opacity 1.4s var(--e-out)}
+html.vorschlag.lesen #floor{opacity:0}
+/* Setzung wie in der 2D-Projektansicht (style.css .proj-bi): DE voll, EN kursiv und blass, Hover ueber EN tauscht die beiden (Ruben 07.11.) */
+html.vorschlag .say .s{text-wrap:pretty;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:8 4 4;overflow-wrap:break-word;transition:color var(--t-fast) var(--e-out)}
+html.vorschlag #en .s{font-style:italic;color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  html.vorschlag #en .s{color:rgba(0,0,255,.3)}
+  html.vorschlag:has(#en:hover) #en .s{color:var(--ink)}
+  html.vorschlag:has(#en:hover) #de .s{color:rgba(0,0,255,.3)}
+  html.vorschlag.lesen .say{pointer-events:auto}
+}
+html.vorschlag .say .c{display:none}
+html.vorschlag .card{transition:opacity .8s var(--e-out)}
+@keyframes einblenden{from{opacity:0}}
+.card.pop{animation:einblenden .9s var(--e-out)}
+#hint{display:none}
+.say .num{display:none}
+/* Vorschlag: Texte in Lesegroesse, mittig zu beiden Seiten der Mittelachse, dezent nummeriert (Ruben 07.11.) */
+html.vorschlag .say{width:min(31rem,42vw);background:none;padding:0;margin:0}
+html.vorschlag #de{left:auto;right:calc(50% + 1rem)}
+html.vorschlag #en{right:auto;left:calc(50% + 1rem)}
+html.vorschlag .say .s{font-size:1.1rem;line-height:1.25}
+html.vorschlag #en .num{visibility:hidden}   /* Nummer nur einmal, ueber dem deutschen Text */
+html.vorschlag .say .num{display:block;color:var(--ink-4);margin-bottom:.35rem;font-variant-numeric:tabular-nums}
+html.vorschlag p#hint{display:none}
+html.vorschlag:not(.lesen) .say{opacity:0;pointer-events:none}   /* Texte erst nach dem ersten Aufklappen */   /* Hinweis steht im Ueberblick jetzt rechts in der Leiste */
+@media (max-width:700px){ html.vorschlag .say{width:auto} html.vorschlag #de{left:var(--pad);right:var(--pad)} html.vorschlag #en{left:var(--pad);right:var(--pad)} }
+#ring{display:none;position:absolute;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,255,.35);transform:rotateX(90deg);pointer-events:none;transition:opacity 1.4s var(--e-out)}
+html.kreis #ring{display:block}
+html.kreis .card:not(.on) .sh,html.vorschlag .card:not(.on) .sh{opacity:0}
+html.kreis.lesen #ring{opacity:.35}
+html.vorschlag #hint{display:block;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem);z-index:9;color:var(--ink-4);text-align:center;pointer-events:none;transition:opacity .6s}
+html.vorschlag.lesen #hint{opacity:0}
+@media (max-width:700px){ html.vorschlag #hint{display:none} }
+
+/* Leiste */
+.fbar{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);z-index:12;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 var(--fb-in);border-radius:10em;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink)}
+.fbar .l{justify-self:start}.fbar .c{justify-self:center;display:flex;gap:.6em}.fbar .r{justify-self:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink)}
+@media (hover:hover){ .pill:hover{background:rgba(0,0,255,.08)} }
+.fbar .r{display:flex;align-items:center;gap:.6em}
+/* Themenpunkte wie im Gang (corporate/index.html) */
+.fdots{display:inline-flex;align-items:center;gap:.2em}
+.fdots button{appearance:none;border:0;background:none;padding:.35em .3em;margin:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.fdots i{display:block;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:transparent;transition:background .3s,transform .3s,box-shadow .3s}
+.fdots button.seen i{background:var(--ink)}
+.fdots button.cur i{background:var(--ink);transform:scale(1.45);box-shadow:inset 0 0 0 1px var(--ink),0 0 0 2px var(--bg),0 0 0 3px var(--ink)}
+@media (hover:hover) and (pointer:fine){ .fdots button:hover i{background:rgba(0,0,255,.35)} .fdots button.seen:hover i,.fdots button.cur:hover i{background:var(--ink)} }
+@media (max-width:700px){ .fbar{font-size:13px} .fbar .lg,#cnt{display:none} .fbar .r .pill{padding:.3em .6em .26em} }
 </style>
 </head>
-<body data-ov="about">
+<body>
+<header class="nav"><a href="../">YRD.Works</a><span class="links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></span></header>
 
-<header class="nav cols" aria-label="Site">
-  <a class="home" href="./" data-home>YRD.Works</a>
-  <div class="links"><a href="about/">About</a>    <a href="news/">News</a>    <a href="index/index.html">Index</a>    <a href="contact/">Contact</a></div>
-</header>
-<div class="mm" id="mm"><button type="button" class="mm-b" aria-expanded="false" aria-controls="mm-l">Menu</button><nav class="mm-l" id="mm-l" aria-label="Menu" hidden><button type="button" class="mm-x" aria-label="Close">×</button><a href="./" data-home>Projects</a><a href="about/">About</a><a href="news/">News</a><a href="index/index.html">Index</a><a href="contact/">Contact</a><a href="impressum/">Impressum</a><a href="datenschutz/">Datenschutz</a></nav></div>
-<script>(function(){ var m=document.getElementById('mm'), b=m.querySelector('.mm-b'), l=m.querySelector('.mm-l');
-  function set(o){ l.hidden=!o; b.setAttribute('aria-expanded',o); m.classList.toggle('open',o); }
-  b.addEventListener('click',function(e){ e.stopPropagation(); set(l.hidden); });
-  l.addEventListener('click',function(e){ if(e.target.closest('a')||e.target.closest('.mm-x')) set(false); });
-  document.addEventListener('click',function(e){ if(!l.hidden&&!m.contains(e.target)) set(false); });
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); }); })();</script>
+<div id="scene" aria-hidden="true"><div id="rig"><div id="floor"></div><div id="ring"></div><div id="stack"></div></div></div>
 
-<main id="c" style="overflow-x:clip" class="text-ink font-areal font-medium antialiased leading-tight">
+<p id="de" class="say" lang="de" aria-live="polite"><span class="num caption"></span><span class="s"></span><span class="c caption n"></span></p>
+<p id="en" class="say" lang="en"><span class="num caption" aria-hidden="true"></span><span class="s"></span><span class="c caption n"></span></p>
 
-  <!-- 1 Raum (Probe Flug): Film und Bilder in einem Raum mit einem Fluchtpunkt -->
-  <section id="kompetenzen" class="flug" style="--n:8">
-    <div class="fstage" id="fstage">
-      <canvas class="fgrid" id="fgrid"></canvas>
-      <div class="fspace"><div class="world" id="world">
-      <div class="fsh" id="hsh"></div><div class="hbox" id="hbox">
-        <video id="hv" autoplay muted loop playsinline preload="auto" poster="corporate/poster.jpg"></video>
-      </div>
-      <div class="fsh"></div><a class="fp" href="forschungswerkstatt/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2022-forschungswerkstatt/02.webp"></a>
-      <div class="fsh"></div><a class="fp" href="im-angesicht-des-todes/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-im-angesicht-des-todes/03.webp"></a>
-      <div class="fsh"></div><a class="fp" href="transition-1-7/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2024-transition-1-7/01.webp"></a>
-      <div class="fsh"></div><a class="fp" href="kressmann-halle/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2016-kressmann-halle/01.webp"></a>
-      <div class="fsh"></div><a class="fp" href="soups/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2023-soups/01.webp"></a>
-      <div class="fsh"></div><a class="fp" href="access/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2020-access/03.webp"></a>
-      <div class="fsh"></div><a class="fp" href="display/" tabindex="-1" aria-hidden="true"><img alt="" src="Bilder/2026-display/03.webp"></a>
-      <div class="fsh"></div><a class="fp plan" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><img alt="" src="corporate/plaene/flikue-grundriss.webp"></a>
-      </div></div>
-      <div class="ftafel" id="ftafel"></div>
-      <div class="ftext">
-      <div class="ft"><span class="t-n">01 · Räume</span><span class="t-h">Räume für Wissensvermittlung entwickeln</span><p class="t-p font-normal">Wir entwerfen Orte, an denen Wissen nicht nur gezeigt, sondern gemeinsam erarbeitet wird. Im Senckenberg Naturmuseum haben wir aus einem ehemaligen Pausenraum eine Forschungswerkstatt gemacht, in der sich Publikum und Forschende begegnen.</p><p class="t-p t-p2 font-normal">Der Raum sollte Wissenschaftler*innen und Publikum zusammenbringen: Besucher*innen sollten sehen, wie geforscht wird, und Expert*innen direkt fragen können. Außerdem musste er für konzentrierte Arbeit, offene Workshops und Veranstaltungen gleichermaßen taugen.</p><a class="t-x font-normal" href="forschungswerkstatt/">Beispiel: Forschungswerkstatt →</a></div>
-      <div class="ft"><span class="t-n">02 · Räume</span><span class="t-h">Ausstellungsarchitektur mit eigener Haltung</span><p class="t-p font-normal">Wir bauen keine Kulisse, sondern eine Gestaltung, die selbst Teil des Inhalts wird. Für das Jüdische Museum Frankfurt haben wir die Architektur einer Wechselausstellung auf rund 600 Quadratmetern umgesetzt.</p><p class="t-p t-p2 font-normal">Am Anfang stand die Entscheidung, die naheliegende Bildwelt zum Tod nicht zu verwenden: kein Schwarz als Trauerfarbe, keine Verdunkelung, keine Schwere. Im Mittelpunkt steht stattdessen das Unbegreifliche am Tod, übersetzt in einen hellen Lichtraum ohne klare Grenzen.</p><a class="t-x font-normal" href="im-angesicht-des-todes/">Beispiel: Im Angesicht des Todes →</a></div>
-      <div class="ft"><span class="t-n">03 · Stadt</span><span class="t-h">Wandel sichtbar machen</span><p class="t-p font-normal">Wenn sich Orte verändern, machen wir den Übergang erfahrbar, statt ihn zu überspringen. Vor dem Neubau der HfG am Offenbacher Hafen haben wir den Umbruch in sieben öffentlichen Veranstaltungen zum Thema gemacht.</p><p class="t-p t-p2 font-normal">YRD.Works thematisierten diesen Umbruch in sieben experimentellen, öffentlichen Lehrveranstaltungen, eingebunden in die Lehre von Heiner Blum an der HfG. Workshops, Vorträge und Panels mit eingeladenen Expert*innen blickten zurück auf das Geschehene und voraus auf die Zukunft des Areals.</p><a class="t-x font-normal" href="transition-1-7/">Beispiel: Transition 1-7 →</a></div>
-      <div class="ft"><span class="t-n">04 · Stadt</span><span class="t-h">Leerstand nutzbar machen</span><p class="t-p font-normal">Wir machen aus leeren Gebäuden Orte, die gebraucht werden. Eine ehemalige Montagehalle im Offenbacher Hafen haben wir umgebaut und zehn Jahre lang als Ausstellungshalle betrieben.</p><p class="t-p t-p2 font-normal">Dafür hatte das Künstlerkollektiv eine ehemalige Montagehalle kernsaniert und in mehrmonatiger handwerklicher Arbeit in eine 160 m² große, professionelle Ausstellungshalle verwandelt. Ausgestellt haben dort unter anderem Okka-Esther Hungerbühler, Nasan Tur, Sonja Yakovleva, Marcel Walldorf, Dauphine Klein, Tom Król und Marco Poblete.</p><a class="t-x font-normal" href="kressmann-halle/">Beispiel: Kressmann-Halle →</a></div>
-      <div class="ft"><span class="t-n">05 · Menschen</span><span class="t-h">Menschen zusammenbringen</span><p class="t-p font-normal">Beteiligung entsteht bei uns durch gemeinsames Tun. Im Auftrag der Stadt Offenbach haben wir im leerstehenden Rathaus-Pavillon eine temporäre Küche mit Gastraum gebaut, rund um einen 100-Liter-Suppentopf.</p><p class="t-p t-p2 font-normal">Die Küche, bestehend aus vier mobilen Arbeitsstationen aus Edelstahl, ermöglichte tagsüber professionelles Kochen. Abends wurden die Küchenelemente beiseitegeschoben, um den Raum für das gemeinsame Essen zu öffnen.</p><a class="t-x font-normal" href="soups/">Beispiel: Soups →</a></div>
-      <div class="ft"><span class="t-n">06 · Umsetzung</span><span class="t-h">Groß denken, selbst bauen</span><p class="t-p font-normal">Wir planen und bauen auch große Strukturen selbst. Für das Senckenberg Naturmuseum und den Frankfurter Kunstverein entstand ein 21 Meter langer Holzbau, der ein Jahr lang eine Ausstellung beherbergte.</p><p class="t-p t-p2 font-normal">Im Inneren der 21 × 9 × 5 m großen Holzkonstruktion befand sich ein sogenanntes Bonebed, ein 20 m² großer Gesteinsblock voller fossiler Knochen. Das Bonebed war eigens für die Ausstellung aus Wyoming, USA, nach Frankfurt gebracht worden und wurde von einem Team aus Wissenschaftler*innen freigelegt und erforscht.</p><a class="t-x font-normal" href="access/">Beispiel: Access →</a></div>
-      <div class="ft"><span class="t-n">07 · Umsetzung</span><span class="t-h">Vom Konzept bis zur Eröffnung aus einer Hand</span><p class="t-p font-normal">Wir entwerfen, steuern die Gewerke und begleiten die Umsetzung bis zum Schluss. Für Display, einen Raum für digitale Praxis der Stadt Frankfurt und von NODE e.V., entstanden Raumkonzept, Möbelsystem und Licht.</p><p class="t-p t-p2 font-normal">Grundlage ist ein Raster, das auf digitale Systeme verweist, in denen Bedeutung aus der Anordnung kleinster Einheiten entsteht. Gelochte Holzleisten mit 9-mm-Löchern im Abstand von 5 cm bilden einen Baukasten, aus dem alle Möbel entstehen: Regale, Flex Desks zum Einhängen, ein Tiny Makerspace und eine zentrale Bar.</p><a class="t-x font-normal" href="display/">Beispiel: Display →</a></div>
-      <div class="ft"><span class="t-n">Probe · Plan</span><span class="t-h">Fliegendes Künstler*innenzimmer, Grundriss und Deckenspiegel</span><p class="t-p font-normal">Ausschnitt aus Blatt FLK-AP-01, M 1:50.</p><a class="t-x font-normal" href="corporate/plaene/FLK-AP_FlieKue_Raum.pdf" target="_blank" rel="noopener">Planset als PDF →</a></div>
-      </div>
-      <span class="probe" id="probe">Probe: man geht selbst durch den Raum</span>
-    </div>
-  </section>
+<p id="hint" class="caption">Scrollen, um den Stapel aufzuklappen<br>Scroll to open the stack</p>
 
-  <!-- 4 Zusammenarbeit -->
-  <section id="zusammenarbeit" class="pt-24 pb-16 scroll-mt-16">
-    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight">Zusammenarbeit</h2>
-    <p class="reveal mt-8 text-2xl md:text-4xl max-w-[30ch]">Viele unserer Auftraggeber kommen wieder: Das Senckenberg Naturmuseum, das Jüdische Museum Frankfurt und das Künstlerhaus Mousonturm haben uns mehrfach beauftragt.</p>
-    <ol class="mt-12 grid grid-cols-2 md:grid-cols-6 gap-x-4"><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">1</span><h3 class="text-xl md:text-2xl mt-4">Konzept</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">2</span><h3 class="text-xl md:text-2xl mt-4">Planung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">3</span><h3 class="text-xl md:text-2xl mt-4">Projektsteuerung</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">4</span><h3 class="text-xl md:text-2xl mt-4">Produktion</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">5</span><h3 class="text-xl md:text-2xl mt-4">Umsetzung vor Ort</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li><li class="reveal border-t border-ink/30 pt-3 pb-6"><span class="text-ink/65">6</span><h3 class="text-xl md:text-2xl mt-4">Betrieb</h3><p class="font-normal mt-2">Lorem ipsum dolor sit amet, consectetur.</p></li></ol>
-    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 font-normal text-lg">
-      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">YRD.Works</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
-      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Netzwerk</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
-      <div class="reveal border-t border-ink/30 pt-3"><p class="font-medium text-xl mb-2">Auftraggeber</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</p></div>
-    </div>
-    <div class="mt-16 grid grid-cols-12 gap-4"><div class="reveal box col-span-12 md:col-span-7 aspect-[16/9]"><span>FOTO WERKSTATT</span></div><div class="reveal box col-span-12 md:col-span-5 aspect-[4/3] md:mt-24"><span>FOTO AUFBAU</span></div></div>
-  </section>
-
-  <!-- Auf einen Blick (vorerst am Ende) -->
-  <section id="blick" class="pt-24 pb-8 scroll-mt-16">
-    <p class="reveal text-2xl md:text-4xl max-w-[30ch]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 border-t border-ink/30 pt-3">
-      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir gestalten</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Räume</li><li>Ausstellungen</li><li>Bühnen</li><li>Pavillons</li><li>Lernorte</li><li>Treffpunkte</li><li>Zwischennutzungen</li></ul></div>
-      <div class="reveal"><p class="text-ink/65 text-base mb-4">Wir entwickeln</p>
-        <ul class="text-4xl md:text-6xl leading-[1.05]"><li>Ideen</li><li>Konzepte</li><li>Orte</li><li>Formate</li><li>Programme</li></ul></div>
-    </div>
-    <div class="mt-20 border-t border-ink/30 pt-3 grid grid-cols-12 gap-4">
-      <p class="col-span-12 md:col-span-3 text-ink/65 text-base">Auftraggeber (Auswahl)</p>
-      <p class="reveal col-span-12 md:col-span-9 text-xl md:text-3xl leading-snug">Jüdisches Museum Frankfurt · Senckenberg Museum · Künstlerhaus Mousonturm · Kulturstiftung des Bundes · Stadt Frankfurt, Stabsstelle Digitalisierung · Node e.V.</p>
-    </div>
-  </section>
-
-  <!-- Kontakt -->
-  <section id="kontakt" class="min-h-[70vh] flex flex-col justify-center py-24 scroll-mt-16">
-    <p class="text-ink/65 text-base mb-6">Kontakt</p>
-    <h2 class="text-5xl md:text-8xl leading-[0.95] tracking-tight max-w-[14ch]">Lorem ipsum dolor sit.</h2>
-    <a href="mailto:info@yrd.works" class="mt-10 text-2xl md:text-4xl underline underline-offset-4">info@yrd.works</a>
-  </section>
-
-  <!-- 5 Ende: normales Portfolio -->
-  <section id="alle" class="pt-24 pb-24 scroll-mt-16">
-    <p class="text-ink/65 text-base mb-6">Alle Projekte</p>
-    <div class="grid" id="grid"><a class="tile" href="display/" data-i="0"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2026-display/01.webp" srcset="Bilder/2026-display/01-900.webp 900w, Bilder/2026-display/01.webp 1497w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Display</span><span class="n">2026</span></div></a><a class="tile" href="bingenheim/" data-i="1"><div class="phw"><img class="ph" alt="" src="Bilder/2025-bingenheim/hero.webp" srcset="Bilder/2025-bingenheim/hero-900.webp 900w, Bilder/2025-bingenheim/hero.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Bingenheim</span><span class="n">2025</span></div></a><a class="tile" href="transition-1-7/" data-i="2"><div class="phw"><img class="ph" alt="" src="Bilder/2024-transition-1-7/01.webp" srcset="Bilder/2024-transition-1-7/01-900.webp 900w, Bilder/2024-transition-1-7/01.webp 1333w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Transition 1-7</span><span class="n">2024</span></div></a><a class="tile" href="im-angesicht-des-todes/" data-i="3"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2024-im-angesicht-des-todes/01.webp" srcset="Bilder/2024-im-angesicht-des-todes/01-900.webp 900w, Bilder/2024-im-angesicht-des-todes/01.webp 1333w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Im Angesicht des Todes</span><span class="n">2024</span></div></a><a class="tile" href="tables/" data-i="4"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-tables/hero.webp" srcset="Bilder/2023-tables/hero-900.webp 900w, Bilder/2023-tables/hero.webp 1392w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Tables</span><span class="n">2023</span></div></a><a class="tile" href="hole-mound/" data-i="5"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-hole-mound/hero.webp" srcset="Bilder/2023-hole-mound/hero-900.webp 900w, Bilder/2023-hole-mound/hero.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Hole/Mound</span><span class="n">2023</span></div></a><a class="tile" href="soups/" data-i="6"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2023-soups/01.webp" srcset="Bilder/2023-soups/01-900.webp 900w, Bilder/2023-soups/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Soups</span><span class="n">2023</span></div></a><a class="tile" href="steady-burn/" data-i="7"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-steady-burn/hero.webp" srcset="Bilder/2022-steady-burn/hero-900.webp 900w, Bilder/2022-steady-burn/hero.webp 1778w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Steady Burn</span><span class="n">2022</span></div></a><a class="tile" href="forschungswerkstatt/" data-i="8"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-forschungswerkstatt/01.webp" srcset="Bilder/2022-forschungswerkstatt/01-900.webp 900w, Bilder/2022-forschungswerkstatt/01.webp 1503w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Forschungswerkstatt</span><span class="n">2022</span></div></a><a class="tile" href="current-tours/" data-i="9"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2022-current-tours/01.webp" srcset="Bilder/2022-current-tours/01-900.webp 900w, Bilder/2022-current-tours/01.webp 1501w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Current Tours</span><span class="n">2021</span></div></a><a class="tile" href="bread-dispenser/" data-i="10"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2021-bread-dispenser/01.webp" srcset="Bilder/2021-bread-dispenser/01-900.webp 900w, Bilder/2021-bread-dispenser/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Bread Dispenser</span><span class="n">2021</span></div></a><a class="tile" href="logis/" data-i="11"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2021-logis/01.webp" srcset="Bilder/2021-logis/01-900.webp 900w, Bilder/2021-logis/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Logis</span><span class="n">2020</span></div></a><a class="tile" href="canned-99-63/" data-i="12"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2020-canned-99-63/01.webp" srcset="Bilder/2020-canned-99-63/01-900.webp 900w, Bilder/2020-canned-99-63/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Canned (99/63)</span><span class="n">2020</span></div></a><a class="tile" href="access/" data-i="13"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2020-access/01.webp" srcset="Bilder/2020-access/01-900.webp 900w, Bilder/2020-access/01.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Access</span><span class="n">2020</span></div></a><a class="tile" href="doubles/" data-i="14"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2019-doubles/01.webp" srcset="Bilder/2019-doubles/01-900.webp 900w, Bilder/2019-doubles/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Doubles</span><span class="n">2019</span></div></a><a class="tile" href="copy-service/" data-i="15"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2019-copy-service/hero.webp" srcset="Bilder/2019-copy-service/hero-900.webp 900w, Bilder/2019-copy-service/hero.webp 1200w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Copy Service</span><span class="n">2019</span></div></a><a class="tile" href="white-out/" data-i="16"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-white-out/hero.webp" srcset="Bilder/2018-white-out/hero-900.webp 900w, Bilder/2018-white-out/hero.webp 1200w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">White Out</span><span class="n">2018</span></div></a><a class="tile" href="oper-offenbach/" data-i="17"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-oper-offenbach/01.webp" srcset="Bilder/2018-oper-offenbach/01-900.webp 900w, Bilder/2018-oper-offenbach/01.webp 1779w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Oper Offenbach</span><span class="n">2018</span></div></a><a class="tile" href="not-not-pizza/" data-i="18"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-not-not-pizza/01.webp" srcset="Bilder/2018-not-not-pizza/01-900.webp 900w, Bilder/2018-not-not-pizza/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Not Not Pizza</span><span class="n">2018</span></div></a><a class="tile" href="insight-out/" data-i="19"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2018-insight-out/01.webp" srcset="Bilder/2018-insight-out/01-900.webp 900w, Bilder/2018-insight-out/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Insight Out</span><span class="n">2018</span></div></a><a class="tile" href="1-offenbacher-seefestspiele/" data-i="20"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-offenbacher-seefestspiele/hero.webp" srcset="Bilder/2017-offenbacher-seefestspiele/hero-900.webp 900w, Bilder/2017-offenbacher-seefestspiele/hero.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">1. Offenbacher Seefestspiele</span><span class="n">2017</span></div></a><a class="tile" href="messerschmiede/" data-i="21"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-messerschmiede/01.webp" srcset="Bilder/2017-messerschmiede/01-900.webp 900w, Bilder/2017-messerschmiede/01.webp 1502w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Messerschmiede</span><span class="n">2017</span></div></a><a class="tile" href="eins-zu-eins/" data-i="22"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-eins-zu-eins/01.webp" srcset="Bilder/2017-eins-zu-eins/01-900.webp 900w, Bilder/2017-eins-zu-eins/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Eins zu Eins</span><span class="n">2017</span></div></a><a class="tile" href="busy-sculpture/" data-i="23"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2017-busy-sculpture/01.webp" srcset="Bilder/2017-busy-sculpture/01-900.webp 900w, Bilder/2017-busy-sculpture/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Busy Sculpture</span><span class="n">2017</span></div></a><a class="tile" href="sirenen/" data-i="24"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-sirenen/01.webp" srcset="Bilder/2016-sirenen/01-900.webp 900w, Bilder/2016-sirenen/01.webp 1788w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Sirenen</span><span class="n">2016</span></div></a><a class="tile" href="scale-scale-scale/" data-i="25"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-scale-scale-scale/01.webp" srcset="Bilder/2016-scale-scale-scale/01-900.webp 900w, Bilder/2016-scale-scale-scale/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Scale Scale Scale</span><span class="n">2016</span></div></a><a class="tile" href="kressmann-halle/" data-i="26"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2016-kressmann-halle/01.webp" srcset="Bilder/2016-kressmann-halle/01-900.webp 900w, Bilder/2016-kressmann-halle/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Kressmann-Halle</span><span class="n">2016</span></div></a><a class="tile" href="pool/" data-i="27"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2015-pool/01.webp" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Pool</span><span class="n">2015</span></div></a><a class="tile" href="hafenmeisterei/" data-i="28"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-hafenmeisterei/01.webp" srcset="Bilder/2014-hafenmeisterei/01-900.webp 900w, Bilder/2014-hafenmeisterei/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Hafenmeisterei</span><span class="n">2015</span></div></a><a class="tile" href="pelican-bay/" data-i="29"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-pelican-bay/01.webp" srcset="Bilder/2014-pelican-bay/01-900.webp 900w, Bilder/2014-pelican-bay/01.webp 1780w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Pelican Bay</span><span class="n">2014</span></div></a><a class="tile" href="makoko/" data-i="30"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-makoko/01.webp" srcset="Bilder/2014-makoko/01-900.webp 900w, Bilder/2014-makoko/01.webp 1498w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Makoko</span><span class="n">2014</span></div></a><a class="tile" href="holzhausen/" data-i="31"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2014-holzhausen/01.webp" srcset="Bilder/2014-holzhausen/01-900.webp 900w, Bilder/2014-holzhausen/01.webp 1500w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Holzhausen</span><span class="n">2014</span></div></a><a class="tile" href="holzhausenstrasse/" data-i="32"><div class="phw"><img class="ph" loading="lazy" alt="" src="Bilder/2012-holzhausenstrasse/01.webp" srcset="Bilder/2012-holzhausenstrasse/01-900.webp 900w, Bilder/2012-holzhausenstrasse/01.webp 1499w" sizes="(max-width:700px) calc(100vw - 32px), 33vw" style="aspect-ratio:3 / 2;object-fit:cover"></div><div class="caption"><span class="wiggle">Holzhausenstraße</span><span class="n">2012</span></div></a></div>
-  </section>
-
-</main>
-
-<div class="fbar caption" id="fbar">
-  <div class="fb-l"><a href="./" class="arw fback">←<span class="lg"> Back to</span> Projects</a></div>
-  <div class="fb-c"><span class="arw fst" data-for="about" aria-current="page">Corporate</span><span class="fdots" id="fdots" role="navigation" aria-label="Kapitel"></span></div>
-  <div class="fb-r"><span class="flegal"><a href="impressum/" data-for="impressum">Impressum</a>    <a href="datenschutz/" data-for="datenschutz">Datenschutz</a></span></div>
-</div>
+<nav class="fbar caption" aria-label="Corporate">
+  <span class="l"><a class="pill" href="../">←<span class="lg"> Back to</span> Projects</a></span>
+  <span class="c"><span class="fdots" id="fdots" role="navigation" aria-label="Themen"></span></span>
+  <span class="r"><span id="cnt" class="n"></span><a class="pill" href="../impressum/">Impressum</a><a class="pill" href="../datenschutz/">Datenschutz</a></span>
+</nav>
 
 <script>
-  (function(){ var v=document.getElementById('hv'), small=matchMedia('(max-width:900px)').matches;
-    var tall=matchMedia('(max-width:900px) and (orientation:portrait)').matches; v.poster='corporate/'+(tall?'poster-mobil.jpg':'poster.jpg');
-    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){ v.src='corporate/'+(tall?'video-mobil.mp4':'video.mp4'); v.play&&v.play().catch(function(){}); } else v.removeAttribute('autoplay');
-    var full=[].slice.call(document.querySelectorAll('.full')), on=new Set();
-    var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) on.add(e.target); else on.delete(e.target); }); document.body.classList.toggle('on-dark', on.size>0); },{rootMargin:'0px 0px -94% 0px'});
-    full.forEach(function(f){ o.observe(f); });
-  })();
-  const io = new IntersectionObserver(es => es.forEach(e => { e.target.classList.toggle('on', e.isIntersecting); }), { threshold: .15 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
+// Saetze: bestaetigter Einstieg (Corporate-Geruest 07.11.). EN: Entwurf, ungeprueft.
+// Ein Text je Bild (Artefakt Bildtexte Corporate, 07.11.); DE von Ruben freigegeben als Entwurf, EN Entwurf Claude, ungeprueft.
+const S=[
+ ["Für die Umsetzung unserer Konzepte koordinieren wir die beteiligten Gewerke und übernehmen bei Bedarf die Projektsteuerung. Dazu gehören die Abstimmung mit Behörden und Fachplanung ebenso wie Budget und Ablauf.",
+  "To realise our concepts, we coordinate the trades involved and take on project management where needed. This includes coordinating with authorities and specialist planners as well as managing budget and schedule."],
+ ["Die Herausforderungen eines Bestands nehmen wir als Ausgangspunkt für den Entwurf. Niedrige Decken, alte Balken oder wenig Tageslicht kaschieren wir nicht, wir machen sie zum Teil der Arbeit.",
+  "We take the challenges of an existing building as the starting point for our design. Low ceilings, old beams or little daylight are not concealed; we make them part of the work."],
+ ["Wir entwickeln immersive Ausstellungsarchitekturen, die selbst als künstlerische Position gelesen werden können. Freie Projekte und angewandte Auftragsarbeiten gehen in unserer Praxis ineinander über.",
+  "We develop immersive exhibition architectures that can themselves be read as an artistic position. In our practice, independent projects and commissioned work merge into one another."],
+ ["Wir entwickeln partizipative und soziale Projekte, die Menschen und Communities aktiv einbeziehen. Gesellschaftliche Themen werden dabei zur gelebten Situation, nicht zur illustrierten Botschaft.",
+  "We develop participatory and social projects that actively involve people and communities. Social issues become a lived situation rather than an illustrated message."],
+ ["Wir arbeiten auch außerhalb der Städte und Institutionen, im ländlichen Raum. Dort machen unsere Interventionen ungenutztes Potenzial sichtbar und schaffen Anlässe für echte Begegnung.",
+  "We also work outside cities and institutions, in rural areas. There, our interventions reveal unused potential and create occasions for real encounters."],
+ ["Wir beschränken uns nicht auf konventionelle Räume und befragen gern die Grenzen unseres Genres. Ein festes Medium gibt es für uns nicht, was ein Projekt braucht, eignen wir uns an.",
+  "We do not limit ourselves to conventional spaces and like to question the boundaries of our genre. We have no fixed medium; we acquire whatever a project needs."],
+ ["Wir gestalten temporäre Architekturen und Ausstellungspavillons und können ihre Umsetzung vollständig betreuen. Weil wir lange selbst gebaut haben, kennen wir Material, Konstruktion und Aufwand aus eigener Erfahrung.",
+  "We design temporary architecture and exhibition pavilions and can oversee their entire realisation. Having built for many years ourselves, we know materials, construction and effort from our own experience."],
+ ["Wir greifen auf, was an einem Ort verhandelt wird, und übersetzen es in eine räumliche Form. Oft ist es eine Behauptung im Raum, die einen vertrauten Ort für eine Zeit anders lesbar macht.",
+  "We take up what is being negotiated at a site and translate it into spatial form. Often it is a claim made in space that lets a familiar place be read differently for a while."],
+ ["Unsere Arbeiten werden oft zu Bühnen und Displays für andere. Unsere Skulpturen dienen als Plattform für Musik, Performance und zeitgenössische Kunst und treten dabei bewusst in den Hintergrund.",
+  "Our works often become stages and displays for others. Our sculptures serve as platforms for music, performance and contemporary art and deliberately step into the background."],
+ ["Wir machen sichtbar, was sonst im Hintergrund bleibt, von Technik und Konstruktion bis zu Arbeitsprozessen. Wer sich in unseren Räumen bewegt, ist oft zugleich Akteur*in und Beobachter*in.",
+  "We make visible what usually stays in the background, from technology and construction to working processes. Those who move through our spaces are often participants and observers at once."],
+ ["Wir befragen die Räume, in denen wir arbeiten, und kehren ihre Logik um. Die sonst zurückhaltende Architektur eines Hauses machen wir selbst zum begehbaren Objekt, das sich mit dem Gebrauch verändert.",
+  "We question the spaces we work in and reverse their logic. The otherwise reticent architecture of an institution becomes a walk-in object that changes as it is used."],
+ ["Wir schaffen Orte jenseits von Zuhause und Arbeit, die sich Communities aneignen. Viele davon bauen und bespielen wir über Jahre selbst, und sie wirken nach, auch wenn es sie nicht mehr gibt.",
+  "We create places beyond home and work that communities make their own. We build and run many of them ourselves for years, and they continue to have an effect even after they are gone."],
+ ["Wir entwickeln performative Architekturen für den öffentlichen Stadtraum. Der Prozess ist dabei oft spannender als das Ergebnis, und wer zuschaut, wird selbst zum Teil des Geschehens.",
+  "We develop performative architecture for public urban space. The process is often more exciting than the result, and those who watch become part of what happens."],
+ ["Wir entwerfen Räume für Wissensvermittlung und außerschulisches Lernen. Vermittelt wird dort durch Gestaltung, in realen statt simulierten Situationen, in denen Forschung sichtbar wird.",
+  "We design spaces for knowledge transfer and learning outside school. Here, learning happens through design, in real rather than simulated situations in which research becomes visible."]
 
-<script>
+];
+// Bilder und Filme, Zuordnung zu den Saetzen wie in zeitlos.html
+const B='../Bilder/';
+// Bilder: Rubens Auswahl im Artefakt Bildwahl Corporate (07.11., zweite Runde), in seiner Reihenfolge. vm = Video vorgemerkt, Foto ist Platzhalter.
+// Zuordnung zu den Saetzen vorlaeufig: gleichmaessig verteilt (Ruben ordnet spaeter zu).
+const C=[
+ {s:0,src:'../Bilder/2026-display/01.webp',c:"Display, 2026"},
+ {s:1,src:'../Bilder/2025-bingenheim/hero.webp',c:"Bingenheim, 2025"},
+ {s:2,src:'../Bilder/2024-im-angesicht-des-todes/01.webp',c:"Im Angesicht des Todes, 2024",vm:true},
+ {s:3,src:'../Bilder/2023-soups/07.webp',c:"Soups, 2023",vm:true},
+ {s:4,v:'video.mp4',seg:[15.03,19.95],poster:'',c:"Hole/Mound, 2023"},   // Filmausschnitt 15 bis 20 s
+ {s:5,v:'video.mp4',seg:[20.03,24.95],poster:'',c:"Current Tours, 2021"},   // Filmausschnitt 20 bis 25 s
+ {s:6,src:'../Bilder/2020-access/01.webp',c:"Access, 2020"},
+ {s:7,v:'video.mp4',seg:[25.03,29.95],poster:'',c:"Copy Service, 2019"},   // Filmausschnitt 25 bis 30 s
+ {s:8,src:'../Bilder/2018-oper-offenbach/01.webp',c:"Oper Offenbach, 2018"},
+ {s:9,src:'../Bilder/2018-insight-out/07.webp',c:"Insight Out, 2018"},
+ {s:10,src:'../Bilder/2017-eins-zu-eins/01.webp',c:"Eins zu Eins, 2017"},
+ {s:11,src:'../Bilder/2016-kressmann-halle/02.webp',c:"Kressmann-Halle, 2016",sl:[['../Bilder/2012-holzhausenstrasse/01.webp',"Holzhausenstraße, 2012"],['../Bilder/2014-holzhausen/02.webp',"Holzhausen, 2014"]]},   // Slideshow: selbst gebaute Orte (Ruben 07.11.)
+ {s:12,v:'video.mp4',seg:[0.03,14.95],poster:'',c:"Transition 1-7, 2024"},   // Filmausschnitt 0 bis 15 s, zwei Szenen (Ruben 07.11.: Schnitte bei 10, 15, 20, 25 s)
+ {s:13,src:'../Bilder/2022-forschungswerkstatt/og.jpg',c:"Forschungswerkstatt, 2022"}
+];
 (function(){
-  /* Probe Gang: Die Kamera geht beim Scrollen durch einen festen Raum (s = Scrollposition in Bildschirmhöhen, läuft beim Hochscrollen rückwärts).
-     Film als Stirnwand vorne (z = 0), die Bilder stehen dahinter abwechselnd rechts und links in einer Allee. Vor jedem Bild bleibt man stehen und schaut leicht hin. */
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { document.querySelectorAll('.ft').forEach(function(t){t.classList.add('on');}); return; }
-  var sec=document.getElementById('kompetenzen'), space=sec.querySelector('.fspace'), world=document.getElementById('world');
-  var ps=[].slice.call(sec.querySelectorAll('.fp')), shs=[].slice.call(world.querySelectorAll('.fsh')).slice(1), ts=[].slice.call(sec.querySelectorAll('.ft'));
-  var hb=document.getElementById('hbox'), hs=document.getElementById('hsh'), tx=sec.querySelector('.ftext'), pr=document.getElementById('probe'), cvs=document.getElementById('fgrid'), taf=document.getElementById('ftafel');
-  /* Satzproben: Rubrik in Nummer und Kategorie zerlegen, Kennung und (Satz 7) Projekt und Jahr ergänzen; Jahr aus dem Bildordner, Projekt aus dem Beispiel-Link */
-  var SATZ=["Satz 1 · Block unten","Satz 2 · Titel groß","Satz 3 · Lesetext","Satz 4 · Nummer","Satz 5 · Mitte","Satz 6 · Zwei Spalten","Satz 7 · Mit Angaben","Satz 8 · Oben groß"];
-  ts.forEach(function(t,i){ t.classList.add("s2");   /* Ruben 06.11.: Satz 2 für alle Tafeln, Titel kleiner, mehr Text (zweiter Absatz wörtlich von der Projektseite) */
-    var n=t.querySelector(".t-n"), m=n.textContent.split(" · "); if(m.length===2){ n.innerHTML=""; [["nn",m[0]],["sep"," · "],["cat",m[1]]].forEach(function(q){ var e=document.createElement("span"); e.className=q[0]; e.textContent=q[1]; n.appendChild(e); }); }
-    var l=null;
-    if(false){ var im=ps[i]&&ps[i].querySelector("img"), y=im&&(im.getAttribute("src").match(/Bilder\/(\d{4})-/)||[])[1], x=t.querySelector(".t-x"), pn=x&&x.textContent.replace(/^Beispiel:\s*/,"").replace(/\s*→\s*$/,"");
-      if(y&&pn){ var fk=document.createElement("div"); fk.className="fakt"; [["Projekt",pn],["Jahr",y]].forEach(function(q){ q.forEach(function(v){ var e=document.createElement("span"); e.textContent=v; fk.appendChild(e); }); }); t.insertBefore(fk,l); } }
+const stack=document.getElementById('stack'), de=document.getElementById('de'), en=document.getElementById('en'), cnt=document.getElementById('cnt');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, touch=matchMedia('(hover:none)').matches;
+const ROT=-90;   // Ruhelage: Bilder quer zum Band (Ruben 07.11.)
+// Ansicht (Ruben 07.11.): Perspektive, Raster 45 Grad (Isometrie verworfen).
+// Zum Vergleich: ?iso = isometrisch, ?raster=20 andere Drehung, ?mix = Bild dreht nur 45 Grad
+const Q=new URLSearchParams(location.search||'?vorschlag')   /* Hauptseite (Ruben 07.11.): ohne Zusatz der Vorschlag */, MIX=Q.has('mix'), VOR=Q.has('vorschlag')||Q.has('kreis');
+const KREIS=Q.has('kreis');   // ?kreis: Stapel als Ring, von aussen gedreht (Gegenstueck zum 3D-Walk, Ruben 07.11.)
+if(KREIS){ Q.set('vorschlag',''); document.documentElement.classList.add('kreis'); }
+if(VOR||KREIS){ Q.set('schwenk',''); Q.set('unten',''); document.documentElement.classList.add('vorschlag'); }   // Vorschlag Claude 07.11.
+document.documentElement.classList.toggle('unten',Q.has('unten')); document.documentElement.classList.toggle('ohneraster',Q.has('ohneraster'));
+const _q=0, ISO=Q.has('iso');
+const RASTER=MIX?45:(Q.has('raster')?+Q.get('raster'):45);
+const TURN=MIX?-45:0;    // 0 = gewaehltes Bild liegt parallel zu den Querlinien des Rasters
+const ISO_S=.6;   // Massstab der Isometrie
+if(ISO){ document.getElementById('scene').style.perspective='none';
+  document.getElementById('rig').style.transform='scale('+ISO_S+') rotateX(-35.264deg) rotateY('+RASTER+'deg)'; document.getElementById('rig').style.top='52%'; }   // echte Isometrie: arctan(1/Wurzel 2)
+else document.getElementById('rig').style.transform='translateZ(-700px) rotateX(-18deg) rotateY('+RASTER+'deg)';
+// ?schwenk: geschlossen 45 Grad (Ueberblick), beim Aufklappen schwenkt der Raum auf 0 Grad (Bild frontal), beim Schliessen zurueck
+const SCHWENK=Q.has('schwenk'); let rigR=RASTER;
+// Kamera auf normaler Hoehe (Ruben 07.11.): keine Neigung, Senkrechte bleiben senkrecht; ?tilt=-18 = alte Aufsicht
+const TILT=Q.has('tilt')?+Q.get('tilt'):0; let tiltNow=VOR?-12:TILT;   // Vorschlag: im Ueberblick leicht von oben, beim Lesen auf Augenhoehe
+if(SCHWENK) document.getElementById('scene').style.perspectiveOrigin='50% '+(Q.has('auge')?Q.get('auge'):'50')+'%';
+const EDGE=1;    // gedrehtes Bild rueckt an die rechte Kante des Stapels (Ruben 07.11.); -1 = linke Kante
+function stackW(){ let m=0; C.forEach(c=>{ if(c.w>m) m=c.w; }); return m; }
+const H=Math.round(Math.min(innerHeight*(VOR?.6:.46),VOR?640:460)), G=Math.round(H*.14);   // Vorschlag: groesser, weil das Bild hoeher sitzt (Ruben 07.11.)
+const MY=VOR?.41:.5;   // senkrechte Lage der Bildmitte (Vorschlag hoeher, damit unten Platz fuer Text bleibt)   // G = Abstand im geschlossenen Stapel
+document.documentElement.style.setProperty("--h",H+"px");
+
+const els=C.map((c,i)=>{
+  const a=document.createElement("div"); a.className="card";
+  a.innerHTML="<span class=\"sh\"></span><span class=\"pic\">"+(c.v
+    ? "<video muted loop playsinline preload=\"metadata\" poster=\""+c.poster+"\" src=\""+c.v+"\"></video>"
+    : "<img alt=\"\" decoding=\"async\" src=\""+c.src+"\">")+(c.sl?c.sl.map(x=>"<img class=\"sl\" alt=\"\" decoding=\"async\" src=\""+x[0]+"\">").join(""):"")+(c.vm?"<span class=\"vtag\">Video</span>":"")+"</span>";   // vm: Video vorgemerkt, Foto ist Platzhalter
+  stack.appendChild(a);
+  c.w=H*(c.v?16/9:1.5); c.x=0; c.t=0; c.r=ROT; c.z=0;
+  const m=a.querySelector("img,video"), pic=a.querySelector(".pic"), sh=a.querySelector(".sh");
+  const place=()=>{ pic.style.left=(-c.w/2)+"px"; sh.style.left=(-c.w*.58)+"px"; sh.style.width=(c.w*1.16)+"px"; };   // Drehpunkt in der Bildmitte
+  const setW=()=>{ const w=m.naturalWidth||m.videoWidth, h=m.naturalHeight||m.videoHeight; if(w&&h) c.w=H*w/h; place(); };
+  if(c.seg&&m.tagName==="VIDEO"){ m.removeAttribute("loop"); m.addEventListener("loadedmetadata",()=>{ m.currentTime=c.seg[0]; }); m.addEventListener("timeupdate",()=>{ if(m.currentTime>=c.seg[1]||m.currentTime<c.seg[0]-.2) m.currentTime=c.seg[0]; }); m.preload="auto"; }
+  m.addEventListener("load",setW); m.addEventListener("loadedmetadata",setW); if(m.complete) setW(); place();
+  return a;
+});
+
+// Lage: geschlossener Stapel um die Mitte. Karte i steht vor Karte i+1 (vorne links, hinten rechts).
+let hov=-1, anchor=null, rigTop=null;
+const RISE=Q.has('rise')?+Q.get('rise'):.12;
+const DIST=Q.has('dist')?+Q.get('dist'):1400; let distNow=VOR?-DIST:-700;   // Steigung der Staffelung im Ueberblick, wie bei der Vorlage (Ruben 07.11.)
+const GC=VOR?Math.round(Q.has('gc')?H*+Q.get('gc'):H*.42):G;   // Vorschlag: geschlossener Stapel ueber die ganze Diagonale, vorderstes Bild angeschnitten (Ruben 07.11.)   // geschlossener Stapel: bei vielen Bildern enger, damit er ins Bild passt
+const base=i=>(i-(C.length-1)/2)*GC;
+C.forEach((c,i)=>{ c.x=c.t=base(i); });
+function gaps(){
+  // Abstand von Karte i zu i+1: um das gedrehte Bild herum so viel Platz, wie es entlang des Bands braucht
+  const half=hov<0?0:C[hov].w*.5*Math.abs(Math.cos(TURN*Math.PI/180))+H*.08;
+  return C.map((c,i)=>{
+    if(i===C.length-1) return 0;
+    if(hov<0) return G;
+    if(i===hov-1||i===hov) return G+half;
+    const d=i<hov ? hov-1-i : i-hov;                         // Nachbarn ruecken etwas mit, nach aussen weniger
+    return G*(1+.9*Math.exp(-(d*d)/3));
   });
-  var tsh=document.createElement("div"); tsh.className="fsh tsh"; tsh.style.opacity=0; world.appendChild(tsh);   /* Schatten der Tafel: auf dem Boden, gespiegelt zum Schatten des Bildes */
-  var HOLD=0.4, S0=1.0, ticking=false, G=null, RIGHT=/[?&]seite=r/.test(location.search);   /* ?seite=r: alle Bilder rechts, Text immer links (Probe 06.11.) */
-  function sm(t){ t=Math.min(1,Math.max(0,t)); return t*t*(3-2*t); }
-  function geo(){
-    var vw=innerWidth, vh=innerHeight, mob=vw<=700, P=mob?vw*1.35:vw*.7;
-    var pad=PADW(), gut=pad, w=mob?vw-2*pad:vw/2-pad-gut/2, kH=1, A=mob?0:(vw/2-pad-w/2), D=P*2.4;   /* Lesestellung: Bild füllt eine Bildschirmhälfte (Rand außen, Steg in der Mitte); 3D nur auf dem Weg dazwischen */
-    var g={vw:vw, vh:vh, mob:mob, pad:pad, gut:gut, P:P, cx:vw/2, cy:vh*(mob?.36:.5), w:w, h:w/1.5, kH:kH, A:A, D:D,
-      HW:(mob?.84:.7)*vw, HH:(mob?.6:.7)*vh, Fl:vh*(mob?.36:.4), yawMax:0};   /* Bilder stehen gerade, der Blick dreht sich nicht (Ruben 05.11.) */
-    g.zh=-(P/kH-P);                          /* Abstand vor dem Bild in Lesestellung */
-    g.cz0=P*.95;                             /* hier steht man vor dem ersten Bild: durch den Film hindurch */
-    g.z=ps.map(function(_,i){ return g.zh-g.cz0-i*D; });   /* Bildpositionen in der Tiefe */
-    g.cz=g.z.map(function(z){ return g.zh-z; });            /* Kameraposition vor jedem Bild */
-    return g;
-  }
-  /* Kamera: steht vor dem Film, geht dann von Halt zu Halt; zwischen zwei Halten weich anfahren und abbremsen, der Blick wendet sich am Halt zum Bild */
-  function cam(s,g){
-    if(s<0.15) return {cz:0, yaw:0};
-    if(s<S0){ var a=sm((s-0.15)/(S0-0.15)); return {cz:g.cz0*a, yaw:g.yawMax*sm((s-S0+0.35)/0.35)*1}; }
-    var n=ps.length, i=Math.min(n-1,Math.floor(s-S0)), f=s-S0-i;
-    var side=function(k){ return (RIGHT||!(k%2))?1:-1; };
-    if(f<HOLD || i>=n-1 && f<HOLD) return {cz:g.cz[i], yaw:g.yawMax*side(i)};
-    if(i>=n-1){ var e=sm((f-HOLD)/1.2); return {cz:g.cz[i]+g.D*1.6*e, yaw:g.yawMax*side(i)*(1-e)}; }
-    var t=sm((f-HOLD)/(1-HOLD)), y=g.yawMax*(side(i)*(1-sm(t*2))+side(i+1)*sm(t*2-1));
-    return {cz:g.cz[i]+(g.cz[i+1]-g.cz[i])*t, yaw:y};
-  }
-  function tr(x,y,z,c,g){   /* Weltpunkt -> Kamera (wie das CSS der Welt): erst gehen, dann um das Auge drehen */
-    var a=c.yaw*Math.PI/180, zz=z+c.cz-g.P, x2=x*Math.cos(a)+zz*Math.sin(a), z2=-x*Math.sin(a)+zz*Math.cos(a)+g.P; return [x2,y,z2]; }
-  function put(el,x,y,z,W,H,extra){ el.style.width=W+'px'; el.style.height=H+'px'; el.style.transform='translate3d('+(x-W/2).toFixed(1)+'px,'+(y-H/2).toFixed(1)+'px,'+z.toFixed(1)+'px)'+(extra||''); }
-  /* Seitenrand der Seite (var(--pad)) in Pixeln */
-  function PADW(){ var d=document.createElement('div'); d.style.cssText='position:absolute;visibility:hidden;width:var(--pad)'; document.body.appendChild(d); var w=d.offsetWidth||16; d.remove(); return w; }
-  /* Text: oben bündig mit dem Bild, mittig im freien Feld auf der anderen Seite; fährt von dieser Seite herein */
-  function textPos(g,side){ textPos0(g,side); taf.offsetWidth; [taf].concat(ts).forEach(function(e){ e.style.transition=''; }); }
-  function textPos0(g,side){
-    var tf=document.getElementById('ftafel').style;
-    var fts=[taf].concat(ts); fts.forEach(function(e){ e.style.transition='none'; });
-    sec.style.setProperty('--tin', ((side>0?-1:1)*(g.mob?g.vw:(g.w+g.pad+40))).toFixed(0)+'px');   /* Tafel links kommt von links, rechts von rechts */
-    if(g.mob){   /* Handy: Tafel unter dem Bild, gleicher Rand wie das Bild (wie die 2D-Liste), endet über der Leiste; Text mit Abstand zur Kontur */
-      var mt=g.cy+g.h/2+g.gut+CNTH, mi=14, mb=g.vh-(5.6*parseFloat(getComputedStyle(document.documentElement).fontSize));
-      taf.style.setProperty('--gut','0px'); tf.left=g.pad+'px'; tf.width=(g.vw-2*g.pad)+'px'; tf.top=mt+'px'; tf.height=Math.max(80,mb-mt)+'px';
-      tx.style.left=(g.pad+mi)+'px'; tx.style.width=(g.vw-2*g.pad-2*mi)+'px'; tx.style.top=(mt+mi)+'px'; tx.style.height=''; return; }
-    /* Tafel: so groß wie das Bild, in der anderen Hälfte gespiegelt (vom Seitenrand bis zum Steg) */
-    tf.width=g.w+'px'; tf.height=g.h+'px'; tf.top=(g.cy-g.h/2)+'px'; tf.left=(side>0 ? g.pad : g.vw/2+g.gut/2)+'px';
-    taf.style.setProperty('--gut', '0px');   /* Ruben 06.11.: kein weißer Streifen am Steg, die Bilder dahinter dürfen zu sehen sein */ taf.classList.toggle('tr', side<0);   /* Steg zum Bild weiß füllen, sonst blitzt dort ein hinteres Bild durch (Ruben 06.11.) */
-    var tw=Math.min(g.w, 440);   /* Text in der anderen Hälfte, am Steg ausgerichtet */
-    /* Satz auf der Tafel (Ruben 06.11.): Rubrik oben links, Titel, Text und Link unten, ringsum gleicher Abstand zur Kontur */
-    var ins=Math.max(20,g.pad*1.5), tl=(side>0 ? g.pad : g.vw/2+g.gut/2);
-    tx.style.left=(tl+ins)+'px'; tx.style.top=(g.cy-g.h/2+ins)+'px'; tx.style.width=(g.w-2*ins)+'px'; tx.style.height=(g.h-2*ins)+'px';
-  }
-  var tside=0;
-  function layout(){
-    var g=G=geo(); tside=0;
-    /* Handy (Ruben 06.11.): Bevor der Text auf der Tafel abgeschnitten wird, rückt das Bild nach oben, aber nur so weit, dass es unter YRD.Works ganz zu sehen bleibt. Gilt für alle Kapitel gleich (längster Text), damit nichts springt. */
-    if(g.mob){ var mi=14, rem=parseFloat(getComputedStyle(document.documentElement).fontSize), mb=g.vh-5.6*rem;
-      tx.style.width=(g.vw-2*g.pad-2*mi)+'px'; var th=0; ts.forEach(function(t){ th=Math.max(th,t.scrollHeight); });
-      var hm=document.querySelector('.nav .home'), top=(hm?hm.getBoundingClientRect().bottom:3*rem)+g.gut;
-      var need=mb-2*mi-th-g.gut-CNTH-g.h/2, lo=top+g.h/2; g.cy=Math.min(g.cy,Math.max(lo,need)); }
-    space.style.perspective=g.P+'px'; space.style.perspectiveOrigin=g.cx+'px '+g.cy+'px';
-    world.style.left=g.cx+'px'; world.style.top=g.cy+'px';
-    var fy=g.mob?g.vh*.08:0; put(hb,0,fy,0,g.HW,g.HH); put(hs,0,g.Fl,0,g.HW*1.1,g.HH*.5,' rotateX(90deg)');
-    ps.forEach(function(p,i){ var sd=(RIGHT||!(i%2))?1:-1; put(p,sd*g.A,0,g.z[i],g.w,g.h); put(shs[i],sd*g.A,g.Fl,g.z[i],g.w*1.25,g.h*.9,' rotateX(90deg)'); });
-  }
-  /* Vorschau (Ruben 06.11.): Sobald man losgeht, zeigen sich das Ziel und dahinter die nächsten Bilder (Tiefe, Vorschau);
-     die hinteren lösen sich auf, wenn man die Hälfte des Wegs zum Ziel geschafft hat. In der Lesestellung bleibt alles dahinter verborgen. */
-  /* Ruben 06.11. abends: keine Ein- und Ausblendung, alle Bilder stehen von Anfang an im Raum und sind nur von den vorderen verdeckt (?vor=1 zeigt die Vorschau-Fassung) */
-  var PRE=3, VOR=/[?&]vor=1/.test(location.search);
-  function walk(s){
-    var n=ps.length;
-    if(s<S0) return {k:0, m:s<0.15?0:sm((s-0.15)/(S0-0.15)), film:true};
-    var i=Math.floor(s-S0), f=s-S0-i;
-    if(i>=n-1) return {k:-1, m:0, film:false};
-    return {k:i+1, m:f<HOLD?0:sm((f-HOLD)/(1-HOLD)), film:false};
-  }
-  function far(j,w){
-    if(w.k<0||j<w.k) return 1;
-    var a=sm(w.m/0.06);
-    if(j===w.k) return w.film?1:a;
-    if(j-w.k<=PRE) return a*(1-sm((w.m-0.4)/0.1))*(1-(j-w.k-1)*0.18);
-    return 0;
-  }
-  /* Staffel (Ruben 06.11., wie früher in den 3D-Projekträumen): Klick aufs Bild in der Lesestellung, dahinter staffeln sich weitere Fotos des Projekts nach hinten.
-     Noch ein Klick aufs Bild schließt sie, ein Klick auf ein Bild der Staffel führt ins Projekt. Beim Weitergehen faltet sie sich zusammen. */
-  var MORE={'2022-forschungswerkstatt':5,'2024-im-angesicht-des-todes':7,'2024-transition-1-7':12,'2016-kressmann-halle':7,'2023-soups':10,'2020-access':5,'2026-display':8}, STK=4, open=-1, items=[];
-  function slot(i,j,g){ var sd=(RIGHT||!(i%2))?1:-1; return {x:sd*(g.A+j*g.w*.05), y:-j*g.h*.24, z:g.z[i]-j*g.w*.4}; }
-  function openStack(i){
-    var g=G, p=ps[i], src=p.querySelector('img').getAttribute('src'), mm=src.match(/Bilder\/([^/]+)\/(\d+)\.webp/); if(!mm||!MORE[mm[1]]) return;
-    closeStack(true); open=i;
-    var ks=[]; for(var k=1;k<=MORE[mm[1]]&&ks.length<STK;k++){ var nn=(k<10?'0':'')+k; if(nn!==mm[2]) ks.push(nn); }
-    items=ks.map(function(nn,j){
-      var a=document.createElement('a'); a.className='fp fs'; a.href=p.getAttribute('href'); a.tabIndex=-1; a.setAttribute('aria-hidden','true');
-      var im=document.createElement('img'); im.alt=''; im.src='Bilder/'+mm[1]+'/'+nn+'.webp'; a.appendChild(im);
-      var o=slot(i,0,g); put(a,o.x,o.y,o.z-1,g.w,g.h); a.style.opacity=0; a.style.setProperty('--fog',((j+1)*.07).toFixed(2)); a.style.transitionDelay=(j*70)+'ms';
-      world.insertBefore(a,world.firstChild); return a;
-    });
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ if(open!==i) return;
-      items.forEach(function(a,j){ var o=slot(i,j+1,g); put(a,o.x,o.y,o.z,g.w,g.h); a.style.opacity=1; }); }); });
-  }
-  function closeStack(now){
-    var old=items, i=open; items=[]; open=-1; if(!old.length) return;
-    if(now===true){ old.forEach(function(a){ a.remove(); }); return; }
-    old.forEach(function(a,j){ a.style.transitionDelay=((old.length-1-j)*50)+'ms'; var o=slot(i,0,G); put(a,o.x,o.y,o.z-1,G.w,G.h); a.style.opacity=0; });
-    setTimeout(function(){ old.forEach(function(a){ a.remove(); }); },1100);
-  }
-  /* Strecke (Ruben 06.11.): Klick aufs Bild in der Lesestellung macht das Thema horizontal scrollbar wie die Projekte in 2D.
-     Bild und Tafel werden zu einer Reihe, dahinter folgen die übrigen Bilder des Projekts in gleicher Höhe. Mausrad und Wischen schieben die Reihe;
-     am Anfang zurück oder am Ende weiter, Esc oder ein Klick aufs Bild schließen sie. Die Bilder der Reihe führen ins Projekt. */
-  var hopen=-1, strip=null, hlast=0, hclosing=0, CNTH=26;   /* Platz für den Bildzähler unter dem Bild auf dem Handy */
-  /* Ruben 06.11. morgens: Mischung aus 2D und 3D. In der Lesestellung liegt die Reihe schon still bereit (quiet): Bild und Tafel stehen dort, wo sie im Raum stehen, die übrigen Bilder des Projekts schließen außerhalb des Bildschirms an (Rand = Steg). Seitlich wischen schiebt sofort, hoch und runter geht es im Raum weiter. */
-  function openStrip(i,quiet){
-    var g=G, p=ps[i], src=p.querySelector('img').getAttribute('src'), mm=src.match(/Bilder\/([^/]+)\/(\d+)\.webp/); if(!mm||!MORE[mm[1]]) return;
-    closeStrip(true); hopen=i;
-    var sd=(RIGHT||!(i%2))?1:-1, ins=Math.max(20,g.pad*1.5);
-    var row=document.createElement('div'); row.className='hrow';
-    row.style.top=(g.cy-g.h/2)+'px'; row.style.height=g.h+'px'; row.style.gap=g.gut+'px'; row.style.paddingLeft=g.pad+'px';
-    var hero=document.createElement('a'); hero.className='hhero'; hero.href=p.getAttribute('href'); hero.style.width=g.w+'px';
-    var hi=document.createElement('img'); hi.alt=''; hi.src=src; hero.appendChild(hi);
-    hero.addEventListener('click',function(e){ if(row.quiet && row.scrollLeft<4) return; e.preventDefault(); closeStrip(); });   /* still bereit: Klick aufs Bild führt ins Projekt */
-    var parts=[hero];
-    if(!g.mob){
-      var tf=document.createElement('div'); tf.className='htafel'; tf.style.width=g.w+'px';
-      var fx=document.createElement('div'); fx.className='ftext'; fx.style.cssText='left:'+ins+'px;top:'+ins+'px;width:'+(g.w-2*ins)+'px;height:'+(g.h-2*ins)+'px';
-      var c=ts[i].cloneNode(true); c.classList.add('on'); fx.appendChild(c); tf.appendChild(fx);
-      parts = sd>0 ? [tf,hero] : [hero,tf];
-    }
-    for(var k=1;k<=MORE[mm[1]];k++){ var nn=(k<10?'0':'')+k; if(nn===mm[2]) continue;
-      var a=document.createElement('a'); a.className='hx'; a.href=p.getAttribute('href'); a.style.transitionDelay=(Math.min(k,6)*60)+'ms';
-      var im=document.createElement('img'); im.alt=''; im.src='Bilder/'+mm[1]+'/'+nn+'.webp'; a.appendChild(im); parts.push(a); }
-    var sp=document.createElement('span'); sp.className='hend'; sp.style.width=Math.max(1,g.pad-g.gut)+'px'; parts.push(sp);
-    parts.forEach(function(el){ row.appendChild(el); });
-    row.quiet=!!quiet; if(quiet) row.querySelectorAll('.hx').forEach(function(a){ a.style.transition='none'; a.classList.add('on'); });
-    sec.querySelector('.fstage').appendChild(row); strip=row;
-    p.classList.add('hid'); if(!(quiet&&g.mob)){ taf.classList.add('hid'); tx.classList.add('hid'); }
-    if(quiet) return;
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ if(strip!==row) return;
-      row.querySelectorAll('.hx').forEach(function(a){ a.classList.add('on'); });
-      row.scrollTo({left:Math.round(g.w*.55), behavior:'smooth'}); }); });   /* kurz anschieben, damit man sieht, dass es weitergeht */
-  }
-  function closeStrip(now){
-    if(!strip) return; var r=strip, i=hopen; strip=null; hopen=-1;
-    function done(){ r.remove(); if(ps[i]) ps[i].classList.remove('hid'); taf.classList.remove('hid'); tx.classList.remove('hid'); }
-    if(now===true) return done();
-    /* zurück in die Lesestellung: eigene Fahrt, Dauer nach Weg (0,35 bis 0,7 s); solange nimmt der Gang kein Scrollen an */
-    r.style.pointerEvents='none'; r.querySelectorAll('.hx').forEach(function(a){ a.style.transitionDelay='0ms'; a.classList.remove('on'); });
-    var x0=r.scrollLeft, dur=Math.min(700,Math.max(350,x0*.25)), t0=performance.now(); hclosing=t0+dur+30;
-    (function step(now){ var t=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-t,3); r.scrollLeft=x0*(1-e); if(t<1) requestAnimationFrame(step); else done(); })(t0);
-  }
-  /* Ruben 06.11.: seitlich wischen schiebt die Reihe; wer runter- oder hochscrollt, fährt zurück in den Hauptgang und geht dann weiter */
-  document.addEventListener('wheel',function(e){
-    if(e.ctrlKey) return;
-    if(performance.now()<hclosing){ e.preventDefault(); e.stopPropagation(); return; }   /* während der Rückfahrt nichts annehmen */
-    if(!strip) return;
-    e.preventDefault(); e.stopPropagation();
-    var m=e.deltaMode===1?40:e.deltaMode===2?innerHeight:1, dx=e.deltaX*m, dy=e.deltaY*m, now=performance.now();
-    if(Math.abs(dx)>=Math.abs(dy)*.7 || e.shiftKey){ strip.scrollLeft+=(Math.abs(dx)>=Math.abs(dy)?dx:dy); return; }
-    if(strip.quiet && strip.scrollLeft<4){ closeStrip(true); dispatchEvent(new WheelEvent('wheel',{deltaY:e.deltaY,deltaMode:e.deltaMode,clientX:e.clientX,clientY:e.clientY,cancelable:true})); return; }   /* Reihe noch am Anfang: senkrecht geht es sofort im Raum weiter */
-    /* Mausrad (06.11.): ein klassisches Rad liefert nur senkrechte Rasten (Firefox in Zeilen, sonst wheelDelta in 120er-Schritten), das Trackpad feine Werte.
-       Das Rad schiebt die Reihe; erst wer am Ende (bzw. am Anfang) nach kurzer Pause weiterdreht, fährt zurück in den Gang. Trackpad: runter = zurück wie bisher. */
-    var fein=e.deltaMode===0 && !(e.wheelDeltaY && e.wheelDeltaY%120===0 && e.deltaX===0); if(fein) hpad=now;
-    if(!fein && now-hpad>400){
-      var max=strip.scrollWidth-strip.clientWidth, gap=now-hwheel; hwheel=now;
-      if(hgoal===null) hgoal=strip.scrollLeft;
-      var atEnd=hgoal>=max-2&&dy>0, atStart=hgoal<=2&&dy<0;
-      if((atEnd||atStart) && gap>250 && !hraf){ hgoal=null; closeStrip(); return; }
-      hgoal=Math.max(0,Math.min(max,hgoal+dy*1.6)); hslide(); return;
-    }
-    closeStrip();
-  },{capture:true,passive:false});
-  /* sanftes Nachgleiten der Reihe beim Mausrad */
-  var hpad=-1e9, hwheel=0, hgoal=null, hraf=0;
-  function hslide(){ if(hraf) return; var last=performance.now(), x=strip.scrollLeft;   /* eigene Position mitführen, der Browser rundet scrollLeft */
-    hraf=requestAnimationFrame(function st(now){ var r=strip; if(!r||hgoal===null){ hraf=0; hgoal=null; return; }
-      var dt=Math.min(.05,(now-last)/1000); last=now; x+=(hgoal-x)*(1-Math.exp(-dt/0.12));
-      if(Math.abs(hgoal-x)<0.5){ r.scrollLeft=hgoal; hraf=0; hgoal=null; return; } r.scrollLeft=x; hraf=requestAnimationFrame(st); }); }
-  document.addEventListener('keydown',function(e){
-    if(!strip) return; var k=e.key;
-    if(k==='Escape'){ e.preventDefault(); e.stopPropagation(); closeStrip(); return; }
-    if(k==='ArrowDown'||k==='ArrowUp'||k==='PageDown'||k==='PageUp'||k===' '){ if(strip.quiet&&strip.scrollLeft<4){ closeStrip(true); return; } e.preventDefault(); e.stopPropagation(); closeStrip(); return; }
-    var dir=k==='ArrowRight'?1:k==='ArrowLeft'?-1:0;
-    if(!dir) return; e.preventDefault(); e.stopPropagation(); strip.scrollBy({left:dir*G.w*.6, behavior:'smooth'});
-  },true);
-  var dots=document.getElementById('fdots'), dbt=[], seenMax=-1, dcur=-2;
-  ts.forEach(function(t,i){ var b=document.createElement('button'); b.type='button'; var h=t.querySelector('.t-h'); b.title=(i+1)+' · '+(h?h.textContent:''); b.setAttribute('aria-label',b.title); b.appendChild(document.createElement('i'));
-    b.addEventListener('click',function(){ jumpChapter(i); }); dots.appendChild(b); dbt.push(b); });
-  function dotsUpdate(s){
-    var n=ts.length, pos=s-S0-HOLD/2, cur=(s<S0-0.4)?-1:Math.max(0,Math.min(n-1,Math.round(pos)));
-    if(s>snaps[LAST]+0.6) cur=-1;   /* hinter dem Raum: kein Ort mehr markiert */
-    /* gesehen = dort gewesen; beim Sprung über die Punkte zählen übersprungene Kapitel nicht */
-    var seen=dbt._s||(dbt._s=[]), ch=false; if(cur>=0&&!seen[cur]&&!JUMP){ seen[cur]=true; ch=true; }
-    if(cur===dcur && !ch) return; dcur=cur;
-    dbt.forEach(function(b,i){ b.classList.toggle('seen', !!seen[i]); b.classList.toggle('cur', i===cur); if(i===cur) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
-  }
-  /* Sprung über die Punkte (Ruben 06.11.): keine Fahrt durch die Kapitel, sondern eine kurze weiße Blende, darunter steht man sofort im Ziel */
-  var veil=document.createElement('div'); veil.className='fveil'; sec.querySelector('.fstage').appendChild(veil);
-  /* Zeitreise (Ruben 06.11. spät): kein Abfahren jedes Kapitels, sondern ein gestauchter Flug durch den Raum (0,6 bis 1 s):
-     die Kamera rauscht durch, die Bilder dazwischen schieben sich nicht zur Seite, die Tafel wartet, ein leichter weißer Hauch in der Mitte.
-     Am Ziel fährt die Tafel wie gewohnt herein. */
-  var JUMP=false;
-  function jumpChapter(i){
-    closeStrip(true); var to=snaps[i+1]; if(raf){ cancelAnimationFrame(raf); raf=0; } magT=null;
-    var secTop=scrollY+sec.getBoundingClientRect().top, from=sNow();
-    if(from<-0.5||from>snaps[LAST]+1){ from=Math.max(0,Math.min(snaps[LAST],from)); }   /* von außerhalb: Flug beginnt am Rand des Raums */
-    var dist=Math.abs(to-from); if(dist<0.01) return;
-    var dur=Math.min(1000,600+dist*60), t0=performance.now(); JUMP=true;
-    function ease(t){ return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
-    (function step(now){
-      var t=Math.min(1,(now-t0)/dur); sv=tgt=rest=from+(to-from)*ease(t);
-      veil.style.transition='none'; veil.style.opacity=(0.35*Math.sin(Math.PI*t)).toFixed(3);
-      scrollTo({top:secTop+sv*innerHeight, behavior:'instant'}); frame();
-      if(t<1) requestAnimationFrame(step); else { JUMP=false; veil.style.opacity=''; veil.style.transition=''; sv=tgt=rest=to; vel=0; frame(); var ni=snaps.indexOf(to)-1; if(ni>=0&&!strip) openStrip(ni,true); }   /* Feder nach der Zeitreise zurücksetzen */
-    })(t0);
-  }
-  addEventListener('wheel',function(e){ if(JUMP){ e.preventDefault(); e.stopImmediatePropagation(); } },{capture:true,passive:false});
-  function goChapter(i){
-    closeStrip(true); var to=snaps[i+1];
-    if(inside() || raf){ sync(); var d=Math.abs(to-sv); VMAX=Math.max(0.8,d/1.4); tgt=magT=to; idleT=-1e9; kick(); return; }   /* im Raum: hinfahren, weite Sprünge schneller (höchstens ca. 1,4 s) */
-    var secTop=scrollY+sec.getBoundingClientRect().top; scrollTo({top:secTop+to*innerHeight, behavior:'smooth'});
-  }
-  /* Zeiger wie auf der Seite (Ruben 06.11.): Kreis mit Plus auf dem Bild = Thema aufklappen, Minus = zuklappen,
-     Pfeile rechts/links = weiter/zurück (im Raum ein Kapitel, in der Reihe ein Bild). Nur am Rechner mit Maus oder Trackpad. */
-  (function(){
-    var fine=matchMedia('(hover:hover) and (pointer:fine)'); if(!fine.matches) return;
-    function svg(d){ return 'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="14.5" fill="#fff" stroke="#00f" stroke-width="1.5"/><path d="'+d+'" fill="none" stroke="#00f" stroke-width="1.5"/></svg>')+'") 16 16'; }
-    var CR=svg('M11 16h10M17 11.5l4.5 4.5-4.5 4.5')+', e-resize', CL=svg('M21 16H11M15 11.5L10.5 16l4.5 4.5')+', w-resize', CP=svg('M16 10v12M10 16h12')+', zoom-in', CM=svg('M10 16h12')+', zoom-out', CD=svg('M16 10.5v11M11.5 17l4.5 4.5 4.5-4.5')+', s-resize';   /* im Raum: Pfeil nach unten = weiter, wie Runterscrollen (Ruben 06.11.) */
-    var st=document.createElement('style'); st.textContent=
-      '.fstage.c-r{cursor:'+CD+'}.fstage.c-l{cursor:'+CL+'}.fp:not(.plan):not(.fs){cursor:'+CP+'}.hhero{cursor:'+CM+'!important}'+
-      '.hrow.c-r,.hrow.c-r .hx,.hrow.c-r .htafel{cursor:'+CR+'}.hrow.c-l,.hrow.c-l .hx,.hrow.c-l .htafel{cursor:'+CL+'}.fstage a:not(.fp):not(.hx):not(.hhero){cursor:pointer}';
-    document.head.appendChild(st);
-    var stage=sec.querySelector('.fstage'), n=ts.length;
-    function cur(){ return (typeof dcur==='number'&&dcur>=-1)?dcur:-1; }
-    function onFree(t){ return !t.closest('.fp,.hrow,a,.fbar,button'); }
-    function stageDir(e){ if(!onFree(e.target)||strip) return 0; return cur()<n-1?1:0; }   /* im Raum nur vorwärts: überall der Pfeil weiter (Ruben 06.11.), zurück per Scrollen oder Punkte */
-    stage.addEventListener('mousemove',function(e){ var d=stageDir(e); stage.classList.toggle('c-r',d>0); stage.classList.toggle('c-l',d<0); });
-    stage.addEventListener('mouseleave',function(){ stage.classList.remove('c-r','c-l'); });
-    stage.addEventListener('click',function(e){ var d=stageDir(e); if(!d) return; e.preventDefault(); goChapter(cur()+d); });
-    /* Reihe: Klick rechts/links blättert ein Bild weiter, wie in der 2D-Bildstrecke */
-    function items(r){ return [].slice.call(r.children).filter(function(x){ return x.className!=='hend'; }); }
-    function stripDir(r,e){ if(e.target.closest('.hhero')||e.target.closest('.ft a')) return 0; var d=e.clientX>innerWidth/2?1:-1, max=r.scrollWidth-r.clientWidth; return d>0?(r.scrollLeft<max-2?1:0):(r.scrollLeft>2?-1:0); }
-    function stripGo(r,d){ var pad=parseFloat(r.style.paddingLeft)||0, x=r.scrollLeft, its=items(r), to=null;
-      if(d>0){ for(var i=0;i<its.length;i++){ if(its[i].offsetLeft-pad>x+2){ to=its[i].offsetLeft-pad; break; } } }
-      else { for(var j=its.length-1;j>=0;j--){ if(its[j].offsetLeft-pad<x-2){ to=its[j].offsetLeft-pad; break; } } }
-      if(to===null) to=d>0?r.scrollWidth:0; r.scrollTo({left:to, behavior:'smooth'}); }
-    document.addEventListener('mousemove',function(e){ if(!strip) return; var d=strip.contains(e.target)?stripDir(strip,e):0; strip.classList.toggle('c-r',d>0); strip.classList.toggle('c-l',d<0); });
-    document.addEventListener('click',function(e){ if(!strip||!strip.contains(e.target)) return; var d=stripDir(strip,e); if(!d) return; e.preventDefault(); e.stopPropagation(); stripGo(strip,d); },true);
-  })();
-  ps.forEach(function(p,i){ if(p.classList.contains('plan')) return;
-    p.addEventListener('click',function(e){ e.preventDefault(); if(hopen===i) closeStrip(); else openStrip(i); }); });
-  var restStart=0, rfade=1, fadeRaf=0, FADE=/[?&]fade=1/.test(location.search);   /* Verblassen beim Einrasten nur noch mit ?fade=1: nahm die Illusion (Ruben 06.11.) */
-  function frame(){
-    var g=G, s=sv, c=cam(s,g);
-    world.style.transform='translateZ('+g.P.toFixed(1)+'px) rotateY('+c.yaw.toFixed(3)+'deg) translateZ('+(-g.P).toFixed(1)+'px) translateZ('+c.cz.toFixed(1)+'px)';
-    /* Film: verschwindet, wenn man ihm zu nahe kommt (man geht hindurch) */
-    var zf=c.cz; hb.style.opacity=hs.style.opacity=(1-sm((zf-g.P*.05)/(g.P*.22))).toFixed(3); hb.style.visibility=zf>g.P*.3?'hidden':'visible';   /* Film löst sich früh auf, kein großer Schleier beim Durchgehen */
-    pr.style.opacity = s>0.12 ? 0 : 1;
-    var act=-1, best=9, side=1, w=walk(s);
-    /* Ruben 06.11.: steht man eingerastet vor einem Bild, verblassen die hinteren Bilder langsam (ab 0,25 s über 1,2 s);
-       sobald man weitergeht, sind sie ohne Einblenden sofort wieder da */
-    var kk=Math.round(s-S0-HOLD/2), resting=kk>=0&&kk<ps.length&&Math.abs(s-(S0+kk+HOLD/2))<0.02, tnow=performance.now();
-    if(resting){ if(!restStart) restStart=tnow; rfade=1-sm((tnow-restStart-250)/1200); if(FADE&&rfade>0&&!fadeRaf) fadeRaf=requestAnimationFrame(function(){ fadeRaf=0; frame(); }); }
-    else { restStart=0; rfade=1; }
-    ps.forEach(function(p,i){
-      /* Ruben 06.11.: Geht man weiter, fährt das Bild zur Seite hinaus (wie eine Schiebetür) und kommt nur wenig näher:
-         es läuft zu 85 % mit der Kamera mit und ist nach 0,3 Kapiteln Scrollweg draußen. Der Weg der Kamera bleibt gleich lang. */
-      var sd=(RIGHT||!(i%2))?1:-1, ue=s-S0-i, ex=(ue>HOLD&&!JUMP)?sm((ue-HOLD)/0.3):0, zi=g.z[i];
-      if(ex>0||p._ex){ var adv=Math.max(0,c.cz-g.cz[i]); zi=g.z[i]-adv*0.85*(ex>0?1:0); var X=sd*(g.A+ex*(g.w+g.pad+g.gut));
-        put(p,X,0,zi,g.w,g.h); put(shs[i],X,g.Fl,zi,g.w*1.25,g.h*.9,' rotateX(90deg)'); p._ex=ex>0; }
-      var zc=zi+c.cz, dist=-zc;                     /* Abstand des Bildes vor der Bildebene */
-      var op=(1-sm((zc-g.P*.03)/(g.P*.2)))*(VOR?far(i,w):1)*(FADE&&resting&&i!==kk?rfade:1), gone=zc>g.P*.3||op<0.002||ex>0.999;   /* vorbeigehende Bilder lösen sich früh auf; in der Lesestellung ist das nächste Bild nicht zu sehen */
-      var fog=Math.min(.55,Math.max(0,(dist-(-g.zh))/(g.D*5))*.75);
-      p.style.visibility=shs[i].style.visibility=gone?'hidden':'visible';
-      p.style.opacity=op.toFixed(3); p.style.setProperty('--fog',fog.toFixed(3)); shs[i].style.opacity=(op*(1-fog)).toFixed(3);
-      var u=s-S0-i; p.style.pointerEvents=(u>-0.05&&u<HOLD+0.1)?'auto':'none';
-      var d=Math.abs(u-HOLD/2); if(u>-0.15&&u<HOLD+0.04&&d<best){ best=d; act=i; side=sd; }
-    });
-    if(JUMP) act=-1;
-    if(act>=0 && side!==tside){ tside=side; tx.classList.toggle('r', side<0); textPos(g,side); }   /* erst die Seite wechseln (ohne Fahrt), dann einblenden: so kommt die Tafel immer von außen */
-    ts.forEach(function(t,i){ t.classList.toggle('on', i===act); }); taf.classList.toggle('on', act>=0);
-    if(act>=0 && !g.mob){ var sdA=(RIGHT||!(act%2))?1:-1; put(tsh,-sdA*g.A,g.Fl,g.z[act],g.w*1.25,g.h*.9,' rotateX(90deg)'); } tsh.style.opacity=(act>=0&&!g.mob)?1:0;
-    if(open>=0 && act!==open) closeStack();
-    if(hopen>=0 && act!==hopen) closeStrip(true);
-    floor(c,g); if(typeof dotsUpdate==='function'&&snaps) dotsUpdate(s);
-  }
-  /* Boden-Raster in Weltkoordinaten: es bleibt im Raum liegen und läuft deshalb beim Gehen unter einem hindurch */
-  function floor(c,g){
-    var dpr=Math.min(2,devicePixelRatio||1), x=cvs.getContext('2d');
-    if(cvs.width!==Math.round(g.vw*dpr)){ cvs.width=g.vw*dpr; cvs.height=g.vh*dpr; }
-    x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,g.vw,g.vh);
-    var st=g.w/5, near=g.P*.92, zmin=-c.cz-14*g.D, zmax=-c.cz+g.P*1.2;   /* schlank: nur so weit, wie man sieht */
-    function pr2(X,Z){ var q=tr(X,g.Fl,Z,c,g); if(q[2]>near) return null; var k=g.P/(g.P-q[2]); return [g.cx+q[0]*k, g.cy+q[1]*k]; }
-    x.strokeStyle='rgba(0,0,255,.08)'; x.lineWidth=1; x.beginPath();
-    function line(pts){ var on=false; pts.forEach(function(p){ if(!p){ on=false; return; } if(on) x.lineTo(p[0],p[1]); else { x.moveTo(p[0],p[1]); on=true; } }); }
-    var X0=Math.round(-40), z0=Math.ceil(zmin/st)*st;
-    for(var n=-30;n<=30;n++){ var pts=[]; for(var Z=zmax;Z>=zmin;Z-=g.D) pts.push(pr2(n*st,Z)); line(pts); }
-    for(var Z2=Math.floor(zmax/st)*st; Z2>=zmin; Z2-=st){ var q=[]; for(var X=-30*st;X<=30*st;X+=st*6) q.push(pr2(X,Z2)); line(q); }
-    x.stroke();
-    var fg=x.createLinearGradient(0,g.cy,0,g.cy+(g.vh-g.cy)*.45); fg.addColorStop(0,'rgba(255,255,255,1)'); fg.addColorStop(1,'rgba(255,255,255,0)');
-    x.fillStyle=fg; x.fillRect(0,g.cy-2,g.vw,(g.vh-g.cy)*.45+2);
-  }
-  /* Fließendes Gehen (05.11. spätabends, statt „eine Geste = ein Schritt“): Solange der Raum steht, übernimmt die Seite das Scrollen.
-     Mausrad, Trackpad und Wisch schieben ein Ziel stufenlos vor (PER Bildschirmhöhen Scrollweg je Bild); der Raum gleitet dem Ziel mit Trägheit nach.
-     Erst wenn man aufhört, zieht ein sanfter Magnet in die nächste Lesestellung. Nach dem letzten Bild (bzw. vor dem Film) gibt der Raum das Scrollen frei. ?snap=0 schaltet die Steuerung ab. */
-  /* alle Fotos vorab entpacken, damit beim ersten Erscheinen nichts hängt */
-  ps.forEach(function(p){ var im=p.querySelector('img'); if(im&&im.decode) im.decode().catch(function(){}); });
-  var snaps=[0].concat(ps.map(function(_,i){ return S0+i+HOLD/2; })), LAST=snaps.length-1, PER=2.0, TAU=0.4, MAG=0.6, IDLE=700, VMAX=0.8, RAD=0.3;   /* 2 Bildschirmhöhen Scrollweg je Kapitel, höchstens 0,8 Kapitel pro Sekunde */
-  var magT=null, rest=0, tgt=0, sv=0, raf=0, lastT=0, idleT=-1e9, lastWheel=0, touching=false, NOSNAP=/[?&]snap=0/.test(location.search), rq=0, top0=0;
-  function sNow(){ return (-sec.getBoundingClientRect().top)/innerHeight; }
-  function nearest(s){ return snaps.reduce(function(a,b){ return Math.abs(b-s)<Math.abs(a-s)?b:a; }); }
-  /* Magnet: nah an einem Bild rastet es dort ein; wer vom letzten Kapitel aus schon ein Stück (über 0,12) losgegangen ist und dann aufhört, wird zum nächsten Kapitel in dieser Richtung weitergeführt. Der Zwischenzustand bleibt kurz sichtbar (IDLE), dann geht es automatisch weiter. */
-  function magnet(){ var n=nearest(tgt), d=tgt-rest; if(Math.abs(d)<0.12) return n;
-    var c=snaps.filter(function(t){ return d>0 ? t>rest+0.01 : t<rest-0.01; }); if(!c.length) return n;
-    return d>0 ? Math.min.apply(null,c.filter(function(t){ return t>=tgt-0.01; }).concat([Math.max.apply(null,c)])) : Math.max.apply(null,c.filter(function(t){ return t<=tgt+0.01; }).concat([Math.min.apply(null,c)])); }
-  function clampT(t){ return Math.max(0,Math.min(snaps[LAST],t)); }
-  function inside(){ var s=sNow(); return s>-0.02 && s<snaps[LAST]+0.02; }
-  /* Feder (06.11.): kritisch gedämpft wie SmoothDamp. Losgehen und Anhalten ohne Ruck, kein Überschwingen.
-     Die Höchstgeschwindigkeit begrenzt den Abstand zum Ziel, nicht das Tempo, daher kein Knick. */
-  var vel=0, ST=0.35, ST_MAG=0.5;
-  function spring(cur,to,st,dt){
-    var w=2/st, x=w*dt, ex=1/(1+x+0.48*x*x+0.235*x*x*x), mc=VMAX*st, ch=Math.max(-mc,Math.min(mc,cur-to)), t=cur-ch;
-    var tmp=(vel+w*ch)*dt; vel=(vel-w*tmp)*ex; var out=t+(ch+tmp)*ex;
-    if((to-cur>0)===(out>to)){ out=to; vel=0; }   /* nie über das Ziel hinaus */
-    return out;
-  }
-  function kick(){ if(!raf){ top0=scrollY+sec.getBoundingClientRect().top; lastT=performance.now(); vel=0; raf=requestAnimationFrame(loop); } }
-  function loop(now){
-    var dt=Math.min(.05,Math.max(.001,(now-lastT)/1000)); lastT=now; var prev=sv;
-    if(!touching && now-idleT>IDLE && magT===null){ magT=magnet(); rest=tgt=magT; }   /* Magnet, erst nach dem Aufhören; das angesteuerte Kapitel gilt sofort als Ausgangspunkt der nächsten Geste */
-    sv=spring(sv,tgt,magT!==null?ST_MAG:ST,dt);
-    var done=magT!==null && Math.abs(tgt-sv)<0.0004 && Math.abs(magT-tgt)<0.0004 && Math.abs(vel)<0.01;
-    if(!done && !strip && !touching && magT!==null && Math.abs(magT-sv)<0.003 && Math.abs(magT-tgt)<0.003 && Math.abs(vel)<0.05) done=true;   /* Reihe schon bereitlegen, wenn das Bild praktisch steht (vorher erst nach knapp 3 s) */
-    if(done){ sv=tgt=rest=magT; magT=null; VMAX=0.8; vel=0; var ni=snaps.indexOf(rest)-1; if(ni>=0&&!strip&&!touching) openStrip(ni,true); }
-    if(Math.abs(sv-prev)>1e-5||done){ frame(); scrollTo({top:top0+sv*innerHeight, behavior:'instant'}); }
-    raf = done ? 0 : requestAnimationFrame(loop);
-  }
-  function sync(){ if(!raf){ sv=tgt=sNow(); vel=0; if(Math.abs(nearest(sv)-sv)<0.01) rest=nearest(sv); } }
-  addEventListener('wheel',function(e){
-    if(NOSNAP||e.ctrlKey||(!inside()&&!raf)) return;
-    if(!strip && Math.abs(e.deltaX)>Math.abs(e.deltaY) && quietOpen()){ e.preventDefault(); strip.scrollLeft+=e.deltaX; return; }   /* seitlich, bevor die Reihe bereitliegt: sofort öffnen und schieben */
-    var now=performance.now(), gap=now-lastWheel; lastWheel=now; sync();
-    var d=e.deltaY*(e.deltaMode===1?40:e.deltaMode===2?innerHeight:1)/(innerHeight*PER); d=Math.max(-0.08,Math.min(0.08,d));
-    var atEnd=tgt>=snaps[LAST]-0.002 && Math.abs(sv-tgt)<0.01, atTop=tgt<=0.002;
-    if(((atEnd&&d>0)||(atTop&&d<0)) && gap>200 && !raf) return;   /* am Rand: normal weiterscrollen */
-    var lead=tgt-sv; if(d*lead>0){ var q=Math.min(1,Math.abs(lead)/0.6); d*=1-q*q; }   /* Vorausblick weich: je weiter das Ziel schon vorne ist, desto weniger zählt jede weitere Raste (statt hart abzuschneiden) */
-    e.preventDefault(); idleT=now; magT=null; tgt=clampT(Math.max(sv-0.6,Math.min(sv+0.6,tgt+d))); kick();   /* Ziel läuft dem Raum höchstens 0,6 Kapitel voraus */
-  },{passive:false});
-  addEventListener('keydown',function(e){
-    if(NOSNAP||!inside()) return; var k=e.key, dir=(k==='ArrowDown'||k==='PageDown'||(k===' '&&!e.shiftKey))?1:(k==='ArrowUp'||k==='PageUp'||(k===' '&&e.shiftKey))?-1:0;
-    sync(); var i=snaps.indexOf(nearest(tgt)); if(!dir||(i>=LAST&&dir>0)||(i<=0&&dir<0)) return;
-    e.preventDefault(); tgt=snaps[i+dir]; magT=rest=tgt; idleT=-1e9; kick();
+}
+// Endlos (Vorschlag, Ruben 07.11.): Lage relativ zum gewaehlten Bild, nach dem letzten kommt wieder das erste.
+// Durchgeblaetterte Bilder werden hinten unsichtbar wieder angelegt (Versatz o, -4..4 bei 9 Bildern).
+function off(i){ const N=C.length; let o=((i-hov)%N+N)%N; if(o>Math.floor(N/2)) o-=N; return o; }
+function layoutLoop(){
+  const N=C.length, half=C[hov].w*.5*Math.abs(Math.cos(TURN*Math.PI/180))+H*.08;
+  const gap=o=>{ if(o===0||o===-1) return G+half; const d=o>0?o:-o-1; return d>=2?G*1.9:G*(1+.9*Math.exp(-(d*d)/3)); };   // ab dem dritten Nachbarn weiter auseinander, damit die blassen Bilder sichtbar werden   // Abstand zwischen Versatz o und o+1
+  const by={}; C.forEach((c,i)=>{ const o=off(i); if((c.o!==undefined&&Math.abs(o-c.o)>N/2)||(c.o===undefined&&o<0)) c.jump=true; c.o=o; by[o]=c; });
+  C[hov].t=anchor;
+  for(let o=1;by[o];o++) by[o].t=by[o-1].t+gap(o-1);
+  for(let o=-1;by[o];o--) by[o].t=by[o+1].t-gap(o);
+}
+function layout(){
+  if(VOR&&hov>=0){ layoutLoop(); return; }
+  C.forEach(c=>{ c.o=undefined; });
+  const g=gaps();
+  if(hov<0){ C.forEach((c,i)=>{ c.t=base(i); }); return; }
+  C[hov].t=anchor;
+  for(let i=hov+1;i<C.length;i++) C[i].t=C[i-1].t+g[i-1];
+  for(let i=hov-1;i>=0;i--) C[i].t=C[i+1].t-g[i];
+}
+// Ring: Karte i steht auf Winkel i*DA + ringRot; in Ruhe radial (wie ein Rolodex), die gewaehlte dreht nach aussen und tritt vor
+const DA=360/C.length; let ringRot=DA/2, kTilt=-24, kDist=-2500;   // Start halb versetzt, damit vorne keine Karte genau auf der Kante steht
+function kreisTick(){
+  const k=reduce?1:.06, R=stackW()*.62+H*.25, rig=document.getElementById("rig"), ring=document.getElementById("ring");
+  if(hov>=0){ let t=-hov*DA; while(t-ringRot>180) t-=360; while(t-ringRot<-180) t+=360; ringRot+=(t-ringRot)*k; }
+  kTilt+=((hov<0?-24:-6)-kTilt)*(reduce?1:.045); kDist+=((hov<0?-2500:-900)-kDist)*(reduce?1:.045);   // Ueberblick weiter weg und von oben, Lesen nah und auf Augenhoehe
+  ring.style.left=ring.style.top=(-R)+"px"; ring.style.width=ring.style.height=(2*R)+"px";
+  if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
+  rig.style.transform="translateZ("+kDist.toFixed(1)+"px) rotateX("+kTilt.toFixed(2)+"deg)";
+  C.forEach((c,i)=>{
+    c.b=(c.b===undefined?1:c.b); c.b+=((i===hov?0:1)-c.b)*k;          // 1 = radial, 0 = nach aussen gedreht
+    const th=i*DA+ringRot, rr=R+(1-c.b)*H*.55, a=th*Math.PI/180;
+    els[i].style.transform="translate3d("+(rr*Math.sin(a)).toFixed(1)+"px,0,"+(rr*Math.cos(a)).toFixed(1)+"px) rotateY("+(th+90*c.b).toFixed(2)+"deg)";
+    els[i].style.opacity=(hov<0?1:(.25+.75*(Math.cos(a)+1)/2)).toFixed(2);
   });
-  var ty=null, t0=0, tnat=null, vy=0, lt=0, ly=0, tdy=0, tx0=0, hsw=null;
-  /* Reihe auf dem Handy: seitlich wischen schiebt sie selbst (kein Zurück-Wischen des Browsers) und rastet auf das nächste Bild ein, wie in 2D */
-  function hItems(r){ var pad=parseFloat(r.style.paddingLeft)||0; return [].slice.call(r.children).filter(function(x){ return x.className!=='hend'; }).map(function(x){ return Math.max(0,x.offsetLeft-pad); }); }
-  function hSnap(r,dx){ var xs=hItems(r), max=r.scrollWidth-r.clientWidth, x=r.scrollLeft, base=hsw?hsw.x0:x, i0=0;
-    xs.forEach(function(v,i){ if(Math.abs(v-base)<Math.abs(xs[i0]-base)) i0=i; });
-    var i=i0+(Math.abs(dx)>36?(dx>0?1:-1):0); i=Math.max(0,Math.min(xs.length-1,i));
-    var to=Math.min(max,xs[i]), from=x, t1=performance.now(), D=380;
-    (function st(now){ var q=Math.min(1,(now-t1)/D), e=1-Math.pow(1-q,3); r.scrollLeft=from+(to-from)*e; if(q<1) requestAnimationFrame(st); })(t1); }
-  addEventListener('touchstart',function(e){ if(NOSNAP||!inside()||(strip&&!strip.quiet)){ ty=null; return; } if(!strip) sync(); tx0=e.touches[0].clientX; ty=ly=e.touches[0].clientY; lt=performance.now(); t0=tgt; tnat=null; vy=0; },{passive:true});
-  addEventListener('touchmove',function(e){
-    if(ty===null) return; var y=e.touches[0].clientY, dy=ty-y, now=performance.now();
-    if(tnat===null && !strip && Math.abs(e.touches[0].clientX-tx0)>6 && Math.abs(e.touches[0].clientX-tx0)>Math.abs(dy)) quietOpen();   /* seitlich, bevor die Reihe bereitliegt: sofort öffnen */
-    if(tnat===null && strip && Math.max(Math.abs(dy),Math.abs(e.touches[0].clientX-tx0))>6){   /* Reihe still bereit: seitlich = Reihe schieben (nativ), senkrecht = weiter im Raum */
-      if(Math.abs(e.touches[0].clientX-tx0)>Math.abs(dy)){ tnat=true; hsw={x0:strip.scrollLeft}; }
-      else {
-      if(strip.scrollLeft>4){ closeStrip(); ty=null; return; } closeStrip(true); sync(); t0=tgt; } }
-    if(hsw){ e.preventDefault(); if(strip) strip.scrollLeft=hsw.x0+(tx0-e.touches[0].clientX); return; }
-    if(tnat===null && Math.abs(dy)>6) tnat=(t0>=snaps[LAST]-0.002&&dy>0)||(t0<=0.002&&dy<0);
-    if(tnat) return; e.preventDefault(); touching=true;
-    var d=(ly-y)/(innerHeight*PER*0.7); vy=0.7*vy+0.3*(d/Math.max(.008,(now-lt)/1000)); lt=now; ly=y;
-    tdy=dy; idleT=now; magT=null; tgt=clampT(t0+Math.max(-0.15,Math.min(0.15,dy/(innerHeight*PER*0.7)))); kick();   /* Handy: der Raum deutet die Bewegung nur an, entschieden wird beim Loslassen */
-  },{passive:false});
-  /* Handy (Ruben 06.11.): ein Wisch führt immer entschlossen zum nächsten Kapitel in Wischrichtung, ein Antippen oder Zucken federt zurück */
-  addEventListener('touchend',function(e){ if(hsw){ if(strip){ var t=e.changedTouches&&e.changedTouches[0]; hSnap(strip, t?tx0-t.clientX:0); } hsw=null; ty=null; tnat=null; touching=false; return; }
-    if(ty!==null&&!tnat){
-      var b=snaps.indexOf(nearest(t0)), dir=(Math.abs(tdy)>36||Math.abs(vy)>0.6) ? (tdy>0?1:-1) : 0, n=Math.max(0,Math.min(LAST,b+dir));
-      tgt=magT=rest=snaps[n]; if(dir) VMAX=1.6; idleT=-1e9; kick(); }
-    ty=null; touching=false; tdy=0; },{passive:true});
-  /* Reihe sofort still öffnen, wenn man nah an einem Kapitel steht (seitliche Geste, bevor sie von selbst bereitliegt) */
-  function quietOpen(){ var n=nearest(sv), ni=snaps.indexOf(n)-1; if(ni<0||Math.abs(sv-n)>0.2||strip) return false;
-    if(raf){ cancelAnimationFrame(raf); raf=0; } var top=scrollY+sec.getBoundingClientRect().top; sv=tgt=rest=n; magT=null; vel=0; VMAX=0.8; frame(); scrollTo({top:top+n*innerHeight, behavior:'instant'}); openStrip(ni,true); return !!strip; }
-  function req(){ if(raf||rq) return; rq=requestAnimationFrame(function(){ rq=0; sv=tgt=sNow(); frame(); }); }
-  /* Bildzähler mit Pfeilen wie in der 2D-Projektansicht (Ruben 06.11.): unter dem Bild links, zeigt, dass man seitlich weiterkommt */
-  var cnt=document.createElement('div'); cnt.className='proj-count caption fcount'; cnt.innerHTML='<button type="button" class="gp" data-d="-1" aria-label="Vorheriges Bild">\u2190</button><span class="gn"></span><button type="button" class="gp" data-d="1" aria-label="Nächstes Bild">\u2192</button>';
-  sec.querySelector('.fstage').appendChild(cnt);
-  function cntInfo(){ var n=nearest(sv), i=snaps.indexOf(n)-1; if(i<0||Math.abs(sv-n)>0.06) return null;
-    var m=ps[i].querySelector('img').getAttribute('src').match(/Bilder\/([^/]+)\//); if(!m||!MORE[m[1]]) return null; return {i:i, n:MORE[m[1]]}; }
-  function cntUpdate(){ var g=G, c=cntInfo(); if(!c){ cnt.classList.remove('on'); return; }
-    var sd=(RIGHT||!(c.i%2))?1:-1, x=g.mob?g.pad:(sd>0?g.vw/2+g.gut/2:g.pad);
-    cnt.style.left=x+'px'; cnt.style.top=(g.cy+g.h/2+(g.mob?6:10))+'px';
-    var r=(strip&&hopen===c.i)?strip:null, st=g.w+g.gut, max=r?r.scrollWidth-r.clientWidth:1, sl=r?r.scrollLeft:0, end=r&&sl>=max-2;
-    var k=end?c.n:Math.min(c.n,Math.round(sl/st)+1);
-    cnt.querySelector('.gn').textContent=k+' / '+c.n; cnt.querySelector('[data-d="-1"]').disabled=sl<=2; cnt.querySelector('[data-d="1"]').disabled=!!end;
-    cnt.classList.add('on'); }
-  cnt.addEventListener('click',function(e){ var b=e.target.closest('.gp'); if(!b||b.disabled) return; e.preventDefault(); e.stopPropagation();
-    var fresh=!strip; if(fresh) quietOpen(); var r=strip; if(!r) return;
-    function run(){ var st=G.w+G.gut, max=r.scrollWidth-r.clientWidth, to=Math.max(0,Math.min(max,(Math.round(r.scrollLeft/st)+(+b.dataset.d))*st)), from=r.scrollLeft, t1=performance.now();
-      (function sl(now){ var q=Math.min(1,(now-t1)/420), ee=1-Math.pow(1-q,3); r.scrollLeft=from+(to-from)*ee; if(q<1) requestAnimationFrame(sl); })(t1); }
-    if(fresh) requestAnimationFrame(function(){ requestAnimationFrame(run); }); else run(); });   /* frisch geöffnete Reihe erst einen Moment auslegen lassen */
-  document.addEventListener('scroll',function(e){ if(strip&&e.target===strip) cntUpdate(); },true);
-  var frame0=frame; frame=function(){ frame0(); cntUpdate(); };
-  addEventListener('scroll',req,{passive:true}); addEventListener('resize',function(){ closeStack(true); closeStrip(true); layout(); req(); }); layout(); sv=tgt=rest=sNow(); frame();
+  if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect(); rigTop-=((r.top+r.height/2)-innerHeight*MY)*(reduce?1:.06); }
+  else rigTop+=(innerHeight*.6-rigTop)*(reduce?1:.05);
+  rig.style.top=rigTop.toFixed(1)+"px";
+}
+let slideK=0, slideFor=-1;
+setInterval(()=>{ if(slideFor!==hov) document.querySelectorAll(".sl.cur").forEach(x=>x.classList.remove("cur"));
+  if(hov<0||!C[hov].sl){ slideFor=-1; return; } const c=C[hov], imgs=els[hov].querySelectorAll(".sl");
+  if(slideFor!==hov){ slideFor=hov; slideK=0; return; }
+  slideK=(slideK+1)%(c.sl.length+1); imgs.forEach((im,j)=>im.classList.toggle("cur",j===slideK-1));
+  cnt.textContent=VOR?(slideK?c.sl[slideK-1][1]:c.c):cnt.textContent; },3500);   // Slideshow alle 3,5 s, Leiste nennt das jeweilige Projekt
+function segGuard(){ if(hov<0||!C[hov].seg) return; const v=els[hov].querySelector("video"); if(v&&(v.currentTime>=C[hov].seg[1]||v.currentTime<C[hov].seg[0]-.3)) v.currentTime=C[hov].seg[0]; }
+function tick(){
+  segGuard();
+  if(KREIS){ kreisTick(); requestAnimationFrame(tick); return; }
+  layout();
+  const k=reduce?1:.07;   // ruhige Fahrt
+  if(SCHWENK){ rigR+=((hov<0?45:0)-rigR)*(reduce?1:.045); tiltNow+=(((VOR&&hov<0)?-12:TILT)-tiltNow)*(reduce?1:.045); distNow+=(((VOR&&hov<0)?-DIST:-700)-distNow)*(reduce?1:.045);   // Ueberblick weiter weg, damit die steile Staffelung ins Bild passt
+    document.getElementById('rig').style.transform='translateZ('+distNow.toFixed(1)+'px) rotateX('+tiltNow.toFixed(2)+'deg) rotateY('+rigR.toFixed(2)+'deg)'; }
+  if(VOR) C.forEach((c,i)=>{ const d=hov<0?0:Math.abs(c.o); els[i].style.opacity=d<=2?1:(d===3?.5:(d===4?.22:0)); });   // je Seite zwei volle, dann zwei blasse Bilder (Ruben 07.11.)
+  C.forEach((c,i)=>{ if(c.jump){ c.x=c.t; c.jump=false; els[i].classList.remove('pop'); void els[i].offsetWidth; els[i].classList.add('pop'); } });   // unsichtbar ans andere Ende springen
+  // aeussere Bilder nach hinten versetzen: kleiner, mehr Tiefe
+  C.forEach(c=>{ const d=(VOR&&hov>=0&&c.o!==undefined)?Math.abs(c.o):0; c.dp=0; c.sc=(c.sc||1)+((d>=3?1-.16*(d-2):1)-(c.sc||1))*k; });   // aeussere Bilder kleiner
+  C.forEach((c,i)=>{ c.x+=(c.t-c.x)*k; c.r+=((i===hov?TURN:ROT)-c.r)*k; c.z+=((i===hov?EDGE*(stackW()/2+H*.06):0)-c.z)*k;
+    c.yy=(c.yy||0)+(((VOR&&hov<0)?-(i-(C.length-1)/2)*H*RISE:0)-(c.yy||0))*k;   // Ueberblick: Stapel steigt nach hinten an
+    els[i].style.transform="translate3d("+c.x.toFixed(1)+"px,"+c.yy.toFixed(1)+"px,"+(c.z-(c.o!==undefined?c.o:i)*2+(c.dp||0)).toFixed(1)+"px) rotateY("+c.r.toFixed(2)+"deg) scale("+(c.sc||1).toFixed(3)+")"; });
+  // gewaehltes Bild in die Bildmitte: der ganze Stapel schiebt sich nach, bis es mittig steht
+  // gewaehltes Bild auf 50 % / 50 % (Ruben 07.11.): waagerecht schiebt sich der Stapel, senkrecht der ganze Raum
+  const rig=document.getElementById("rig");
+  if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
+  if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect();
+    anchor-=((r.left+r.width/2)-innerWidth/2)*(reduce?1:.06);
+    // bei niedrigen Fenstern rueckt das Bild hoeher, damit die Texte ueber der Leiste Platz haben
+    let cy=innerHeight*MY, lim=innerHeight; if(VOR&&innerWidth>700){ const th=Math.max(de.offsetHeight,en.offsetHeight); lim=document.querySelector(".fbar").getBoundingClientRect().top-20-th; cy=Math.min(cy,lim-36-r.height/2); }
+    rigTop-=((r.top+r.height/2)-cy)*(reduce?1:.06);
+    // Vorschlag: Texte beziehen sich auf das Bild, DE an der linken, EN an der rechten Bildkante (Ruben 07.11.)
+    if(VOR&&innerWidth>700){ const half=Math.max(160,r.width/2-14); de.style.left=r.left.toFixed(1)+"px"; de.style.right="auto"; de.style.width=half.toFixed(1)+"px";
+      en.style.left=(r.right-half).toFixed(1)+"px"; en.style.right="auto"; en.style.width=half.toFixed(1)+"px";
+      const top=Math.min(r.bottom+36,lim)+"px"; de.style.top=en.style.top=top; de.style.bottom=en.style.bottom="auto"; } }   // beide Texte haengen gleich hoch unter dem Bild
+  else { rigTop+=(innerHeight*(ISO?.52:.66)-rigTop)*(reduce?1:.05);
+    if(VOR&&de.style.width){ de.style.left=de.style.right=de.style.width=de.style.top=de.style.bottom=""; en.style.left=en.style.right=en.style.width=en.style.top=en.style.bottom=""; } }
+  rig.style.top=rigTop.toFixed(1)+"px";
+  requestAnimationFrame(tick);
+}
+
+// Text
+let curS=-1;
+function say(s,cap){
+  if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][0]; en.querySelector('.s').textContent=S[s][1]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
+  de.querySelector('.c').textContent=cap; en.querySelector('.c').textContent=cap;
+}
+function pick(i){
+  if(i===hov) return;
+  if(hov>=0){ const v=els[hov].querySelector('video'); if(v) v.pause(); els[hov].classList.remove('on'); }
+  anchor=C[i].x; hov=i; els[i].classList.add('on');
+  const v=els[i].querySelector('video'); if(v) v.play().catch(()=>{});
+  say(C[i].s,C[i].c); dots(C[i].s);
+  cnt.textContent=VOR?C[i].c:String(i+1).padStart(2,'0')+' / '+String(C.length).padStart(2,'0');   // Vorschlag: Nummer steht schon ueber dem Text
+  document.documentElement.classList.add('lesen');
+}
+function release(){
+  if(hov>=0){ const v=els[hov].querySelector('video'); if(v) v.pause(); els[hov].classList.remove('on'); }
+  hov=-1; anchor=null; cnt.textContent=VOR?HINT:''; document.documentElement.classList.remove('lesen');
+}
+// Steuerung in Schritten (Ruben 07.11.: Mausregler war zu unruhig). Eine Geste = ein Bild, danach steht alles still.
+const sc=document.getElementById('scene'); let rt=null;
+function step(d){ if(KREIS||VOR){ pick(hov<0?0:(hov+d+C.length)%C.length); return; }   // Ring: endlos weiterdrehen, Esc schliesst
+  if(hov===0&&d<0){ release(); return; } pick(Math.max(0,Math.min(C.length-1,hov+d))); }
+let wAcc=0, wLock=false, wT=null;
+addEventListener('wheel',e=>{ e.preventDefault(); clearTimeout(wT); wT=setTimeout(()=>{ wLock=false; wAcc=0; },240);
+  if(wLock) return; wAcc+=e.deltaY+e.deltaX; if(Math.abs(wAcc)>40){ step(wAcc>0?1:-1); wLock=true; } },{passive:false});
+let px=null;
+sc.addEventListener('pointerdown',e=>{ px=e.clientX; });
+addEventListener('pointerup',e=>{ if(px===null) return; const d=e.clientX-px; px=null; if(Math.abs(d)>40) step(d<0?1:-1); });
+els.forEach((a,i)=>{ a.addEventListener('click',()=>pick(i)); });
+addEventListener('keydown',e=>{ if(e.key==='ArrowRight') step(1); if(e.key==='ArrowLeft') step(-1); if(e.key==='Escape') release(); if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' ') step(1); if(e.key==='ArrowUp'||e.key==='PageUp') step(-1); });
+
+// Themenpunkte: ein Punkt pro Satz, Klick faechert den Stapel bei diesem Thema auf
+const fd=document.getElementById('fdots');
+const db=S.map((s,k)=>{ const b=document.createElement('button'); b.type='button'; b.title=(k+1)+' · '+s[0]; b.setAttribute('aria-label',b.title); b.innerHTML='<i></i>';
+  b.onclick=()=>{ clearTimeout(rt); pick(C.findIndex(c=>c.s===k)); }; fd.appendChild(b); return b; });
+function dots(k){ db.forEach((b,j)=>{ b.classList.toggle('cur',j===k); if(j===k){ b.classList.add('seen'); b.setAttribute('aria-current','step'); } else b.removeAttribute('aria-current'); }); }
+dots(0);
+
+// zu Beginn steht der erste Satz
+const HINT="Scrollen, um aufzuklappen / Scroll to open"; if(VOR) cnt.textContent=HINT;
+function num(k){ const t=String(k+1).padStart(2,'0')+' / '+String(S.length).padStart(2,'0'); de.querySelector('.num').textContent=t; en.querySelector('.num').textContent=t; }
+de.querySelector('.s').textContent=S[0][0]; en.querySelector('.s').textContent=S[0][1]; num(0); curS=0;
+document.getElementById('scene').style.pointerEvents='auto';
+// Start: Stapel geschlossen, erst der erste Schritt dreht ein Bild (Ruben 07.11.)
+requestAnimationFrame(tick);
 })();
 </script>
-
 </body>
 </html>
