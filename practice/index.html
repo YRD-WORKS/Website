@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works – Practice</title>
+<script>/* Merkzeichen fuer die Hauptseite: dort erscheint dann Practice in Kopf und Menue (site.js, Ruben 08.11.) */
+try{ localStorage.setItem("yrd-practice","1"); }catch(e){}
+</script>
+<!-- Practice-Seite (Arbeitstitel Corporate), Fotostapel. Seit 08.11.2026 einzige Arbeitsdatei, hier direkt aendern; die fruehere Probe stapel.html und alle anderen Proben liegen in Website/_Archiv/practice-proben-2026-11-08/. DE-Saetze = bestaetigter Einstieg (Corporate-Geruest), EN = Entwurf Claude, ungeprueft. -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{
+  --bg:#fff; --ink:rgb(0,0,255); --ink-4:rgba(0,0,255,.65); --line:rgba(0,0,255,.3);
+  --base:clamp(10px,.88vw,22px); --pad:max(16px,1rem); font-size:var(--base);
+  --fb-b:1rem; --fb-h:3.2rem; --fb-in:1.3rem;
+  --t-fast:.2s; --t-mid:.35s; --e-out:cubic-bezier(.2,.7,.2,1);
+}
+@media (max-width:700px){ :root{ --base:10px; font-size:15px; --pad:16px } }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--ink);font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1.3rem;font-weight:550;line-height:1.22;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.caption{font-size:1.05rem;font-weight:420}
+.n{color:var(--ink-4)}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;padding:var(--pad);pointer-events:none}
+.nav a{pointer-events:auto}
+.nav .links{display:flex;gap:1em}
+@media (hover:hover){ .nav a:hover{text-decoration:underline;text-underline-offset:.18em} }
+
+/* Raum mit Bodenraster wie auf der 3D-Seite */
+#scene{position:fixed;inset:0;perspective:1600px;perspective-origin:50% 36%;overflow:hidden}
+#rig{position:absolute;left:50%;top:66%;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-700px) rotateX(-18deg) rotateY(45deg)}
+#floor{position:absolute;left:-3500px;top:-3500px;width:7000px;height:7000px;transform:rotateX(90deg);
+  background-image:linear-gradient(rgba(0,0,255,.16) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,255,.16) 1.5px,transparent 1.5px);background-size:80px 80px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 35%,transparent 100%);mask-image:radial-gradient(closest-side,#000 35%,transparent 100%)}
+#stack{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card .pic{position:absolute;left:0;bottom:0;transform-origin:50% 100%;transition:transform var(--t-mid) var(--e-out)}
+.card img,.card video{display:block;height:var(--h);width:auto;user-select:none;-webkit-user-drag:none;background:rgba(0,0,255,.08)}
+.card .sh{position:absolute;left:-8%;bottom:-40px;width:116%;height:80px;transform:translateY(-2px) rotateX(90deg);background:radial-gradient(closest-side,rgba(0,0,60,.3),transparent);pointer-events:none}
+html.f32 .card img,html.f32 .card video{width:calc(var(--h) * 1.5);object-fit:cover}
+/* Zeiger-Pfeile wie in der Bildstrecke (style.css #nlb): beim Lesen links zurueck, rechts weiter (Ruben 07.11.) */
+@media (hover:hover) and (pointer:fine){ html.vorschlag.lesen #scene.c-r,html.vorschlag.lesen #scene.c-r *{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2214.5%22%20fill%3D%22%23fff%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3Cpath%20d%3D%22M11%2016h10M17%2011.5l4.5%204.5-4.5%204.5%22%20fill%3D%22none%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3C/svg%3E") 16 16, e-resize} html.vorschlag.lesen #scene.c-r .card:not(.on):not(.nah),html.vorschlag.lesen #scene.c-r .card:not(.on):not(.nah) *,html.vorschlag.lesen #scene.c-l .card:not(.on):not(.nah),html.vorschlag.lesen #scene.c-l .card:not(.on):not(.nah) *{cursor:pointer !important}   /* andere Bilder: Hand, Klick springt hin */
+  html.vorschlag.lesen #scene.c-l,html.vorschlag.lesen #scene.c-l *{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%2214.5%22%20fill%3D%22%23fff%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3Cpath%20d%3D%22M21%2016H11M15%2011.5L10.5%2016l4.5%204.5%22%20fill%3D%22none%22%20stroke%3D%22%2300f%22%20stroke-width%3D%221.5%22/%3E%3C/svg%3E") 16 16, w-resize} }
+/* Intro wie auf der Startseite (style.css #intro, Ruben 08.11.): Woerter nacheinander, waehrend Bilder und Filme laden */
+#intro{position:fixed;inset:0;z-index:50;background:var(--bg);color:var(--ink);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .6s cubic-bezier(.5,0,.75,0),visibility 0s linear .6s}
+#intro.gone{opacity:0;visibility:hidden;pointer-events:none}
+#intro-w{font-size:clamp(1.6rem,3.6vw,4.5rem);font-weight:550;line-height:1;letter-spacing:-.01em;text-align:center;white-space:nowrap}
+html.intro-on,html.intro-on body{overflow:hidden}
+@media (prefers-reduced-motion:reduce){ #intro{transition:none} }
+.nav .links a[aria-current]{text-decoration:underline;text-underline-offset:.18em}
+.mmb,.mml{display:none}
+@media (max-width:700px){
+  /* Handy: Menue wie auf der Website statt der Linkzeile */
+  .nav .links{display:none}
+  .mmb{display:block;pointer-events:auto;font:inherit;color:var(--ink);background:none;border:0;padding:0;cursor:pointer}
+  .mml:not([hidden]){display:flex;flex-direction:column;gap:.5em;position:fixed;top:3.2rem;right:var(--pad);z-index:20;background:var(--bg);padding:.8em 1em;box-shadow:inset 0 0 0 1px var(--ink);border-radius:1em}
+  .fbar .l .pill{white-space:nowrap}
+  html.vorschlag #scene{touch-action:none}
+  html.vorschlag .say{width:auto}
+  html.vorschlag #en .num{display:none}
+  html.vorschlag .say .s{font-size:14px;line-height:1.3}
+  html.vorschlag .fbar .r .pill{display:none}
+  html.vorschlag .fdots button{padding:.35em .16em}
+  html.vorschlag .fdots i{width:7px;height:7px}
+}
+.card .pic .sl{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s var(--e-out)}
+.card .pic .sl.cur{opacity:1}
+.card .vtag{position:absolute;right:8px;bottom:8px;font-size:11px;font-weight:420;line-height:1;padding:.3em .55em .25em;border-radius:10em;background:rgba(255,255,255,.9);color:var(--ink)}
+.card.on .pic{transform:translateY(-20px) scale(1.1)}
+.card{cursor:pointer}
+.card.on{cursor:default}
+@media (hover:hover){ .card:not(.on):hover .pic{transform:translateY(-8px)} }
+.card .pic{transition:transform .5s var(--e-out)}
+
+/* Text: DE oben links, EN unten rechts */
+.say{position:fixed;z-index:9;width:min(38rem,46vw);background:rgba(255,255,255,.95);padding:.5rem .7rem;margin:-.5rem -.7rem;pointer-events:none;transition:opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out)}
+.say.out{opacity:0}
+#de{left:var(--pad);top:4.2rem}
+#de.out{transform:translateY(-8px)}
+#en{right:var(--pad);bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem)}
+#en.out{transform:translateY(8px)}
+.say .s{display:block;font-size:clamp(1.6rem,2.6vw,3.2rem);line-height:1.05}
+.say .c{display:block;margin-top:.7rem}
+@media (max-width:700px){ .say{width:auto;right:var(--pad);left:var(--pad)} .say .s{font-size:1.5rem} #de{top:3.2rem} }
+/* ?unten: beide Texte unten nebeneinander, kleiner (Kapiteltitel-Groesse); ?ohneraster: Boden ohne Raster (Ruben 07.11.) */
+html.unten .say{top:auto;bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem);width:min(30rem,40vw)}
+html.unten #de{left:var(--pad);right:auto;top:auto;bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem)}
+html.unten #en{right:var(--pad);left:auto}
+html.unten .say .s{font-size:1.9rem;line-height:1.1}
+html.unten #de.out{transform:translateY(8px)}
+@media (max-width:700px){ html.unten .say{width:auto} html.unten #de{bottom:calc(var(--fb-b) + var(--fb-h) + 7rem)} html.unten .say .s{font-size:1.2rem} }
+html.ohneraster #floor{background:none}
+/* Iso-Ueberblick: 3D-Boden aus (Chrome zeichnete ihn auf der Grafikkarte ueber das Verzeichnis, Test 08.11.: Link A), stattdessen flaches Raster im Isometrie-Winkel */
+html.isov #floor{display:none}
+#isogrid{display:none}
+html.isov #isogrid{display:block;position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(var(--bandw,30deg),rgba(0,0,255,.1) 0 1px,transparent 1px 46px),repeating-linear-gradient(var(--kantew,150deg),rgba(0,0,255,.1) 0 1px,transparent 1px 46px);-webkit-mask-image:radial-gradient(ellipse 48% 52% at 64% 54%,#000 30%,transparent 100%);mask-image:radial-gradient(ellipse 48% 52% at 64% 54%,#000 30%,transparent 100%);transition:opacity 1.2s var(--e-out)}
+html.isov.lesen #isogrid{opacity:0}
+html.isov.nosp #isogrid{-webkit-mask-position:-28vw 0;mask-position:-28vw 0}
+/* Iso-Ueberblick: Boden kleiner, damit er ganz vor der Kamera bleibt (sonst zeichnet Chrome auf der Grafikkarte Teile ueber das Verzeichnis); Rasterweite gleich */
+
+/* ?vorschlag: Raster nur im Ueberblick, beim Lesen blendet es aus; EN als zweite Stimme heller; Bildunterschrift einmal in der Leiste; Hinweis zum Start */
+html.vorschlag #floor{transition:opacity 1.4s var(--e-out)}
+html.vorschlag.lesen #floor{opacity:0}
+/* Setzung wie in der 2D-Projektansicht (style.css .proj-bi): DE voll, EN kursiv und blass, Hover ueber EN tauscht die beiden (Ruben 07.11.) */
+html.vorschlag .say .s{text-wrap:pretty;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:8 4 4;overflow-wrap:break-word;transition:color var(--t-fast) var(--e-out)}
+html.vorschlag #en .s{font-style:italic;color:var(--ink)}
+@media (hover:hover) and (pointer:fine){
+  html.vorschlag #en .s{color:rgba(0,0,255,.3)}
+  html.vorschlag:has(#en:hover) #en .s{color:var(--ink)}
+  html.vorschlag:has(#en:hover) #de .s{color:rgba(0,0,255,.3)}
+  html.vorschlag.lesen .say{pointer-events:auto}
+}
+html.vorschlag .say .c{display:none}
+html.vorschlag .card{transition:opacity .8s var(--e-out)}
+@keyframes einblenden{from{opacity:0}}
+.card.pop{animation:einblenden .9s var(--e-out)}
+#hint{display:none}
+.say .num{display:none}
+/* Vorschlag: Texte in Lesegroesse, mittig zu beiden Seiten der Mittelachse, dezent nummeriert (Ruben 07.11.) */
+html.vorschlag .say{width:min(31rem,42vw);background:none;padding:0;margin:0}
+html.vorschlag #de{left:auto;right:calc(50% + 1rem)}
+html.vorschlag #en{right:auto;left:calc(50% + 1rem)}
+html.vorschlag .say .s{font-size:1.1rem;line-height:1.25}
+html.vorschlag #en .num{visibility:hidden}   /* Nummer nur einmal, ueber dem deutschen Text */
+html.vorschlag .say .num{display:block;color:var(--ink-4);margin-bottom:.35rem;font-variant-numeric:tabular-nums}
+html.vorschlag p#hint{display:none}
+html.vorschlag:not(.lesen) .say{opacity:0;pointer-events:none}   /* Texte erst nach dem ersten Aufklappen */   /* Hinweis steht im Ueberblick jetzt rechts in der Leiste */
+@media (max-width:700px){ html.vorschlag .say{width:auto} html.vorschlag #de{left:var(--pad);right:var(--pad)} html.vorschlag #en{left:var(--pad);right:var(--pad)} }
+#ring{display:none;position:absolute;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,255,.35);transform:rotateX(90deg);pointer-events:none;transition:opacity 1.4s var(--e-out)}
+html.kreis #ring{display:block}
+html.kreis .card:not(.on) .sh,html.vorschlag .card:not(.on) .sh{opacity:0}
+html.vorschlag .card .sh{display:none}   /* Vorschlag ohne Bodenschatten: auf Augenhoehe und ohne Raster gibt es keinen Boden, auf dem er liegen koennte (Ruben 07.11.) */
+html.kreis.lesen #ring{opacity:.35}
+html.vorschlag #hint{display:block;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem);z-index:9;color:var(--ink-4);text-align:center;pointer-events:none;transition:opacity .6s}
+html.vorschlag.lesen #hint{opacity:0}
+@media (max-width:700px){ html.vorschlag #hint{display:none} }
+
+/* Leiste */
+.fbar{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);z-index:12;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 var(--fb-in);border-radius:10em;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink)}
+.fbar .l{justify-self:start}.fbar .c{justify-self:center;display:flex;gap:.6em}.fbar .r{justify-self:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink)}
+@media (hover:hover){ .pill:hover{background:rgba(0,0,255,.08)} }
+.fbar .r{display:flex;align-items:center;gap:.6em}
+/* Themenpunkte wie im Gang (practice/index.html) */
+.fdots{display:inline-flex;align-items:center;gap:.2em}
+.fdots button{appearance:none;border:0;background:none;padding:.35em .3em;margin:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.fdots i{display:block;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--ink);background:transparent;transition:background .3s,transform .3s,box-shadow .3s}
+.fdots button.seen i{background:var(--ink)}
+.fdots button.cur i{background:var(--ink);transform:scale(1.45);box-shadow:inset 0 0 0 1px var(--ink),0 0 0 2px var(--bg),0 0 0 3px var(--ink)}
+@media (hover:hover) and (pointer:fine){ .fdots button:hover i{background:rgba(0,0,255,.35)} .fdots button.seen:hover i,.fdots button.cur:hover i{background:var(--ink)} }
+@media (max-width:700px){ .fbar{font-size:13px} .fbar .lg,#cnt{display:none} .fbar .r .pill{padding:.3em .6em .26em} }
+/* Leistungsebene (08.11., nach Julias Rueckmeldung, aus probe-leistung.html uebernommen): Liste im Ueberblick, Leistungszeile je Tafel, Zusammenarbeit in der Leiste */
+#lst{position:fixed;z-index:9;right:var(--pad);bottom:calc(var(--fb-b) + var(--fb-h) + 1.2rem);}
+html:not(.nosp) #lst{right:auto;bottom:auto;left:var(--pad);top:5.5rem;translate:none;margin-right:0;margin-left:-.8rem;padding-top:0}   /* oben unter der Kopfzeile; Textfeld #vor nimmt dieselbe Oberkante (Ruben 08.11.) */
+#lst{width:min(30rem,36vw);background:none;padding:.6rem .8rem .8rem;margin-right:-.8rem;pointer-events:none;transition:opacity .6s var(--e-out),transform .6s var(--e-out)}
+html.vorschlag.lesen:not(.angekommen) .say{opacity:0!important;transition:none}
+html.lesen #lst,html.vorschlag:not(.ovda) #lst{opacity:0;transform:translateY(-8px);pointer-events:none}
+html.vorschlag:not(.ovda) #lst button{pointer-events:none}
+#lst .k{color:var(--ink-4);margin:0 0 .8rem}
+#lst .satz{margin:0 0 .9rem;font-size:1.08rem;line-height:1.25;max-width:26rem}
+#lst .g{color:var(--ink);font-size:1.08rem;line-height:1.2;font-weight:550;margin:1rem 0 .3rem}
+#lst .g .gn{display:inline-block;width:2em;color:var(--ink-4);font-weight:400}
+#lst ol{padding-left:2em!important}
+#lst li.ab{margin-top:.55rem}
+html.pillen #lst ol{font-size:1.15rem;display:flex;flex-direction:column;align-items:flex-start;gap:.32rem}
+html.pillen #lst li.ab{margin-top:.5rem}
+html.pillen #lst button{padding:.28em .8em .24em .55em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);line-height:1.1}
+html.pillen #lst button .n{width:auto;margin-right:.55em}
+html.pillen #lst button.aktiv,html.pillen #lst button:hover,html.pillen #lst button:focus-visible{text-decoration:none;background:var(--ink);color:var(--bg)}
+html.pillen #lst button.aktiv .n,html.pillen #lst button:hover .n,html.pillen #lst button:focus-visible .n{color:rgba(255,255,255,.7)}
+html.pillen #lst .g{font-size:1.15rem;margin:1.2rem 0 .5rem}
+html.pillen #lst{width:min(34rem,40vw)}   /* Was wir machen: Orte (01-04) und Raeume (05-10) durch Abstand getrennt */   /* Eintraege unter dem Kapiteltitel eingerueckt (Ruben 08.11.) */
+#lst ol{list-style:none;margin:0;padding:0;font-size:1.08rem;line-height:1.2}
+#lst button{all:unset;cursor:pointer;display:block;padding:.13em 0;pointer-events:auto;color:var(--ink);white-space:nowrap}
+#lst button .n{display:inline-block;width:2em;color:var(--ink-4);font-variant-numeric:tabular-nums}
+#lst button .e{margin-left:.6em;color:var(--ink-4);font-style:italic;font-size:.8em;opacity:0;transition:opacity var(--t-fast)}
+#lst button .e{display:none}
+#lst button:hover,#lst button:focus-visible{text-decoration:underline;text-underline-offset:.18em}
+#stack.toc .card:not(.on):not(.grp) .pic{opacity:.35}
+/* Iso-Ueberblick: gewaehltes Bild gleitet in seiner Ebene nach oben aus dem Stapel (Karteikarte) */
+html.isov:not(.lesen) .card.on .pic,html.isov:not(.lesen) .card.zieh .pic{transform:translateY(-58%) scale(1.35);transition:transform .45s var(--e-out)}
+#lst .g{pointer-events:auto;cursor:default;width:max-content}
+#lst .g:hover{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+html.lesen #lst .g,html.vorschlag:not(.ovda) #lst .g{pointer-events:none}
+#stack .card .pic{transition:transform var(--t-mid) var(--e-out),opacity .2s}
+html.lesen #lst button{pointer-events:none}
+
+/* Textfeld rechts: erscheint beim Hovern ueber Verzeichnis oder Bild im Ueberblick */
+/* Textfeld rechts spiegelt das Verzeichnis links: gleiche Breite, gleiche Oberkante, gewaehlter Eintrag als gefuellte Pille (Ruben 08.11.) */
+#vor{position:fixed;z-index:9;top:5.5rem;right:var(--pad);pointer-events:none;opacity:0;transition:opacity .25s var(--e-out)}
+#vor.auf{opacity:1}
+html.lesen #vor,html.vorschlag:not(.ovda) #vor{opacity:0}
+#vor p{margin:0}
+#vor .n{color:var(--ink-4);font-variant-numeric:tabular-nums;margin:0 0 .8rem}
+#vor .t{font-size:1.15rem;line-height:1.1;margin:0 0 .45rem}
+#vor .t .p{display:inline-block;padding:.28em .8em .24em .55em;border-radius:10em;background:var(--ink);color:var(--bg)}
+#vor .t .pn{color:rgba(255,255,255,.7);margin-right:.55em;font-variant-numeric:tabular-nums}
+#vor .te{color:var(--ink-4);font-style:italic;margin:0 0 .8rem .55em}
+#vor .l{display:flex;flex-wrap:wrap;gap:.3rem;margin:0 0 .9rem}
+#vor .l span{font-size:.82rem;line-height:1;padding:.32em .7em .28em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg)}
+#vor .d{font-size:1.02rem;line-height:1.32}
+@media (max-width:700px){ #vor{display:none} }
+#lst .en{color:var(--ink-4);font-style:italic;font-size:.85rem;line-height:1.3;margin:.7rem 0 0}
+.say .num .lz{margin-left:.6em;color:var(--ink)}
+#zus{position:fixed;inset:0;z-index:40;background:rgba(255,255,255,.97);display:none;overflow:auto;padding:5.5rem var(--pad) 7rem}
+#zus.auf{display:block}
+#zus .in{max-width:46rem;margin:0 auto}
+#zus h2{font-weight:550;font-size:1.9rem;line-height:1.1;margin:0 0 1.4rem}
+#zus ol{margin:0;padding:0;list-style:none;counter-reset:z}
+#zus ol li{counter-increment:z;display:grid;grid-template-columns:2.6rem 1fr;padding:.75rem 0;border-top:1px solid var(--line);font-size:1.15rem;line-height:1.3}
+#zus ol li::before{content:counter(z,decimal-leading-zero);color:var(--ink-4);font-variant-numeric:tabular-nums}
+#zus ol li b{font-weight:550;display:block}
+#zus .ag{margin-top:2rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:1.15rem}
+#zus .x{position:fixed;top:1rem;right:var(--pad);font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;font-size:1.4rem}
+.probe{color:#c2410c}
+@media (max-width:700px){ #lst{display:none} #zusb{display:none} }
+
+
+</style>
+</head>
+<body>
+<div id="intro" aria-hidden="true"><div id="intro-w"></div></div>
+<header class="nav"><a href="../">YRD.Works</a><span class="links"><a href="./" aria-current="page">Practice</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></span><button type="button" class="mmb" aria-expanded="false" aria-controls="mml">Menu</button></header>
+<nav id="mml" class="mml" hidden aria-label="Menu"><a href="./" aria-current="page">Practice</a><a href="#zus" class="zusm">Zusammenarbeit</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></nav>
+
+<div id="isogrid" aria-hidden="true"></div>
+<div id="scene" aria-hidden="true"><div id="rig"><div id="floor"></div><div id="ring"></div><div id="stack"></div></div></div>
+
+<p id="de" class="say" lang="de" aria-live="polite"><span class="num caption"></span><span class="s"></span><span class="c caption n"></span></p>
+<p id="en" class="say" lang="en"><span class="num caption" aria-hidden="true"></span><span class="s"></span><span class="c caption n"></span></p>
+
+<div id="lst"><p class="k caption">Inhalt <span class="probe">· Entwurf</span></p><p class="g"><span class="gn">A</span>Was wir machen</p><ol><li><button type="button" data-k="0"><span class="n">01</span>Leerstand aktivieren<span class="e">Activating vacancy</span></button></li><li><button type="button" data-k="1"><span class="n">02</span>Im öffentlichen Raum intervenieren<span class="e">Intervening in public space</span></button></li><li><button type="button" data-k="2"><span class="n">03</span>Stadtraum auf Zeit bespielen<span class="e">Animating urban space for a time</span></button></li><li><button type="button" data-k="3"><span class="n">04</span>Kultur in den ländlichen Raum bringen<span class="e">Bringing culture to rural areas</span></button></li><li class="ab"><button type="button" data-k="4"><span class="n">05</span>Ausstellungsarchitektur entwickeln<span class="e">Developing exhibition architecture</span></button></li><li><button type="button" data-k="5"><span class="n">06</span>Lernorte gestalten<span class="e">Designing places of learning</span></button></li><li><button type="button" data-k="6"><span class="n">07</span>Begehbare Installationen bauen<span class="e">Building walk-in installations</span></button></li><li><button type="button" data-k="7"><span class="n">08</span>Bühnen für andere bauen<span class="e">Building stages for others</span></button></li><li><button type="button" data-k="8"><span class="n">09</span>Neue Formate erfinden<span class="e">Inventing new formats</span></button></li><li><button type="button" data-k="9"><span class="n">10</span>Dritte Orte betreiben<span class="e">Running third places</span></button></li></ol><p class="g"><span class="gn">B</span>Wie wir arbeiten</p><ol><li><button type="button" data-k="10"><span class="n">11</span>Mit dem Bestand bauen<span class="e">Building with what is there</span></button></li><li><button type="button" data-k="11"><span class="n">12</span>Beteiligung organisieren<span class="e">Organising participation</span></button></li><li><button type="button" data-k="12"><span class="n">13</span>Mehrere Zugänge schaffen<span class="e">Creating several ways in</span></button></li><li><button type="button" data-k="13"><span class="n">14</span>Von der Idee bis zur Umsetzung begleiten<span class="e">From idea to completion</span></button></li><li><button type="button" data-k="14"><span class="n">15</span>Gewerke steuern und Genehmigungen koordinieren<span class="e">Managing trades and coordinating permits</span></button></li></ol></div>
+<div id="vor" aria-hidden="true"><p class="n caption"></p><p class="t"><span class="p"><span class="pn"></span><span class="pt"></span></span></p><p class="te caption"></p><p class="l"></p><p class="d"></p></div>
+<div id="zus" role="dialog" aria-label="Zusammenarbeit" aria-modal="true"><button type="button" class="x" aria-label="Schließen">×</button><div class="in"><h2>Wie eine Zusammenarbeit abläuft <span class="probe caption">· Platzhalter</span></h2><ol><li><span><b>Anfrage und erstes Gespräch</b>Ort, Anlass, Budgetrahmen, Zeitplan.</span></li><li><span><b>Konzept</b>Idee, Nutzung, erste Skizzen und Kostenschätzung.</span></li><li><span><b>Planung und Genehmigung</b>Abstimmung mit Behörden, Statik und Fachplanung, Auflagen.</span></li><li><span><b>Bau</b>eigene Produktion oder Steuerung der Gewerke, Budget und Ablauf.</span></li><li><span><b>Betrieb oder Abbau</b>Programm, Übergabe an das Haus oder Rückbau.</span></li></ol><p class="ag"><span class="caption" style="color:var(--ink-4)">Zusammengearbeitet mit</span><br><span class="probe">[Auftraggeber*innen folgen, Namen von Ruben]</span></p></div></div>
+<p id="hint" class="caption">Scrollen, um den Stapel aufzuklappen<br>Scroll to open the stack</p>
+
+<nav class="fbar caption" aria-label="Practice">
+  <span class="l"><a class="pill" href="#zus" id="zusb">Zusammenarbeit</a></span>
+  <span class="c"><span class="fdots" id="fdots" role="navigation" aria-label="Themen"></span></span>
+  <span class="r"><span id="cnt" class="n"></span><a class="pill" href="../impressum/">Impressum</a><a class="pill" href="../datenschutz/">Datenschutz</a></span>
+</nav>
+
+<script>
+// Saetze: bestaetigter Einstieg (Corporate-Geruest 07.11.). EN: Entwurf, ungeprueft.
+// Ein Text je Bild (Artefakt Bildtexte Corporate, 07.11.); DE von Ruben freigegeben als Entwurf, EN Entwurf Claude, ungeprueft.
+const S=[
+ ["Leerstehende Gebäude und Zwischennutzungen ziehen sich seit den Anfängen durch unsere Arbeit. Wir zeigen das Potenzial ungenutzter Orte und entwickeln authentische Antworten auf Strukturwandel und sich verändernde Innenstädte.",
+  "Vacant buildings and temporary uses have run through our work since the beginning. We reveal the potential of unused places and develop authentic answers to structural change and changing city centres."],
+ ["Im öffentlichen Raum setzen wir auf bildstarke Gesten, die auffallen und trotzdem einladen. Unsere Interventionen beziehen die Menschen vor Ort ein und schaffen für sie einen Mehrwert, der über das Bild hinausgeht.",
+  "In public space we rely on strong visual gestures that stand out and still invite people in. Our interventions involve the people on site and create value for them that goes beyond the image."],
+ ["Wir machen den öffentlichen Stadtraum zur Bühne. Temporäre Architektur kann einen Ort im Umbruch begleiten oder auf Bedürfnisse hinweisen. Ein bildstarkes Projekt auf Zeit ist oft das beste Argument für eine Verstetigung.",
+  "We turn public urban space into a stage. Temporary architecture can accompany a place in transition or point to needs. A visually striking project for a limited time is often the best argument for making it permanent."],
+ ["Wir arbeiten auch im ländlichen Raum, oft dort, wo es wenige Kulturangebote gibt. Gemeinsam mit den Menschen vor Ort schaffen wir Anlässe, zusammenzukommen und einen vertrauten Ort neu zu erleben.",
+  "We also work in rural areas, often where there is little cultural provision. Together with local people, we create occasions to come together and experience a familiar place anew."],
+ ["Wir entwickeln immersive Ausstellungsarchitekturen, die selbst als künstlerische Position gelesen werden können. Freie Projekte und angewandte Auftragsarbeiten gehen in unserer Praxis ineinander über.",
+  "We develop immersive exhibition architectures that can themselves be read as an artistic position. In our practice, independent projects and commissioned work merge into one another."],
+ ["Wir entwerfen Räume für Wissensvermittlung und außerschulisches Lernen, über Ziel- und Altersgruppen hinweg. Gemeinsam mit Pädagog*innen übersetzen wir ihre Konzepte in Räume, in denen Wissen und Forschung real erlebbar werden.",
+  "We design spaces for knowledge transfer and learning outside school, across target and age groups. Together with educators, we translate their concepts into spaces in which knowledge and research can be experienced first-hand."],
+ ["Wir befragen die Räume, in denen wir arbeiten, und kehren ihre Logik um. Es entstehen Hybride aus Skulptur, Architektur und Installation, die im Wortsinn begehbar sind und so die Schwelle zum Kunstbetrieb senken.",
+  "We question the spaces we work in and reverse their logic. The results are hybrids of sculpture, architecture and installation that can literally be walked into, lowering the threshold to the art world."],
+ ["Unsere Arbeiten werden oft zu Bühnen und Displays für andere. Unsere Skulpturen dienen als Plattform für Musik, Performance und zeitgenössische Kunst und treten dabei bewusst in den Hintergrund.",
+  "Our works often become stages and displays for others. Our sculptures serve as platforms for music, performance and contemporary art and deliberately step into the background."],
+ ["Wir beschränken uns nicht auf konventionelle Räume und befragen gern die Grenzen unseres Genres. Was ein Projekt braucht, eignen wir uns an, vom selbstgebauten Floß für Bootstouren bis zum temporären Pizzalieferdienst.",
+  "We do not limit ourselves to conventional spaces and like to question the boundaries of our genre. We acquire whatever a project needs, from a self-built raft for boat tours to a temporary pizza delivery service."],
+ ["Seit 2012 schaffen wir sogenannte Dritte Orte jenseits von Zuhause und Arbeit, die sich Communities aneignen. Viele davon bauen und bespielen wir über Jahre selbst, und sie wirken nach, auch wenn es sie nicht mehr gibt.",
+  "Since 2012 we have been creating so-called third places beyond home and work that communities make their own. We build and run many of them ourselves for years, and they continue to have an effect even after they are gone."],
+ ["Die Herausforderungen eines Bestands nehmen wir gerne als Ausgangspunkt für den Entwurf. Niedrige Decken, alte Balken oder wenig Tageslicht kaschieren wir nicht, wir machen sie zum Teil der Arbeit.",
+  "We take the challenges of an existing building as the starting point for our design. Low ceilings, old beams or little daylight are not concealed; we make them part of the work."],
+ ["Wir entwickeln partizipative und soziale Projekte, die Menschen und Communities aktiv einbeziehen. Gesellschaftliche Themen, Selbstwirksamkeit und Teilhabe werden dabei zur gelebten Situation, nicht zur illustrierten Botschaft.",
+  "We develop participatory and social projects that actively involve people and communities. Social issues, self-efficacy and participation become a lived situation rather than an illustrated message."],
+ ["Wir machen sichtbar, was sonst im Hintergrund bleibt, von Technik bis zu Arbeitsprozessen. Unsere Arbeiten haben oft mehrere Zugangsebenen: Auch wer sich nicht für Kunst interessiert, kann sie nutzen und mit ihnen interagieren.",
+  "We make visible what usually stays in the background, from technology to working processes. Our works often have several levels of access: even people with no interest in art can use them and interact with them."],
+ ["Große Projekte begleiten wir von der ersten Idee bis zur fertigen Umsetzung. Mit unserer Erfahrung von zahlreichen Projektbaustellen, auf denen wir selbst gebaut haben, kennen wir Material, Konstruktion und Aufwand und halten, was wir zusagen.",
+  "We take large projects from the first idea through to completion. With experience from many building sites where we did the construction ourselves, we know materials, construction and effort, and we deliver what we promise."],
+ ["Für die Umsetzung unserer Konzepte koordinieren wir die beteiligten Gewerke und übernehmen bei Bedarf die Projektsteuerung für unsere Auftraggeber*innen. Dazu gehören die Abstimmung mit Behörden und Fachplanung ebenso wie Budget und Ablauf.",
+  "To realise our concepts, we coordinate the trades involved and take on project management for our clients where needed. This includes coordinating with authorities and specialist planners as well as managing budget and schedule."]
+
+];
+// Bilder und Filme, Zuordnung zu den Saetzen wie in zeitlos.html
+const B='../Bilder/';
+// Bilder: Rubens Auswahl im Artefakt Bildwahl Corporate (07.11., zweite Runde), in seiner Reihenfolge. vm = Video vorgemerkt, Foto ist Platzhalter.
+// Zuordnung zu den Saetzen vorlaeufig: gleichmaessig verteilt (Ruben ordnet spaeter zu).
+const C=[
+ {s:0,src:'../Bilder/2014-holzhausen/02.webp',c:"Holzhausen, 2014"},   // wieder einzeln (Ruben 07.11.: Slideshow aus verschiedenen Projekten zu unruhig)
+ {s:1,v:'video.mp4',seg:[25.03,29.95],poster:'',c:"Copy Service, 2019"},   // Filmausschnitt 25 bis 30 s
+ {s:2,v:'video.mp4',seg:[0.03,14.95],poster:'',c:"Transition 1-7, 2024"},   // Filmausschnitt 0 bis 15 s, zwei Szenen (Ruben 07.11.: Schnitte bei 10, 15, 20, 25 s)
+ {s:3,v:'video.mp4',seg:[15.03,19.95],poster:'',c:"Hole/Mound, 2023"},   // Filmausschnitt 15 bis 20 s
+ {s:4,src:'../Bilder/2024-im-angesicht-des-todes/01.webp',c:"Im Angesicht des Todes, 2024",vm:true},
+ {s:5,src:'../Bilder/2022-forschungswerkstatt/og.jpg',c:"Forschungswerkstatt, 2022"},
+ {s:6,src:'../Bilder/2017-eins-zu-eins/01.webp',c:"Eins zu Eins, 2017"},
+ {s:7,src:'../Bilder/2018-oper-offenbach/01.webp',c:"Oper Offenbach, 2018"},
+ {s:8,v:'video.mp4',seg:[20.03,24.95],poster:'',c:"Current Tours, 2021"},   // Filmausschnitt 20 bis 25 s
+ {s:9,src:'../Bilder/2016-kressmann-halle/02.webp',c:"Kressmann-Halle, 2016"},
+ {s:10,src:'../Bilder/2025-bingenheim/hero.webp',c:"Bingenheim, 2025"},
+ {s:11,src:'../Bilder/2023-soups/07.webp',c:"Soups, 2023",sl:[['../Bilder/2023-soups/04.webp',"Soups, 2023"],['../Bilder/2023-soups/01.webp',"Soups, 2023"],['../Bilder/2023-soups/08.webp',"Soups, 2023"],['../Bilder/2023-soups/05.webp',"Soups, 2023"],['../Bilder/2023-soups/09.webp',"Soups, 2023"]]},   // Slideshow aus einem Projekt statt Video: leerer Raum, Kochen, Ausgabe, Essen (Ruben 07.11.)
+ {s:12,src:'../Bilder/2018-insight-out/07.webp',c:"Insight Out, 2018"},
+ {s:13,src:'../Bilder/2020-access/01.webp',c:"Access, 2020"},
+ {s:14,src:'../Bilder/2026-display/01.webp',c:"Display, 2026"}
+];
+(function(){
+const stack=document.getElementById('stack'), de=document.getElementById('de'), en=document.getElementById('en'), cnt=document.getElementById('cnt');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, touch=matchMedia('(hover:none)').matches;
+const ROT=-90;   // Ruhelage: Bilder quer zum Band (Ruben 07.11.)
+// Ansicht (Ruben 07.11.): Perspektive, Raster 45 Grad (Isometrie verworfen).
+// Zum Vergleich: ?iso = isometrisch, ?raster=20 andere Drehung, ?mix = Bild dreht nur 45 Grad
+const Q=new URLSearchParams(location.search||'?vorschlag&format=32&nb=.2')   /* Hauptseite (Ruben 07.11.): Vorschlag, alle Formate 3:2, Nachbarn mittlerer Abstand */, MIX=Q.has('mix'), VOR=Q.has('vorschlag')||Q.has('kreis');
+const KREIS=Q.has('kreis');   // ?kreis: Stapel als Ring, von aussen gedreht (Gegenstueck zum 3D-Walk, Ruben 07.11.)
+if(KREIS){ Q.set('vorschlag',''); document.documentElement.classList.add('kreis'); }
+if(VOR||KREIS){ Q.set('schwenk',''); Q.set('unten',''); document.documentElement.classList.add('vorschlag'); }   // Vorschlag Claude 07.11.
+document.documentElement.classList.toggle('unten',Q.has('unten')); document.documentElement.classList.toggle('ohneraster',Q.has('ohneraster'));
+const _q=0, ISO=Q.has('iso');
+const RASTER=MIX?45:(Q.has('raster')?+Q.get('raster'):45);
+const TURN=MIX?-45:0;    // 0 = gewaehltes Bild liegt parallel zu den Querlinien des Rasters
+const ISO_S=.6;   // Massstab der Isometrie
+if(ISO){ document.getElementById('scene').style.perspective='none';
+  document.getElementById('rig').style.transform='scale('+ISO_S+') rotateX(-35.264deg) rotateY('+RASTER+'deg)'; document.getElementById('rig').style.top='52%'; }   // echte Isometrie: arctan(1/Wurzel 2)
+else document.getElementById('rig').style.transform='translateZ(-700px) rotateX(-18deg) rotateY('+RASTER+'deg)';
+// ?schwenk: geschlossen 45 Grad (Ueberblick), beim Aufklappen schwenkt der Raum auf 0 Grad (Bild frontal), beim Schliessen zurueck
+const SCHWENK=Q.has('schwenk'); let rigR=RASTER;
+// Kamera auf normaler Hoehe (Ruben 07.11.): keine Neigung, Senkrechte bleiben senkrecht; ?tilt=-18 = alte Aufsicht
+const TILT=Q.has('tilt')?+Q.get('tilt'):0; let tiltNow=VOR?-12:TILT;   // Vorschlag: im Ueberblick leicht von oben, beim Lesen auf Augenhoehe
+if(SCHWENK) document.getElementById('scene').style.perspectiveOrigin='50% '+(Q.has('auge')?Q.get('auge'):'50')+'%';
+const EDGE=1;    // gedrehtes Bild rueckt an die rechte Kante des Stapels (Ruben 07.11.); -1 = linke Kante
+function stackW(){ let m=0; C.forEach(c=>{ if(c.w>m) m=c.w; }); return m; }
+const H=Math.round(Math.min(innerHeight*(VOR?.6:.46),VOR?640:460)), G=Math.round(H*.14);   // Vorschlag: groesser, weil das Bild hoeher sitzt (Ruben 07.11.)
+const MY=VOR?.41:.5;   // senkrechte Lage der Bildmitte (Vorschlag hoeher, damit unten Platz fuer Text bleibt)   // G = Abstand im geschlossenen Stapel
+document.documentElement.style.setProperty("--h",H+"px");
+
+const els=C.map((c,i)=>{
+  const a=document.createElement("div"); a.className="card";
+  a.innerHTML="<span class=\"sh\"></span><span class=\"pic\">"+(c.v
+    ? "<video muted loop playsinline preload=\"metadata\" poster=\""+c.poster+"\" src=\""+c.v+"\"></video>"
+    : "<img alt=\"\" decoding=\"async\" src=\""+c.src+"\">")+(c.sl?c.sl.map(x=>"<img class=\"sl\" alt=\"\" decoding=\"async\" src=\""+x[0]+"\">").join(""):"")+(c.vm?"<span class=\"vtag\">Video</span>":"")+"</span>";   // vm: Video vorgemerkt, Foto ist Platzhalter
+  stack.appendChild(a);
+  c.w=H*(c.v?16/9:1.5); c.x=0; c.t=0; c.r=ROT; c.z=0;
+  const m=a.querySelector("img,video"), pic=a.querySelector(".pic"), sh=a.querySelector(".sh");
+  const place=()=>{ pic.style.left=(-c.w/2)+"px"; sh.style.left=(-c.w*.58)+"px"; sh.style.width=(c.w*1.16)+"px"; };   // Drehpunkt in der Bildmitte
+  const setW=()=>{ const w=m.naturalWidth||m.videoWidth, h=m.naturalHeight||m.videoHeight; if(F32) c.w=H*1.5; else if(w&&h) c.w=H*w/h; place(); };
+  if(c.seg&&m.tagName==="VIDEO"){ m.removeAttribute("loop"); m.addEventListener("loadedmetadata",()=>{ m.currentTime=c.seg[0]; }); m.addEventListener("timeupdate",()=>{ if(m.currentTime>=c.seg[1]||m.currentTime<c.seg[0]-.2) m.currentTime=c.seg[0]; }); m.preload="auto"; }
+  m.addEventListener("load",setW); m.addEventListener("loadedmetadata",setW); if(m.complete) setW(); place();
+  return a;
+});
+
+// Lage: geschlossener Stapel um die Mitte. Karte i steht vor Karte i+1 (vorne links, hinten rechts).
+let hov=-1, anchor=null, rigTop=null;
+const F32=Q.has('format')&&Q.get('format')==='32'; if(F32) document.documentElement.classList.add('f32');   // Test: alle Bilder und Filme auf 3:2 zuschneiden (Ruben 07.11.)
+const NB=Q.has('nb')?+Q.get('nb'):0;   // Test: Abstand der direkten Nachbarn zum aufgeklappten Bild, in Bildhoehen
+const FLUCHT=Q.has('flucht')?+Q.get('flucht'):.5;   // .5 = Mitte (perspektivisch richtig), 0 = alle auf der Bodenlinie
+const ISOV=!Q.has('noiso'), P_OV=Q.has('ip')?+Q.get('ip'):14000, S_OV=Q.has('is')?+Q.get('is'):.5, X_OV=Q.has('ix')?+Q.get('ix'):.065;   /* Band mittig, rechts Platz fuer das Textfeld (Ruben 08.11.) */   /* Probe Iso-Ueberblick (Ruben 08.11., Skizze: steiles Band links unten nach rechts oben) */
+const DREH=Q.has('dreh')?+Q.get('dreh'):20;   /* Standard seit 08.11.: 20 Grad (Ruben: mit Drehung besser); ?dreh=0 zum Vergleich */   /* Variante: Bilder im Ueberblick um DREH Grad zum Betrachter gedreht (Ruben 08.11.) */
+let uNow=0, rotNow=-90, fitK=1, fitY=0, fitX=0, fitN=0; addEventListener('resize',()=>{ fitN=0; }); const SPIEGEL=!Q.has("nospiegel"), IH=.6, IY=Q.has("iy")?+Q.get("iy"):-50, U_DAUER=1.1, D_OV=Q.has('id')?+Q.get('id'):1400, F_OV=Q.has("if")?+Q.get("if"):.255;   /* Abstand und Massstab im Ueberblick, entspricht Perspektive 14000 px, Stapel 50 % */
+if(!SPIEGEL) document.documentElement.classList.add('nosp');
+if(ISOV) document.documentElement.classList.add('isov');
+if(!Q.has('ohnepillen')) document.documentElement.classList.add('pillen');   /* Verzeichnis groesser und als Pillen (Ruben 08.11.); Vergleich ohne: ?ohnepillen */
+const RISE=Q.has('rise')?+Q.get('rise'):(ISOV?.15:.12);   /* flacheres Band, mehr von jedem Bild (Ruben 08.11.) */
+const DIST=Q.has('dist')?+Q.get('dist'):1400; let distRead=-700; /* Handy: wird nachgeregelt (Rand 16 px wie im 3D-Walk) */ let distNow=VOR?-DIST:-700;   // Steigung der Staffelung im Ueberblick, wie bei der Vorlage (Ruben 07.11.)
+const GC=VOR?Math.round(Q.has('gc')?H*+Q.get('gc'):H*(Q.has('noiso')?.42:.36)):G;   /* Iso-Ueberblick enger (Ruben 08.11.: steiler, groesser, mittiger) */   // Vorschlag: geschlossener Stapel ueber die ganze Diagonale, vorderstes Bild angeschnitten (Ruben 07.11.)   // geschlossener Stapel: bei vielen Bildern enger, damit er ins Bild passt
+const base=i=>(i-(C.length-1)/2)*GC;
+C.forEach((c,i)=>{ c.x=c.t=base(i); });
+function gaps(){
+  // Abstand von Karte i zu i+1: um das gedrehte Bild herum so viel Platz, wie es entlang des Bands braucht
+  const half=hov<0?0:C[hov].w*.5*Math.abs(Math.cos(TURN*Math.PI/180))+H*.08;
+  return C.map((c,i)=>{
+    if(i===C.length-1) return 0;
+    if(hov<0) return G;
+    if(i===hov-1||i===hov) return G+half;
+    const d=i<hov ? hov-1-i : i-hov;                         // Nachbarn ruecken etwas mit, nach aussen weniger
+    return G*(1+.9*Math.exp(-(d*d)/3));
+  });
+}
+// Endlos (Vorschlag, Ruben 07.11.): Lage relativ zum gewaehlten Bild, nach dem letzten kommt wieder das erste.
+// Durchgeblaetterte Bilder werden hinten unsichtbar wieder angelegt (Versatz o, -4..4 bei 9 Bildern).
+function off(i){ const N=C.length; let o=((i-hov)%N+N)%N; if(o>Math.floor(N/2)) o-=N; return o; }
+function layoutLoop(){
+  const N=C.length, half=C[hov].w*.5*Math.abs(Math.cos(TURN*Math.PI/180))+H*.08;
+  const gap=o=>{ if(o===0||o===-1) return G+half+H*NB; /* direkte Nachbarn weiter raus, damit sie nicht im Fluchtpunkt gestaucht werden (Ruben 07.11.) */ const d=o>0?o:-o-1; return d>=2?G*1.9:G*(1+.9*Math.exp(-(d*d)/3)); };   // ab dem dritten Nachbarn weiter auseinander, damit die blassen Bilder sichtbar werden   // Abstand zwischen Versatz o und o+1
+  const by={}; C.forEach((c,i)=>{ const o=off(i); if((c.o!==undefined&&Math.abs(o-c.o)>N/2)||(c.o===undefined&&o<0)) c.jump=true; c.o=o; by[o]=c; });
+  C[hov].t=anchor;
+  for(let o=1;by[o];o++) by[o].t=by[o-1].t+gap(o-1);
+  for(let o=-1;by[o];o--) by[o].t=by[o+1].t-gap(o);
+}
+function layout(){
+  if(VOR&&hov>=0){ layoutLoop(); return; }
+  C.forEach(c=>{ c.o=undefined; });
+  const g=gaps();
+  if(hov<0){ C.forEach((c,i)=>{ c.t=base(i); }); return; }
+  C[hov].t=anchor;
+  for(let i=hov+1;i<C.length;i++) C[i].t=C[i-1].t+g[i-1];
+  for(let i=hov-1;i>=0;i--) C[i].t=C[i+1].t-g[i];
+}
+// Ring: Karte i steht auf Winkel i*DA + ringRot; in Ruhe radial (wie ein Rolodex), die gewaehlte dreht nach aussen und tritt vor
+const DA=360/C.length; let ringRot=DA/2, kTilt=-24, kDist=-2500;   // Start halb versetzt, damit vorne keine Karte genau auf der Kante steht
+function kreisTick(){
+  const k=reduce?1:.06, R=stackW()*.62+H*.25, rig=document.getElementById("rig"), ring=document.getElementById("ring");
+  if(hov>=0){ let t=-hov*DA; while(t-ringRot>180) t-=360; while(t-ringRot<-180) t+=360; ringRot+=(t-ringRot)*k; }
+  kTilt+=((hov<0?-24:-6)-kTilt)*(reduce?1:.045); kDist+=((hov<0?-2500:-900)-kDist)*(reduce?1:.045);   // Ueberblick weiter weg und von oben, Lesen nah und auf Augenhoehe
+  ring.style.left=ring.style.top=(-R)+"px"; ring.style.width=ring.style.height=(2*R)+"px";
+  if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
+  rig.style.transform="translateZ("+kDist.toFixed(1)+"px) rotateX("+kTilt.toFixed(2)+"deg)";
+  C.forEach((c,i)=>{
+    c.b=(c.b===undefined?1:c.b); c.b+=((i===hov?0:1)-c.b)*k;          // 1 = radial, 0 = nach aussen gedreht
+    const th=i*DA+ringRot, rr=R+(1-c.b)*H*.55, a=th*Math.PI/180;
+    els[i].style.transform="translate3d("+(rr*Math.sin(a)).toFixed(1)+"px,0,"+(rr*Math.cos(a)).toFixed(1)+"px) rotateY("+(th+90*c.b).toFixed(2)+"deg)";
+    els[i].style.opacity=(hov<0?1:(.25+.75*(Math.cos(a)+1)/2)).toFixed(2);
+  });
+  if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect(); rigTop-=((r.top+r.height/2)-innerHeight*MY)*(reduce?1:.06); }
+  else rigTop+=(innerHeight*.6-rigTop)*(reduce?1:.05);
+  rig.style.top=rigTop.toFixed(1)+"px";
+}
+let slideK=0, slideFor=-1;
+setInterval(()=>{ if(slideFor!==hov) document.querySelectorAll(".sl.cur").forEach(x=>x.classList.remove("cur"));
+  if(hov<0||!C[hov].sl){ slideFor=-1; return; } const c=C[hov], imgs=els[hov].querySelectorAll(".sl");
+  if(slideFor!==hov){ slideFor=hov; slideK=0; return; }
+  slideK=(slideK+1)%(c.sl.length+1); imgs.forEach((im,j)=>im.classList.toggle("cur",j===slideK-1));
+  cnt.textContent=VOR?(slideK?c.sl[slideK-1][1]:c.c):cnt.textContent; },3500);   // Slideshow alle 3,5 s, Leiste nennt das jeweilige Projekt
+function segGuard(){ if(hov<0||!C[hov].seg) return; const v=els[hov].querySelector("video"); if(v&&(v.currentTime>=C[hov].seg[1]||v.currentTime<C[hov].seg[0]-.3)) v.currentTime=C[hov].seg[0]; }
+function tick(){
+  segGuard();
+  if(KREIS){ kreisTick(); requestAnimationFrame(tick); return; }
+  layout();
+  const k=reduce?1:.07;   // ruhige Fahrt
+  if(SCHWENK&&ISOV&&VOR){
+    /* Iso-Ueberblick (08.11.): ein gemeinsamer Fortschritt u (0 = Ueberblick, 1 = Lesen), Perspektive bleibt 1600 px;
+       die isometrische Wirkung entsteht ueber grossen Abstand plus Massstab, so bleibt die Bildgroesse unterwegs stimmig */
+    const now=performance.now(), dt=Math.min(.05,(now-(tick.t||now))/1000); tick.t=now;
+    uNow+=((hov<0?0:1)>uNow?1:-1)*dt/U_DAUER; uNow=Math.max(0,Math.min(1,uNow)); if(reduce) uNow=hov<0?0:1;
+    const w=uNow*uNow*(3-2*uNow);
+    /* Perspektive selbst veraendern statt weit weg und gross (grosse Texturen ueberfordern die Grafikkarte, Chrome verwirft dann Kacheln des Verzeichnisses).
+       Sichtbare Groesse f wird logarithmisch ueberblendet, der Massstab kk ergibt sich daraus und bleibt unter 1 */
+    const wd=Math.pow(w,1.7), P=Math.exp(Math.log(P_OV)+(Math.log(1600)-Math.log(P_OV))*wd), D=D_OV+(-distRead-D_OV)*wd;
+    const MOBO=innerWidth<=700, f0=(MOBO?F_OV*.62:F_OV)*fitK, f1=1600/(1600-distRead), f=Math.exp(Math.log(f0)+(Math.log(f1)-Math.log(f0))*wd), kk=f*(P+D)/P;
+    document.getElementById('scene').style.perspective=P.toFixed(0)+'px';
+    rigR=(SPIEGEL?-45:45)*(1-w); rotNow=SPIEGEL?(-90+(180-DREH)*(1-w)):ROT; tiltNow=-35.264*(1-w)+TILT*w; distNow=-D;
+    const sf=(P+D)/P*(1-w);   /* Bildschirm-Pixel in Tiefe umrechnen */
+    document.getElementById('rig').style.transform='translate('+(MOBO?0:((SPIEGEL?1:-1)*innerWidth*X_OV+fitX)*sf).toFixed(1)+'px,'+(((MOBO?-30:IY)+fitY)*sf).toFixed(1)+'px) translateZ('+(-D).toFixed(1)+'px) scale('+kk.toFixed(4)+') rotateX('+tiltNow.toFixed(2)+'deg) rotateY('+rigR.toFixed(2)+'deg)';
+    document.documentElement.classList.toggle('ovda',uNow<.02);
+    /* Anordnung als System (Ruben 08.11., Ziele): das Band so gross wie moeglich, kein Bild (auch herausgezogen) ueberlappt Verzeichnis,
+       Textfeldbereich, Kopfzeile oder Leiste oder wird angeschnitten; gesucht wird die groesste Skalierung, bei der eine Lage passt,
+       bevorzugt mittig. Sperrflaechen liefert das Verzeichnis-Skript (window.__sperr). */
+    if(uNow<.02&&!MOBO&&fitN<220&&window.__sperr&&!document.getElementById('stack').classList.contains('toc')&&!document.querySelector('#stack .card.on,#stack .card.zieh')){ fitN++;
+      const Rr=[], Vv=[]; els.forEach(a=>{ const r=a.querySelector('.pic').getBoundingClientRect(); if(r.width){ Rr.push([r.left-.21*r.width, r.top-.76*r.height, r.right+.21*r.width, r.bottom]); Vv.push([r.left,r.top,r.right,r.bottom]); } });   /* Platzbedarf herausgezogen, gemessen mit Playwright: oben 0,72 Bildhoehen, seitlich 0,19 Bildbreiten (plus Reserve) */
+      if(Rr.length){
+        const hb=document.querySelector('.nav a').getBoundingClientRect().bottom, fb=document.querySelector('.fbar').getBoundingClientRect().top;
+        const Bx=[16, hb+14, innerWidth-16, fb-12], F=window.__sperr;
+        let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; Rr.forEach(q=>{ x0=Math.min(x0,q[0]); y0=Math.min(y0,q[1]); x1=Math.max(x1,q[2]); y1=Math.max(y1,q[3]); });
+        const cx=(x0+x1)/2, cy=(y0+y1)/2; let v0=1e9,w0=1e9,v1=-1e9,w1=-1e9; Vv.forEach(q=>{ v0=Math.min(v0,q[0]); w0=Math.min(w0,q[1]); v1=Math.max(v1,q[2]); w1=Math.max(w1,q[3]); });   /* sichtbare Bilder fuer die Mittigkeit */
+        const ok=(s,tx,ty)=>{ for(let i=0;i<Rr.length;i++){ const q=Rr[i], v=Vv[i]; const l=cx+(q[0]-cx)*s+tx, tp=cy+(q[1]-cy)*s+ty, r=cx+(q[2]-cx)*s+tx, b=cy+(q[3]-cy)*s+ty, vt=cy+(v[1]-cy)*s+ty, vb=cy+(v[3]-cy)*s+ty; if(l<Bx[0]||r>Bx[2]||vt<Bx[1]||vb>Bx[3]) return false; for(const f of F){ if(l<f.r&&r>f.l&&tp<f.b&&b>f.t) return false; } } return true; };   /* Bildschirmrand nur fuer die ruhenden Bilder; herausgezogen darf das oberste Bild leicht hinausfahren (Ruben 08.11.: Bildachse vermitteln) */
+        const lage=s=>{ if((x1-x0)*s>Bx[2]-Bx[0]||(w1-w0)*s>Bx[3]-Bx[1]) return null; const a0=Bx[0]-(cx+(x0-cx)*s), a1=Bx[2]-(cx+(x1-cx)*s), b0=Bx[1]-(cy+(w0-cy)*s), b1=Bx[3]-(cy+(w1-cy)*s);
+          let bb=null, bd=1e18; const N=48, tyM=(Bx[1]+Bx[3])/2-(cy+((w0+w1)/2-cy)*s); if(tyM<b0-.5||tyM>b1+.5) return null; for(let i=0;i<=N;i++) for(let j=0;j<=0;j++){ const tx=a0+(a1-a0)*i/N, ty=tyM;   /* Bildachse senkrecht fest in der Mitte, Groesse ergibt sich daraus (Ruben 08.11.) */ if(!ok(s,tx,ty)) continue; const vx=cx+((v0+v1)/2-cx)*s+tx, vy=cy+((w0+w1)/2-cy)*s+ty, dx=vx-(Bx[0]+Bx[2])/2, dy=vy-(Bx[1]+Bx[3])/2, d=dx*dx+dy*dy; if(d<bd){ bd=d; bb=[tx,ty]; } } return bb; };
+        let lo=.2, hi=3, sol=null; for(let it=0;it<14;it++){ const m=(lo+hi)/2, r=lage(m); if(r){ lo=m; sol=[m,r]; } else hi=m; }
+        if(sol){ const s=sol[0], tx=sol[1][0], ty=sol[1][1]; fitK*=Math.pow(s,.5); fitX+=tx*.5; fitY+=ty*.5; if(Math.abs(s-1)<.004&&Math.abs(tx)<1.5&&Math.abs(ty)<1.5) fitN=999; }
+      } }
+    if(uNow<.02&&!(tick.gw>0&&tick.gw--)){ tick.gw=20; const a=els[0].querySelector('.pic').getBoundingClientRect(), b=els[C.length-1].querySelector('.pic').getBoundingClientRect(); const ang=Math.atan2((b.top+b.height/2)-(a.top+a.height/2),(b.left+b.width/2)-(a.left+a.width/2))*180/Math.PI; if(isFinite(ang)) document.getElementById('isogrid').style.setProperty('--bandw',ang.toFixed(1)+'deg');
+      const aa=(rigR+rotNow)*Math.PI/180, tt=tiltNow*Math.PI/180, kw=Math.atan2(Math.sin(aa)*Math.sin(tt),Math.cos(aa))*180/Math.PI; document.getElementById('isogrid').style.setProperty('--kantew',kw.toFixed(1)+'deg'); }   /* zweite Rasterschar parallel zu den unteren Bildkanten, folgt der Drehung */   /* eine Rasterschar parallel zum Band (Ruben 08.11.) */ document.documentElement.classList.toggle('angekommen',uNow>.92); }
+  else if(SCHWENK){ rigR+=((hov<0?45:0)-rigR)*(reduce?1:.045); tiltNow+=(((VOR&&hov<0)?-12:TILT)-tiltNow)*(reduce?1:.045); distNow+=(((VOR&&hov<0)?-DIST:distRead)-distNow)*(reduce?1:.045);
+    document.getElementById('rig').style.transform='translateZ('+distNow.toFixed(1)+'px) rotateX('+tiltNow.toFixed(2)+'deg) rotateY('+rigR.toFixed(2)+'deg)'; }
+  if(VOR) C.forEach((c,i)=>{ els[i].classList.toggle("nah",hov>=0&&Math.abs(c.o)===1); });   // direkte Nachbarn zeigen die Pfeile, weiter aussen die Hand
+  if(VOR) C.forEach((c,i)=>{ const d=hov<0?0:Math.abs(c.o); els[i].style.opacity=d<=2?1:(d===3?.5:(d===4?.22:0)); });   // je Seite zwei volle, dann zwei blasse Bilder (Ruben 07.11.)
+  C.forEach((c,i)=>{ if(c.jump){ c.x=c.t; c.jump=false; els[i].classList.remove('pop'); void els[i].offsetWidth; els[i].classList.add('pop'); } });   // unsichtbar ans andere Ende springen
+  // aeussere Bilder nach hinten versetzen: kleiner, mehr Tiefe
+  C.forEach(c=>{ const d=(VOR&&hov>=0&&c.o!==undefined)?Math.abs(c.o):0; c.dp=0; c.sc=(c.sc||1)+((d>=3?1-.16*(d-2):1)-(c.sc||1))*k; });   // aeussere Bilder kleiner
+  C.forEach((c,i)=>{ c.x+=(c.t-c.x)*k; c.r+=((i===hov?TURN:(ISOV&&VOR?rotNow:ROT))-c.r)*(ISOV&&VOR&&i!==hov?1:k); c.z+=((i===hov?EDGE*(stackW()/2+H*.06):0)-c.z)*k;
+    c.yy=(c.yy||0)+(((VOR&&hov<0)?(ISOV&&SPIEGEL?1:-1)*(i-(C.length-1)/2)*H*RISE:0)-(c.yy||0))*k;   // Ueberblick: Stapel steigt nach hinten an
+    const fl=-(1-(c.sc||1))*H*FLUCHT;   // kleinere Aussenbilder fluchten zur Augenhoehe (Bildmitte) statt auf der Bodenlinie zu stehen (Ruben 07.11.)
+    els[i].style.transform="translate3d("+c.x.toFixed(1)+"px,"+(c.yy+fl).toFixed(1)+"px,"+(c.z-(c.o!==undefined?c.o:i)*2+(c.dp||0)).toFixed(1)+"px) rotateY("+c.r.toFixed(2)+"deg) scale("+(c.sc||1).toFixed(3)+")"; });
+  // gewaehltes Bild in die Bildmitte: der ganze Stapel schiebt sich nach, bis es mittig steht
+  // gewaehltes Bild auf 50 % / 50 % (Ruben 07.11.): waagerecht schiebt sich der Stapel, senkrecht der ganze Raum
+  const rig=document.getElementById("rig");
+  if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
+  if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect();
+    anchor-=((r.left+r.width/2)-innerWidth/2)*(reduce?1:.06);
+    // bei niedrigen Fenstern rueckt das Bild hoeher, damit die Texte ueber der Leiste Platz haben
+    const MOB=VOR&&innerWidth<=700;
+    if(MOB){ const pad=16, tw=innerWidth-2*pad; distRead-=(r.width-tw)*(reduce?2:.6); distRead=Math.max(-4000,Math.min(-150,distRead)); }
+    let cy=innerHeight*MY, lim=innerHeight; if(MOB) cy=64+r.height/2; else if(VOR&&innerWidth>700){ const th=Math.max(de.offsetHeight,en.offsetHeight); lim=document.querySelector(".fbar").getBoundingClientRect().top-20-th; cy=Math.min(cy,lim-36-r.height/2); }
+    rigTop-=((r.top+r.height/2)-cy)*(reduce?1:.06);
+    // Vorschlag: Texte beziehen sich auf das Bild, DE an der linken, EN an der rechten Bildkante (Ruben 07.11.)
+    if(VOR&&innerWidth>700){ const half=Math.max(160,r.width/2-14); de.style.left=r.left.toFixed(1)+"px"; de.style.right="auto"; de.style.width=half.toFixed(1)+"px";
+      en.style.left=(r.right-half).toFixed(1)+"px"; en.style.right="auto"; en.style.width=half.toFixed(1)+"px";
+      const top=Math.min(r.bottom+36,lim)+"px"; de.style.top=en.style.top=top; de.style.bottom=en.style.bottom="auto"; }
+    if(MOB){ de.style.left=en.style.left="16px"; de.style.right=en.style.right="16px"; de.style.width=en.style.width="auto"; de.style.bottom=en.style.bottom="auto";
+      de.style.top=(r.bottom+18).toFixed(1)+"px"; en.style.top=(r.bottom+18+de.offsetHeight+10).toFixed(1)+"px"; } }   // beide Texte haengen gleich hoch unter dem Bild
+  else { rigTop+=(innerHeight*(ISO?.52:(ISOV?IH:.66))-rigTop)*(reduce?1:(ISOV&&VOR?.14:.05));   /* Iso-Ueberblick: Hoehe schneller zurueck, sonst laeuft das Band nach dem Lesen in die Navigation */
+    if(VOR&&de.style.width){ de.style.left=de.style.right=de.style.width=de.style.top=de.style.bottom=""; en.style.left=en.style.right=en.style.width=en.style.top=en.style.bottom=""; } }
+  rig.style.top=rigTop.toFixed(1)+"px";
+  requestAnimationFrame(tick);
+}
+
+// Text
+let curS=-1;
+function say(s,cap){
+  if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][0]; en.querySelector('.s').textContent=S[s][1]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
+  de.querySelector('.c').textContent=cap; en.querySelector('.c').textContent=cap;
+}
+function pick(i){
+  if(i===hov) return;
+  if(hov>=0){ const v=els[hov].querySelector('video'); if(v) v.pause(); els[hov].classList.remove('on'); }
+  anchor=C[i].x; hov=i; els[i].classList.add('on');
+  const v=els[i].querySelector('video'); if(v) v.play().catch(()=>{});
+  say(C[i].s,C[i].c); dots(C[i].s);
+  cnt.textContent=VOR?C[i].c:String(i+1).padStart(2,'0')+' / '+String(C.length).padStart(2,'0');   // Vorschlag: Nummer steht schon ueber dem Text
+  document.documentElement.classList.add('lesen');
+}
+function release(){
+  if(hov>=0){ const v=els[hov].querySelector('video'); if(v) v.pause(); els[hov].classList.remove('on'); }
+  hov=-1; anchor=null; cnt.textContent=VOR?HINT:''; document.documentElement.classList.remove('lesen');
+}
+// Steuerung in Schritten (Ruben 07.11.: Mausregler war zu unruhig). Eine Geste = ein Bild, danach steht alles still.
+const sc=document.getElementById('scene'); let rt=null;
+function step(d){ if(KREIS||VOR){ pick(hov<0?0:(hov+d+C.length)%C.length); return; }   // Ring: endlos weiterdrehen, Esc schliesst
+  if(hov===0&&d<0){ release(); return; } pick(Math.max(0,Math.min(C.length-1,hov+d))); }
+let wAcc=0, wLock=false, wT=null;
+addEventListener('wheel',e=>{ e.preventDefault(); clearTimeout(wT); wT=setTimeout(()=>{ wLock=false; wAcc=0; },240);
+  if(wLock) return; wAcc+=e.deltaY+e.deltaX; if(Math.abs(wAcc)>40){ step(wAcc>0?1:-1); wLock=true; } },{passive:false});
+let px=null;
+sc.addEventListener('pointerdown',e=>{ px=e.clientX; });
+let swiped=0;
+addEventListener('pointerup',e=>{ if(px===null) return; const d=e.clientX-px; px=null; if(Math.abs(d)>40){ step(d<0?1:-1); swiped=Date.now(); } });
+// Vorschlag beim Lesen: linke Haelfte zurueck, rechte weiter, Zeiger zeigt die Richtung
+sc.addEventListener('mousemove',e=>{ const r=e.clientX>=innerWidth/2; sc.classList.toggle('c-r',r); sc.classList.toggle('c-l',!r); });
+sc.addEventListener('click',e=>{ if(!(VOR&&hov>=0)) return; const card=e.target.closest('.card'); if(card&&!card.classList.contains('on')) return;   /* Klick auf ein anderes Bild springt direkt dorthin */ e.stopPropagation(); if(Date.now()-swiped<350) return; step(e.clientX>=innerWidth/2?1:-1); },true);
+els.forEach((a,i)=>{ a.addEventListener('click',()=>pick(i)); });
+addEventListener('keydown',e=>{ if(e.key==='ArrowRight') step(1); if(e.key==='ArrowLeft') step(-1); if(e.key==='Escape') release(); if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' ') step(1); if(e.key==='ArrowUp'||e.key==='PageUp') step(-1); });
+
+// Themenpunkte: ein Punkt pro Satz, Klick faechert den Stapel bei diesem Thema auf
+const fd=document.getElementById('fdots');
+const db=S.map((s,k)=>{ const b=document.createElement('button'); b.type='button'; b.title=(k+1)+' · '+s[0]; b.setAttribute('aria-label',b.title); b.innerHTML='<i></i>';
+  b.onclick=()=>{ clearTimeout(rt); pick(C.findIndex(c=>c.s===k)); }; fd.appendChild(b); return b; });
+function dots(k){ db.forEach((b,j)=>{ b.classList.toggle('cur',j===k); if(j===k){ b.classList.add('seen'); b.setAttribute('aria-current','step'); } else b.removeAttribute('aria-current'); }); }
+dots(0);
+
+// Handy-Menue
+{ const b=document.querySelector(".mmb"), l=document.getElementById("mml");
+  b.addEventListener("click",e=>{ e.stopPropagation(); const o=l.hidden; l.hidden=!o; b.setAttribute("aria-expanded",o); });
+  document.addEventListener("click",e=>{ if(!l.hidden&&!l.contains(e.target)&&e.target!==b){ l.hidden=true; b.setAttribute("aria-expanded","false"); } }); }
+
+// zu Beginn steht der erste Satz
+const HINT="Scrollen, um aufzuklappen / Scroll to open"; if(VOR) cnt.textContent=HINT;
+window.__LZ=null; const LZ=["Zwischennutzung · Bau · Betrieb","Intervention im Stadtraum · Bau","Temporäre Architektur · Stadtraum","Temporäre Architektur · Beteiligung","Ausstellungsarchitektur · Planung · Bau","Lernort · Planung · Bau","Rauminstallation · Bau","Bühne · Veranstaltung","Konzept · Bau · Betrieb","Umbau · Betrieb · Programm","Entwurf · Bau im Bestand","Beteiligung · Veranstaltung","Rauminstallation · Veranstaltung","Planung · Bau · Projektsteuerung","Projektsteuerung · Genehmigung · Bau"];   /* Probe: Leistungszeile je Tafel, Entwurf */
+window.__LZ=LZ;
+function num(k){ const t=String(k+1).padStart(2,'0')+' / '+String(S.length).padStart(2,'0'); de.querySelector('.num').innerHTML=t+'<span class="lz">'+LZ[k]+'</span>'; en.querySelector('.num').textContent=t; }
+de.querySelector('.s').textContent=S[0][0]; en.querySelector('.s').textContent=S[0][1]; num(0); curS=0;
+document.getElementById('scene').style.pointerEvents='auto';
+// Start: Stapel geschlossen, erst der erste Schritt dreht ein Bild (Ruben 07.11.)
+requestAnimationFrame(tick);
+})();
+</script>
+<script>
+/* Intro wie auf der Startseite (Ruben 08.11.): waehrend der Woerter laden alle Bilder (auch Soups-Slideshow) und der ganze Film,
+   damit beim Aufklappen nichts nachlaedt. Der Film (video.mp4, alle Ausschnitte) wird komplett geholt und den Karten als Blob gegeben,
+   weil der Browser mit preload nur wenige Sekunden vorauslaedt. Ende, wenn alles da ist, spaetestens nach 15 s (der Film laedt dann weiter
+   und wird nachgereicht). Intro einmal pro Besuch (Tab), Klick, Tippen oder Taste ueberspringt. Zum Testen: sessionStorage introPractice loeschen */
+(function(){
+  var vids=[].slice.call(document.querySelectorAll("#stack video")), film=!vids.length;
+  if(vids.length&&window.fetch&&window.URL) fetch(vids[0].getAttribute("src")).then(function(r){ if(!r.ok) throw 0; return r.blob(); }).then(function(b){
+    var u=URL.createObjectURL(b);
+    vids.forEach(function(v){ var lief=!v.paused; v.src=u; if(lief){ var p=v.play(); if(p&&p.catch) p.catch(function(){}); } });
+    film=true;
+  }).catch(function(){ film=true; }); else film=true;
+  var WORDS=["Hello","we","are","YRD.Works","and","this","is","what","we","do"];
+  var BASE=110, PER_CHAR=50, MAXWAIT=15000;
+  var box=document.getElementById("intro"), w=document.getElementById("intro-w"), root=document.documentElement;
+  /* Wer hier war, sieht das Intro der Startseite in diesem Tab nicht noch einmal (intro.html, Merkzeichen introSeen; Ruben 08.11.) */
+  try{ sessionStorage.setItem("introSeen","1"); }catch(e){}
+  try{ if(sessionStorage.getItem("introPractice")){ box.remove(); return; } sessionStorage.setItem("introPractice","1"); }catch(e){}
+  root.classList.add("intro-on");
+  var done=false, t0=Date.now(), timer=0;
+  function end(){ if(done) return; done=true; clearTimeout(timer); box.classList.add("gone"); root.classList.remove("intro-on"); setTimeout(function(){ box.remove(); },700); }
+  function ready(){
+    if(!film) return false;
+    var ims=document.querySelectorAll("#stack img"); for(var i=0;i<ims.length;i++) if(!ims[i].complete) return false;
+    for(var j=0;j<vids.length;j++) if(vids[j].readyState<1) return false;
+    return true;
+  }
+  function wait(){ if(done) return; if(ready()||Date.now()-t0>MAXWAIT) end(); else setTimeout(wait,100); }
+  var k=0;
+  function step(){ if(done) return; if(k>=WORDS.length){ w.textContent=""; wait(); return; } var word=WORDS[k++]; w.textContent=word; timer=setTimeout(step,BASE+PER_CHAR*word.length); }
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){ w.textContent="YRD.Works"; k=WORDS.length; timer=setTimeout(step,900); } else step();
+  box.addEventListener("click",end);
+  var skipT=0; box.addEventListener("touchstart",function(){ skipT=Date.now(); end(); },{passive:true});
+  document.addEventListener("click",function(e){ if(Date.now()-skipT<700){ e.preventDefault(); e.stopPropagation(); } },true);
+  window.addEventListener("keydown",function(){ end(); },{once:true});
+})();
+</script>
+<script>
+/* Zusammenarbeit oeffnen und schliessen; solange offen, blaettert der Stapel nicht */
+(function(){
+  var z=document.getElementById("zus"), b=document.getElementById("zusb");
+  function set(o){ z.classList.toggle("auf",o); if(o) z.querySelector(".x").focus(); else b.focus(); }
+  b.addEventListener("click",function(e){ e.preventDefault(); set(true); });
+  var m=document.querySelector("#mml .zusm"); if(m) m.addEventListener("click",function(e){ e.preventDefault(); document.getElementById("mml").hidden=true; set(true); });   /* Handy: Zusammenarbeit im Menue */
+  z.querySelector(".x").addEventListener("click",function(){ set(false); });
+  z.addEventListener("wheel",function(e){ e.stopPropagation(); },{passive:true});
+  z.addEventListener("click",function(e){ e.stopPropagation(); });
+  window.addEventListener("keydown",function(e){ if(!z.classList.contains("auf")) return; if(e.key==="Escape") set(false); e.stopImmediatePropagation(); },true);
+})();
+</script>
+<script>
+/* Inhaltsverzeichnis im Ueberblick. Hover hebt das Bild im Stapel an (.on wie beim Zeigen), Klick klappt bei dieser Tafel auf (ueber den Themenpunkt) */
+(function(){
+  var cards=function(){ return document.querySelectorAll("#stack .card"); };
+  var vor=document.getElementById("vor"), titel=[].map.call(document.querySelectorAll("#lst button"),function(b){ var c=b.cloneNode(true), e=c.querySelector(".e"), n=c.querySelector(".n"), en=e?e.textContent:""; if(e) e.remove(); if(n) n.remove(); return [c.textContent.trim(),en]; });
+  function fuell(k){ vor.querySelector(".n").textContent=String(k+1).padStart(2,"0")+" / 15"; vor.querySelector(".pn").textContent=String(k+1).padStart(2,"0"); vor.querySelector(".pt").textContent=(titel[k]||[""])[0]; vor.querySelector(".te").textContent=(titel[k]||["",""])[1];
+    vor.querySelector(".l").innerHTML=((window.__LZ&&window.__LZ[k])||"").split(" · ").filter(Boolean).map(function(x){ return "<span>"+x+"</span>"; }).join(""); vor.querySelector(".d").textContent=S[k][0]; }
+  function zeig(k){ if(k<0||document.documentElement.classList.contains("lesen")){ vor.classList.remove("auf"); return; } fuell(k); vor.classList.add("auf"); }
+  /* Lage des Textfelds (gleich breit wie das Verzeichnis, gleiche Oberkante) und Sperrflaechen fuer das Band */
+  function lage(){ if(innerWidth<=700){ window.__sperr=null; return; } var lst=document.getElementById("lst"), L=lst.getBoundingClientRect(), bs=document.querySelectorAll("#lst button"), mr=0, lb=0;
+    bs.forEach(function(b){ var r=b.getBoundingClientRect(); mr=Math.max(mr,r.right); lb=Math.max(lb,r.bottom); });
+    var dy=L.top-lst.offsetTop; var W=Math.max(260,mr-L.left); vor.style.width=W+"px"; vor.style.top=lst.offsetTop+"px";   /* ohne die Einblend-Verschiebung des Verzeichnisses messen */
+    var kk=document.querySelector("#lst .k"), ks=getComputedStyle(kk), vn=vor.querySelector(".n"); vn.style.fontSize=ks.fontSize; vn.style.lineHeight=ks.lineHeight; vn.style.marginBottom=ks.marginBottom; vn.style.paddingTop=ks.paddingTop;   /* Kopfzeilen links und rechts exakt gleich gesetzt */
+    fuell(0); vn.style.marginBottom="0px"; var b0=document.querySelector("#lst button"), tp=vor.querySelector(".t .p"); var dyp=(b0.getBoundingClientRect().top-dy)-tp.getBoundingClientRect().top; vn.style.marginBottom=Math.max(0,dyp)+"px";   /* gefuellte Pille rechts auf Hoehe der ersten Pille links (Ruben 08.11.) */
+    var mh=0; for(var k=0;k<15;k++){ fuell(k); mh=Math.max(mh,vor.offsetHeight); } var vr=vor.getBoundingClientRect();
+    var vt=lst.offsetTop; window.__sperr=[{l:0,t:vt-10,r:mr+28,b:lb-dy+14},{l:vr.left-28,t:vt-10,r:innerWidth,b:vt+mh+18}]; }
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){ lage(); });
+  addEventListener("resize",function(){ clearTimeout(lage.t); lage.t=setTimeout(lage,120); });
+  /* Hover ueber ein Bild im Ueberblick zeigt dasselbe Textfeld */
+  cards().forEach(function(c,k){ c.addEventListener("mouseenter",function(){ if(!document.documentElement.classList.contains("lesen")){ zeig(k); c.classList.add("zieh"); var b=document.querySelector("#lst button[data-k=\""+k+"\"]"); if(b) b.classList.add("aktiv"); } }); c.addEventListener("mouseleave",function(){ zeig(-1); c.classList.remove("zieh"); var b=document.querySelector("#lst button[data-k=\""+k+"\"]"); if(b) b.classList.remove("aktiv"); }); });   /* Hover ueber ein Bild faerbt auch die passende Pille (Ruben 08.11.: in beide Richtungen) */
+  document.querySelectorAll("#lst button").forEach(function(b){
+    var k=+b.dataset.k;
+    function on(v){ var c=cards()[k]; if(c) c.classList.toggle("on",v); zeig(v?k:-1); }   /* kein Abblassen mehr, das Bild wird herausgezogen (Ruben 08.11.) */
+    b.addEventListener("mouseenter",function(){ on(true); });
+    b.addEventListener("mouseleave",function(){ on(false); });
+    b.addEventListener("focus",function(){ on(true); });
+    b.addEventListener("blur",function(){ on(false); });
+    b.addEventListener("click",function(e){ e.stopPropagation(); on(false); var d=document.querySelectorAll("#fdots button")[k]; if(d) d.click(); });
+  });
+})();
+</script>
+<script>
+/* Gruppen im Verzeichnis: Hover zeigt die Bilder der Gruppe voll, die uebrigen blass (Ruben 08.11.) */
+(function(){
+  var st=document.getElementById("stack");
+  document.querySelectorAll("#lst .g").forEach(function(g){
+    var ol=g.nextElementSibling, ks=ol?[].map.call(ol.querySelectorAll("button"),function(b){ return +b.dataset.k; }):[];
+    function on(v){ var cs=st.querySelectorAll(".card"); ks.forEach(function(k){ if(cs[k]) cs[k].classList.toggle("grp",v); }); st.classList.toggle("toc",v); }
+    g.addEventListener("mouseenter",function(){ on(true); });
+    g.addEventListener("mouseleave",function(){ on(false); });
+  });
+})();
+</script>
+</body>
+</html>

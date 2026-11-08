@@ -723,3 +723,23 @@
   route();
 
 })();
+
+/* Corporate-Besucher (Ruben 08.11.): wer /practice/ geoeffnet hat (Merkzeichen yrd-practice, gesetzt in practice/index.html),
+   sieht in Kopf und Menue vor About (Menue: vor Projects) den Eintrag Practice als Rueckweg (Arbeitstitel Corporate, Name und Adresse von Ruben 08.11.). Alle anderen sehen nichts. Zum Testen: localStorage yrd-practice loeschen */
+(function(){
+  var c=false; try{ c=localStorage.getItem('yrd-practice')==='1'; }catch(e){}
+  if(!c) return;
+  document.querySelectorAll('.links, .mm-l').forEach(function(l){
+    var ab=l.querySelector('a[href$="about/"]');
+    if(!ab||l.querySelector('.corp-l')) return;
+    var a=document.createElement('a'); a.className='corp-l'; a.textContent='Practice';
+    a.href=ab.getAttribute('href').replace(/about\/$/,'practice/');
+    var sp=(ab.nextSibling&&ab.nextSibling.nodeType===3)?ab.nextSibling.nodeValue:'';
+    var hm=l.querySelector("a[data-home],a[data-mm-home]");   /* Reihenfolge Practice, Projects, About (Ruben 08.11.) */
+    if(hm){ hm.before(a); return; }
+    /* Kopf: zusaetzlich Projects, unterstrichen solange man bei den Projekten ist (style.css .prj-l, Ruben 08.11.) */
+    var p=document.createElement("a"); p.className="prj-l"; p.textContent="Projects";
+    if(document.querySelector("a[data-mm-home]")) p.href="./"; else { p.href=ab.getAttribute("href").replace(/about\/$/,"")||"./"; p.setAttribute("data-home",""); }
+    if(sp){ ab.before(a,document.createTextNode(sp),p,document.createTextNode(sp)); } else ab.before(a,p);
+  });
+})();

@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Alle Arbeiten von YRD.Works als Liste: nach Arbeitsfeldern und Themen filtern, auswählen, als Link teilen.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=c2f52fb3">
+<link rel="stylesheet" href="style.css?v=5176d5a1">
 <style>
 /* Ansicht Index: alle Arbeiten als Liste. Oben Erklaerung DE/EN, Knoepfe Fields und Topics (klappen auf), Suche am Handy; Zeilen anwaehlbar;
    unten in der Leiste: Link kopieren und PDF fuer die Auswahl (ohne Auswahl: fuer alles, was die Liste gerade zeigt) */
@@ -339,5 +339,24 @@
   })();
 })();
 </script>
+<script>/* Corporate-Besucher (Ruben 08.11.): wer /practice/ geoeffnet hat (Merkzeichen yrd-practice, gesetzt in practice/index.html),
+   sieht in Kopf und Menue vor About (Menue: vor Projects) den Eintrag Practice als Rueckweg (Arbeitstitel Corporate, Name und Adresse von Ruben 08.11.). Alle anderen sehen nichts. Zum Testen: localStorage yrd-practice loeschen */
+(function(){
+  var c=false; try{ c=localStorage.getItem('yrd-practice')==='1'; }catch(e){}
+  if(!c) return;
+  document.querySelectorAll('.links, .mm-l').forEach(function(l){
+    var ab=l.querySelector('a[href$="about/"]');
+    if(!ab||l.querySelector('.corp-l')) return;
+    var a=document.createElement('a'); a.className='corp-l'; a.textContent='Practice';
+    a.href=ab.getAttribute('href').replace(/about\/$/,'practice/');
+    var sp=(ab.nextSibling&&ab.nextSibling.nodeType===3)?ab.nextSibling.nodeValue:'';
+    var hm=l.querySelector("a[data-home],a[data-mm-home]");   /* Reihenfolge Practice, Projects, About (Ruben 08.11.) */
+    if(hm){ hm.before(a); return; }
+    /* Kopf: zusaetzlich Projects, unterstrichen solange man bei den Projekten ist (style.css .prj-l, Ruben 08.11.) */
+    var p=document.createElement("a"); p.className="prj-l"; p.textContent="Projects";
+    if(document.querySelector("a[data-mm-home]")) p.href="./"; else { p.href=ab.getAttribute("href").replace(/about\/$/,"")||"./"; p.setAttribute("data-home",""); }
+    if(sp){ ab.before(a,document.createTextNode(sp),p,document.createTextNode(sp)); } else ab.before(a,p);
+  });
+})();</script>
 </body>
 </html>
