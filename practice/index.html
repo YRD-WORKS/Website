@@ -278,6 +278,7 @@ html.vorschlag .say .num{margin-bottom:.7rem}
   html.pillen #lst button,.say .num .wp{white-space:normal;max-width:100%;border-radius:1.1em}   /* EN-Titel sind laenger: lange Pillen brechen auf schmalen Handys um, statt ueber den Rand zu ragen; einzeilig bleibt die Pillenform */
   html.pillen #lst button{display:flex;align-items:baseline}
   html.vorschlag.lesen #de{overflow-y:auto;pointer-events:auto;overscroll-behavior:contain}
+  html.vorschlag.lesen #de{touch-action:pan-y}   /* Text wischt mit (Ruben 09.11.): waagerecht faehrt das Band, senkrecht scrollt der Text */
   html.vorschlag #de.eng{-webkit-mask-image:linear-gradient(#000 calc(100% - 1.4em),transparent);mask-image:linear-gradient(#000 calc(100% - 1.4em),transparent)}
 }
 
@@ -599,14 +600,22 @@ let swiped=0;
 /* Wischen im Walk mit dem Finger wie im 3D-Walk der Hauptseite (Ruben 09.11., Regel aus 3d/index.html rundFling): das Band folgt dem Finger direkt;
    beim Loslassen hoechstens ein Bild weiter, wenn der Finger mehr als 30 % der Breite gefahren ist oder geschnippt hat (ueber 0,3 px/ms), sonst federt es zurueck; danach schnell einrasten */
 let dr=null, snapUntil=0;
-sc.addEventListener('pointerdown',e=>{ if(e.pointerType!=='touch'||!VOR||KREIS||hov<0) return; px=null; const r=els[hov].querySelector('.pic').getBoundingClientRect(), now=performance.now();
-  dr={x0:e.clientX,t0:now,x:e.clientX,t:now,v:0,on:false,s:(r.width/(1.1*C[hov].w))||1}; });
+function drStart(e){ if(e.pointerType!=='touch'||!VOR||KREIS||hov<0) return; px=null; const r=els[hov].querySelector('.pic').getBoundingClientRect(), now=performance.now();
+  clearTimeout(drStart.t); de.style.transition='none'; dr={x0:e.clientX,t0:now,x:e.clientX,t:now,v:0,on:false,s:(r.width/(1.1*C[hov].w))||1}; }
+sc.addEventListener('pointerdown',drStart); de.addEventListener('pointerdown',drStart);   /* Text wischt mit (Ruben 09.11.): Wischen geht auch auf dem Text, der Text faehrt mit dem Finger */
+const TXT_T='opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out),translate .3s var(--e-out)';
 addEventListener('pointermove',e=>{ if(!dr) return; const now=performance.now(), d=e.clientX-dr.x0; if(!dr.on&&Math.abs(d)>6) dr.on=true; if(!dr.on) return;
-  dr.v=.6*dr.v+.4*((e.clientX-dr.x)/Math.max(8,now-dr.t)); dr.x=e.clientX; dr.t=now; stack.style.transform='translate3d('+(d/dr.s).toFixed(1)+'px,0,0)'; },{passive:true});
-function drEnd(e){ if(!dr) return; const o=dr; dr=null; if(!o.on) return; const now=performance.now(), ov=o.x-o.x0, off=ov/o.s;
+  dr.v=.6*dr.v+.4*((e.clientX-dr.x)/Math.max(8,now-dr.t)); dr.x=e.clientX; dr.t=now; stack.style.transform='translate3d('+(d/dr.s).toFixed(1)+'px,0,0)'; de.style.translate=d.toFixed(1)+'px 0'; },{passive:true});
+function drEnd(e){ if(!dr) return; const o=dr; dr=null; if(!o.on){ de.style.transition=''; return; } const now=performance.now(), ov=o.x-o.x0, off=ov/o.s;
   const sp=Math.max(now-o.t<90?Math.abs(o.v):0, Math.abs(ov)/Math.max(16,now-o.t0));
   C.forEach(c=>{ c.x+=off; c.t+=off; }); anchor+=off; stack.style.transform=''; snapUntil=now+700; swiped=Date.now();   /* Versatz in die Lage uebernehmen, damit nichts springt */
-  if(Math.abs(ov)>innerWidth*.3||(sp>.3&&Math.abs(ov)>12)) step(ov<0?1:-1); }
+  const oldS=curS; if(Math.abs(ov)>innerWidth*.3||(sp>.3&&Math.abs(ov)>12)) step(ov<0?1:-1);
+  /* Text: bei neuer Tafel weiter hinaus, der neue Text kommt von der anderen Seite; sonst federt er zurueck */
+  de.style.transition=TXT_T;
+  if(curS!==oldS&&!reduce){ const dir=ov<0?-1:1; de.style.translate=(dir*innerWidth*.5).toFixed(0)+'px 0';
+    drStart.t=setTimeout(()=>{ de.style.transition='none'; de.style.translate=(-dir*innerWidth*.25).toFixed(0)+'px 0'; void de.offsetWidth; de.style.transition=TXT_T; de.style.translate='0px 0';
+      drStart.t=setTimeout(()=>{ de.style.transition=''; de.style.translate=''; },350); },190); }
+  else { de.style.translate='0px 0'; drStart.t=setTimeout(()=>{ de.style.transition=''; de.style.translate=''; },350); } }
 addEventListener('pointerup',drEnd); addEventListener('pointercancel',drEnd);
 addEventListener('pointerup',e=>{ if(px===null) return; const d=e.clientX-px; px=null; if(Math.abs(d)>40){ step(d<0?1:-1); swiped=Date.now(); } });
 // Vorschlag beim Lesen: linke Haelfte zurueck, rechte weiter, Zeiger zeigt die Richtung
