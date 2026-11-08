@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>YRD.Works – Practice</title>
+<meta name="description" content="YRD.Works ist ein interdisziplinäres Künstlerkollektiv aus Offenbach am Main mit Yacin Boudalfa, Ruben Fischer und David Bausch. Installation, Skulptur, Performance und partizipative Formate im öffentlichen Raum.">
+<meta property="og:title" content="YRD.Works – Practice">
+<meta property="og:image" content="https://yrd.works/Bilder/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
 <script>/* Merkzeichen fuer die Hauptseite: dort erscheint dann Practice in Kopf und Menue (site.js, Ruben 08.11.) */
 try{ localStorage.setItem("yrd-practice","1"); }catch(e){}
 </script>
@@ -23,14 +27,20 @@ try{ localStorage.setItem("yrd-practice","1"); }catch(e){}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
 body{color:var(--ink);font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1.3rem;font-weight:550;line-height:1.22;-webkit-font-smoothing:antialiased}
 a{color:var(--ink);text-decoration:none}
-a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink)!important;outline-offset:3px!important}   /* Review 08.11.: Fokus ueberall gleich (DESIGN.md), auch bei Knoepfen mit all:unset */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .caption{font-size:1.05rem;font-weight:420}
 .n{color:var(--ink-4)}
 
 .nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;padding:var(--pad);pointer-events:none}
 .nav a{pointer-events:auto}
 .nav .links{display:flex;gap:1em}
-@media (hover:hover){ .nav a:hover{text-decoration:underline;text-underline-offset:.18em} }
+/* wie Hauptseite (style.css): Menuepunkte und YRD.Works wackeln beim Hovern einmal leicht, statt unterstrichen zu werden (Ruben 08.11.) */
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-3deg)}45%{transform:rotate(2.2deg)}70%{transform:rotate(-1deg)}}
+.nav > a,.nav .links a{display:inline-block;transform-origin:0 50%}
+@media (hover:hover) and (pointer:fine){ .nav > a:hover,.nav .links a:hover{animation:wiggle .5s ease-in-out} }
+@media (prefers-reduced-motion:reduce){ .nav > a:hover,.nav .links a:hover{animation:none} }
+::selection{background:rgb(0,0,255);color:#fff}
 
 /* Raum mit Bodenraster wie auf der 3D-Seite */
 #scene{position:fixed;inset:0;perspective:1600px;perspective-origin:50% 36%;overflow:hidden}
@@ -39,6 +49,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset
   background-image:linear-gradient(rgba(0,0,255,.16) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(0,0,255,.16) 1.5px,transparent 1.5px);background-size:80px 80px;
   -webkit-mask-image:radial-gradient(closest-side,#000 35%,transparent 100%);mask-image:radial-gradient(closest-side,#000 35%,transparent 100%)}
 #stack{position:absolute;left:0;top:0;transform-style:preserve-3d}
+html.vorschlag:not(.fitok) #scene{opacity:0}
+html.vorschlag #scene{transition:opacity .45s var(--e-out)}   /* Stapel erst zeigen, wenn das Band eingepasst ist, sonst sieht man es nach links rutschen (Ruben 08.11.) */
 .card{position:absolute;left:0;top:0;transform-style:preserve-3d}
 .card .pic{position:absolute;left:0;bottom:0;transform-origin:50% 100%;transition:transform var(--t-mid) var(--e-out)}
 .card img,.card video{display:block;height:var(--h);width:auto;user-select:none;-webkit-user-drag:none;background:rgba(0,0,255,.08)}
@@ -53,7 +65,7 @@ html.f32 .card img,html.f32 .card video{width:calc(var(--h) * 1.5);object-fit:co
 #intro-w{font-size:clamp(1.6rem,3.6vw,4.5rem);font-weight:550;line-height:1;letter-spacing:-.01em;text-align:center;white-space:nowrap}
 html.intro-on,html.intro-on body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){ #intro{transition:none} }
-.nav .links a[aria-current]{text-decoration:underline;text-underline-offset:.18em}
+.nav .links a[aria-current]{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
 .mmb,.mml{display:none}
 @media (max-width:700px){
   /* Handy: Menue wie auf der Website statt der Linkzeile */
@@ -108,12 +120,12 @@ html.isov.nosp #isogrid{-webkit-mask-position:-28vw 0;mask-position:-28vw 0}
 html.vorschlag #floor{transition:opacity 1.4s var(--e-out)}
 html.vorschlag.lesen #floor{opacity:0}
 /* Setzung wie in der 2D-Projektansicht (style.css .proj-bi): DE voll, EN kursiv und blass, Hover ueber EN tauscht die beiden (Ruben 07.11.) */
-html.vorschlag .say .s{text-wrap:pretty;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:8 4 4;overflow-wrap:break-word;transition:color var(--t-fast) var(--e-out)}
+html.vorschlag .say .s{text-wrap:pretty;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:10 5 5;overflow-wrap:break-word;transition:color var(--t-fast) var(--e-out)}
 html.vorschlag #en .s{font-style:italic;color:var(--ink)}
 @media (hover:hover) and (pointer:fine){
-  html.vorschlag #en .s{color:rgba(0,0,255,.3)}
+  html.vorschlag #en .s{color:var(--ink-4)}   /* Review 08.11.: 65 % statt 30 % Deckkraft (Kontrast 4,9 statt 1,9 : 1) */
   html.vorschlag:has(#en:hover) #en .s{color:var(--ink)}
-  html.vorschlag:has(#en:hover) #de .s{color:rgba(0,0,255,.3)}
+  html.vorschlag:has(#en:hover) #de .s{color:var(--ink-4)}
   html.vorschlag.lesen .say{pointer-events:auto}
 }
 html.vorschlag .say .c{display:none}
@@ -126,7 +138,7 @@ html.vorschlag .card{transition:opacity .8s var(--e-out)}
 html.vorschlag .say{width:min(31rem,42vw);background:none;padding:0;margin:0}
 html.vorschlag #de{left:auto;right:calc(50% + 1rem)}
 html.vorschlag #en{right:auto;left:calc(50% + 1rem)}
-html.vorschlag .say .s{font-size:1.1rem;line-height:1.25}
+html.vorschlag .say .s{font-size:1.3rem;line-height:1.22}   /* Review 08.11.: Fliesstext-Stufe aus DESIGN.md, vorher 1.1rem und damit kleiner als das Menue */
 html.vorschlag #en .num{visibility:hidden}   /* Nummer nur einmal, ueber dem deutschen Text */
 html.vorschlag .say .num{display:block;color:var(--ink-4);margin-bottom:.35rem;font-variant-numeric:tabular-nums}
 html.vorschlag p#hint{display:none}
@@ -145,9 +157,16 @@ html.vorschlag.lesen #hint{opacity:0}
 .fbar{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);z-index:12;
   display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 var(--fb-in);border-radius:10em;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink)}
 .fbar .l{justify-self:start}.fbar .c{justify-self:center;display:flex;gap:.6em}.fbar .r{justify-self:end;font-variant-numeric:tabular-nums;white-space:nowrap}
-.pill{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink)}
-@media (hover:hover){ .pill:hover{background:rgba(0,0,255,.08)} }
+.pill{display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);transform-origin:50% 50%;transition:background var(--t-fast) var(--e-out),color var(--t-fast) var(--e-out)}
+@media (hover:hover) and (pointer:fine){ .pill:hover{background:rgba(0,0,255,.08);animation:wiggle .5s ease-in-out} }   /* wie die Pillen in der Leiste der 3D-Ansicht */
+@media (prefers-reduced-motion:reduce){ .pill:hover{animation:none} }
 .fbar .r{display:flex;align-items:center;gap:.6em}
+/* Overview / Walk wie auf der 3D-Seite (Ruben 08.11.): Pille mit Umriss, gewaehlt blau mit weisser Schrift; Overview = isometrischer Ueberblick, Walk = Tafeln aufgeklappt */
+#navmode .seg{display:inline-flex;align-items:center;gap:.35em;line-height:1}   /* wie 3D (style.css 30.10.): einzelne Pillen, dazwischen ein schmaler Pfeil, gewaehlt blau gefuellt */
+#navmode button{all:unset;cursor:pointer;display:block;text-align:center;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);line-height:1;transition:background .2s ease,color .2s ease}
+#navmode button[aria-pressed="true"]{background:var(--ink);color:var(--bg);cursor:default}
+@media (hover:hover) and (pointer:fine){ #navmode button:not([aria-pressed="true"]):hover{background:rgba(0,0,255,.08)} }
+#navmode .sep{color:var(--ink);line-height:1;opacity:.6;pointer-events:none}
 /* Themenpunkte wie im Gang (practice/index.html) */
 .fdots{display:inline-flex;align-items:center;gap:.2em}
 .fdots button{appearance:none;border:0;background:none;padding:.35em .3em;margin:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -167,9 +186,9 @@ html.vorschlag:not(.ovda) #lst button{pointer-events:none}
 #lst .satz{margin:0 0 .9rem;font-size:1.08rem;line-height:1.25;max-width:26rem}
 #lst .g{color:var(--ink);font-size:1.08rem;line-height:1.2;font-weight:550;margin:1rem 0 .3rem}
 #lst .g .gn{display:inline-block;width:2em;color:var(--ink-4);font-weight:400}
-#lst ol{padding-left:2em!important}
+#lst ol{padding-left:0!important}
 #lst li.ab{margin-top:.55rem}
-html.pillen #lst ol{font-size:1.15rem;display:flex;flex-direction:column;align-items:flex-start;gap:.32rem}
+html.pillen #lst ol{font-size:1.15rem;display:flex;flex-direction:column;align-items:flex-start;gap:.35rem}
 html.pillen #lst li.ab{margin-top:.5rem}
 html.pillen #lst button{padding:.28em .8em .24em .55em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);line-height:1.1}
 html.pillen #lst button .n{width:auto;margin-right:.55em}
@@ -203,32 +222,74 @@ html.lesen #vor,html.vorschlag:not(.ovda) #vor{opacity:0}
 #vor .t .p{display:inline-block;padding:.28em .8em .24em .55em;border-radius:10em;background:var(--ink);color:var(--bg)}
 #vor .t .pn{color:rgba(255,255,255,.7);margin-right:.55em;font-variant-numeric:tabular-nums}
 #vor .te{color:var(--ink-4);font-style:italic;margin:0 0 .8rem .55em}
-#vor .l{display:flex;flex-wrap:wrap;gap:.3rem;margin:0 0 .9rem}
-#vor .l span{font-size:.82rem;line-height:1;padding:.32em .7em .28em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg)}
 #vor .d{font-size:1.02rem;line-height:1.32}
 @media (max-width:700px){ #vor{display:none} }
+/* Probe Klapptext (Ruben 08.11.): Tafeltext unter der Pille statt im Textfeld rechts. ?klapp=schieben (Klick, Pillen darunter ruecken nach unten) oder ?klapp=decken (Hover, Text liegt ueber den naechsten Pillen) */
+html.klapp #vor{display:none}
+#lst li{position:relative}
+#lst .kt{display:none}
+html.klapp #lst .kt{display:block;box-sizing:border-box;font-size:1.05rem;line-height:1.3;text-wrap:pretty;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:10 5 5;color:var(--ink);padding-left:var(--ktin,.55em);pointer-events:none;opacity:0;white-space:normal}
+html.klapp #lst .kt p{margin:0}
+html.klapp #lst li.auf .kt{opacity:1;pointer-events:auto}
+html.klapp-schieben #lst .kt{height:0;overflow:hidden;transition:height .35s var(--e-out),opacity .25s var(--e-out)}
+html.klapp-schieben #lst .kt .in{padding:.35rem 0 .35rem}
+html.klapp-schieben #lst .kt .zu{all:unset;cursor:pointer;display:inline-block;margin-top:.45rem;color:var(--ink-4);text-decoration:underline;text-underline-offset:.18em}
+html.klapp-schieben #lst .kt .zu:hover,html.klapp-schieben #lst .kt .zu:focus-visible{color:var(--ink)}
+html.klapp-hover #lst ol{pointer-events:auto;width:max-content}
+html.pillen.klapp-hover #lst ol{gap:.7rem}
+html.klapp #lst .k{display:none}
+html.vz-split #lst .blk2{position:absolute;top:0}
+html.vz-split.klapp #lst .g.trenn{border-top:0;padding-top:0;margin-top:0;width:auto}   /* Review 08.11.: Inhalt entfaellt, die Ueberschriften sagen es selbst (Textfeld-Fassung ?klapp=aus behaelt es) */
+html.klapp #lst .g{font-size:1.05rem;font-weight:420;color:var(--ink-4);margin:0 0 .7rem}   /* Ueberschriften als Label, klar abgesetzt von den Pillen */
+#lst .g.trenn,html.klapp #lst .g.trenn{width:var(--lw,max-content);margin-top:1rem;padding-top:.7rem;border-top:2px solid var(--line)}   /* Strich ueber der Ueberschrift Kompetenzen (Pillen 13 bis 15), so breit wie die Pillenspalte (Ruben 08.11.) */   /* mehr Abstand, damit man nicht so schnell durch die Pillen faehrt (Ruben 08.11.) */   /* Luecken zwischen den Pillen gehoeren zum Verzeichnis, damit dort nichts zuklappt */
+html.klapp-decken #lst .kt{position:absolute;left:0;top:100%;z-index:3;background:var(--bg);padding:.35rem 0 .7rem var(--ktin,.55em);transition:opacity .2s var(--e-out)}
+html.klapp-decken #lst li.auf{z-index:4}
+@media (max-width:700px){ html.klapp #lst .kt{display:none} }
+#en{display:none!important}   /* einsprachig seit 08.11.: zweite Textspalte aus, der Text steht in #de (EN-Fassung ?en) */
 #lst .en{color:var(--ink-4);font-style:italic;font-size:.85rem;line-height:1.3;margin:.7rem 0 0}
-.say .num .lz{margin-left:.6em;color:var(--ink)}
-#zus{position:fixed;inset:0;z-index:40;background:rgba(255,255,255,.97);display:none;overflow:auto;padding:5.5rem var(--pad) 7rem}
-#zus.auf{display:block}
-#zus .in{max-width:46rem;margin:0 auto}
-#zus h2{font-weight:550;font-size:1.9rem;line-height:1.1;margin:0 0 1.4rem}
-#zus ol{margin:0;padding:0;list-style:none;counter-reset:z}
-#zus ol li{counter-increment:z;display:grid;grid-template-columns:2.6rem 1fr;padding:.75rem 0;border-top:1px solid var(--line);font-size:1.15rem;line-height:1.3}
-#zus ol li::before{content:counter(z,decimal-leading-zero);color:var(--ink-4);font-variant-numeric:tabular-nums}
-#zus ol li b{font-weight:550;display:block}
-#zus .ag{margin-top:2rem;padding-top:.75rem;border-top:1px solid var(--line);font-size:1.15rem}
-#zus .x{position:fixed;top:1rem;right:var(--pad);font:inherit;color:var(--ink);background:none;border:0;cursor:pointer;font-size:1.4rem}
-.probe{color:#c2410c}
-@media (max-width:700px){ #lst{display:none} #zusb{display:none} }
+.say .num .wp{display:inline-block;font-size:1.3rem;font-weight:550;line-height:1.1;padding:.28em .8em .24em .55em;border-radius:10em;background:var(--ink);color:var(--bg);white-space:nowrap}
+.say .num .wn{color:rgba(255,255,255,.7);margin-right:.55em;font-variant-numeric:tabular-nums}
+/* Ueberschrift im Walk dezenter (Ruben 08.11.): Pille mit Umriss wie im Verzeichnis statt blau gefuellt; Probe ?wp=label: nur Nummer und Titel als Label ohne Pille */
+.say .num .wp{background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.say .num .wp .wn{color:var(--ink-4)}
+html.wp-label .say .num .wp{box-shadow:none;padding-left:0;padding-right:0;color:var(--ink-4);font-weight:420}
+html.wp-label .say .num .wp .wn{color:var(--ink-4)}
+html.vorschlag .say .num{margin-bottom:.7rem}
+@media (max-width:700px){ #lst{display:none} }
+/* Handy-Fassung (Ruben 08.11., Klick-Formular): Leiste wie 3D-Handy ohne Punkte, links Pille Inhalt, rechts Overview › Walk in 15 px;
+   Inhalt oeffnet das Verzeichnis als Liste ueber dem Stapel, Tippen auf eine Pille oeffnet die Tafel im Walk (kein Klapptext);
+   Pille im Walk 15 px, damit alle 15 in eine Zeile passen; EN-Text scrollt, wenn er sonst unter die Leiste liefe */
+#inhb{display:none;font:inherit;border:0;cursor:pointer}
+@media (max-width:700px){
+  .fbar{font-size:15px}
+  .fbar .c{display:none}
+  .fbar .r{grid-column:3}
+  .fbar .l #inhb{display:inline-block}
+  #navmode button,.fbar .l #inhb{padding:.45em .95em .4em}
+  #inhb.an{background:var(--ink);color:var(--bg)}
+  .say .num .wp{font-size:16px}
+  html.vorschlag .say .s{font-size:16px;line-height:1.3}   /* Walk (Ruben 09.11., Probe A): Ueberschrift und Text gleich gross, Handy 16 px statt 19,5 */
+  html.pillen #lst{display:block;position:fixed;inset:0;width:auto;margin:0;translate:none;z-index:9;padding:4.6rem var(--pad) calc(var(--fb-b) + var(--fb-h) + 1.4rem);background:rgba(255,255,255,.97);overflow-y:auto;-webkit-overflow-scrolling:touch;
+    opacity:0;visibility:hidden;transform:none;pointer-events:none;transition:opacity .25s var(--e-out),visibility 0s linear .25s}
+  html.pillen.inh #lst{opacity:1!important;visibility:visible;transform:none!important;pointer-events:auto!important;transition:opacity .25s var(--e-out)}
+  html.pillen.inh #lst button{pointer-events:auto!important}
+  html.pillen.klapp-hover #lst ol{font-size:15px;gap:.35rem;width:auto}
+  html.pillen #lst .g{pointer-events:none!important}
+  html.pillen #lst button,.say .num .wp{white-space:normal;max-width:100%;border-radius:1.1em}   /* EN-Titel sind laenger: lange Pillen brechen auf schmalen Handys um, statt ueber den Rand zu ragen; einzeilig bleibt die Pillenform */
+  html.pillen #lst button{display:flex;align-items:baseline}
+  html.vorschlag.lesen #de{overflow-y:auto;pointer-events:auto;overscroll-behavior:contain}
+  html.vorschlag #de.eng{-webkit-mask-image:linear-gradient(#000 calc(100% - 1.4em),transparent);mask-image:linear-gradient(#000 calc(100% - 1.4em),transparent)}
+}
 
 
 </style>
 </head>
 <body>
+<script>setTimeout(function(){ document.documentElement.classList.add("fitok"); },4000);   /* Sicherheitsnetz: spaetestens nach 4 s ist der Stapel sichtbar */</script>
+<h1 class="sr">YRD.Works – Practice</h1>
 <div id="intro" aria-hidden="true"><div id="intro-w"></div></div>
 <header class="nav"><a href="../">YRD.Works</a><span class="links"><a href="./" aria-current="page">Practice</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></span><button type="button" class="mmb" aria-expanded="false" aria-controls="mml">Menu</button></header>
-<nav id="mml" class="mml" hidden aria-label="Menu"><a href="./" aria-current="page">Practice</a><a href="#zus" class="zusm">Zusammenarbeit</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></nav>
+<nav id="mml" class="mml" hidden aria-label="Menu"><a href="./" aria-current="page">Practice</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a><a href="../impressum/">Impressum</a><a href="../datenschutz/">Datenschutz</a></nav>
 
 <div id="isogrid" aria-hidden="true"></div>
 <div id="scene" aria-hidden="true"><div id="rig"><div id="floor"></div><div id="ring"></div><div id="stack"></div></div></div>
@@ -236,15 +297,14 @@ html.lesen #vor,html.vorschlag:not(.ovda) #vor{opacity:0}
 <p id="de" class="say" lang="de" aria-live="polite"><span class="num caption"></span><span class="s"></span><span class="c caption n"></span></p>
 <p id="en" class="say" lang="en"><span class="num caption" aria-hidden="true"></span><span class="s"></span><span class="c caption n"></span></p>
 
-<div id="lst"><p class="k caption">Inhalt <span class="probe">· Entwurf</span></p><p class="g"><span class="gn">A</span>Was wir machen</p><ol><li><button type="button" data-k="0"><span class="n">01</span>Leerstand aktivieren<span class="e">Activating vacancy</span></button></li><li><button type="button" data-k="1"><span class="n">02</span>Im öffentlichen Raum intervenieren<span class="e">Intervening in public space</span></button></li><li><button type="button" data-k="2"><span class="n">03</span>Stadtraum auf Zeit bespielen<span class="e">Animating urban space for a time</span></button></li><li><button type="button" data-k="3"><span class="n">04</span>Kultur in den ländlichen Raum bringen<span class="e">Bringing culture to rural areas</span></button></li><li class="ab"><button type="button" data-k="4"><span class="n">05</span>Ausstellungsarchitektur entwickeln<span class="e">Developing exhibition architecture</span></button></li><li><button type="button" data-k="5"><span class="n">06</span>Lernorte gestalten<span class="e">Designing places of learning</span></button></li><li><button type="button" data-k="6"><span class="n">07</span>Begehbare Installationen bauen<span class="e">Building walk-in installations</span></button></li><li><button type="button" data-k="7"><span class="n">08</span>Bühnen für andere bauen<span class="e">Building stages for others</span></button></li><li><button type="button" data-k="8"><span class="n">09</span>Neue Formate erfinden<span class="e">Inventing new formats</span></button></li><li><button type="button" data-k="9"><span class="n">10</span>Dritte Orte betreiben<span class="e">Running third places</span></button></li></ol><p class="g"><span class="gn">B</span>Wie wir arbeiten</p><ol><li><button type="button" data-k="10"><span class="n">11</span>Mit dem Bestand bauen<span class="e">Building with what is there</span></button></li><li><button type="button" data-k="11"><span class="n">12</span>Beteiligung organisieren<span class="e">Organising participation</span></button></li><li><button type="button" data-k="12"><span class="n">13</span>Mehrere Zugänge schaffen<span class="e">Creating several ways in</span></button></li><li><button type="button" data-k="13"><span class="n">14</span>Von der Idee bis zur Umsetzung begleiten<span class="e">From idea to completion</span></button></li><li><button type="button" data-k="14"><span class="n">15</span>Gewerke steuern und Genehmigungen koordinieren<span class="e">Managing trades and coordinating permits</span></button></li></ol></div>
-<div id="vor" aria-hidden="true"><p class="n caption"></p><p class="t"><span class="p"><span class="pn"></span><span class="pt"></span></span></p><p class="te caption"></p><p class="l"></p><p class="d"></p></div>
-<div id="zus" role="dialog" aria-label="Zusammenarbeit" aria-modal="true"><button type="button" class="x" aria-label="Schließen">×</button><div class="in"><h2>Wie eine Zusammenarbeit abläuft <span class="probe caption">· Platzhalter</span></h2><ol><li><span><b>Anfrage und erstes Gespräch</b>Ort, Anlass, Budgetrahmen, Zeitplan.</span></li><li><span><b>Konzept</b>Idee, Nutzung, erste Skizzen und Kostenschätzung.</span></li><li><span><b>Planung und Genehmigung</b>Abstimmung mit Behörden, Statik und Fachplanung, Auflagen.</span></li><li><span><b>Bau</b>eigene Produktion oder Steuerung der Gewerke, Budget und Ablauf.</span></li><li><span><b>Betrieb oder Abbau</b>Programm, Übergabe an das Haus oder Rückbau.</span></li></ol><p class="ag"><span class="caption" style="color:var(--ink-4)">Zusammengearbeitet mit</span><br><span class="probe">[Auftraggeber*innen folgen, Namen von Ruben]</span></p></div></div>
-<p id="hint" class="caption">Scrollen, um den Stapel aufzuklappen<br>Scroll to open the stack</p>
+<div id="lst"><p class="k caption">Inhalt</p><p class="g">Arbeitsfelder</p><ol><li><button type="button" data-k="0"><span class="n">01</span>Zwischennutzungen im Leerstand<span class="e">Interim uses in vacant buildings</span></button></li><li><button type="button" data-k="1"><span class="n">02</span>Bildstarke Interventionen im Stadtraum<span class="e">Visually striking interventions in urban space</span></button></li><li><button type="button" data-k="2"><span class="n">03</span>Temporäre Architektur und Verstetigung<span class="e">Temporary architecture and permanence</span></button></li><li><button type="button" data-k="3"><span class="n">04</span>Kulturprojekte im ländlichen Raum<span class="e">Cultural projects in rural areas</span></button></li><li><button type="button" data-k="4"><span class="n">05</span>Ausstellungsarchitektur als Position<span class="e">Exhibition architecture as a position</span></button></li><li><button type="button" data-k="5"><span class="n">06</span>Lernorte und Wissensvermittlung<span class="e">Places of learning and knowledge transfer</span></button></li><li><button type="button" data-k="6"><span class="n">07</span>Zwischen Skulptur und Architektur<span class="e">Between sculpture and architecture</span></button></li><li><button type="button" data-k="7"><span class="n">08</span>Kunstwerke als Bühnen und Displays<span class="e">Artworks as stages and displays</span></button></li><li><button type="button" data-k="8"><span class="n">09</span>Formate jenseits des Ausstellungsraums<span class="e">Formats beyond the exhibition space</span></button></li><li><button type="button" data-k="9"><span class="n">10</span>Dritte Orte für reale Begegnung<span class="e">Third places for real encounters</span></button></li><li><button type="button" data-k="10"><span class="n">11</span>Bestand als Ausgangspunkt<span class="e">The existing as a starting point</span></button></li><li><button type="button" data-k="11"><span class="n">12</span>Soziale und partizipative Kunstprojekte<span class="e">Social and participatory art projects</span></button></li></ol><p class="g trenn">Kompetenzen</p><ol><li><button type="button" data-k="12"><span class="n">13</span>Konzept und Entwurf<span class="e">Concept and design</span></button></li><li><button type="button" data-k="13"><span class="n">14</span>Von der Idee bis zur Umsetzung<span class="e">From idea to realisation</span></button></li><li><button type="button" data-k="14"><span class="n">15</span>Projektsteuerung mit Partnern<span class="e">Project management with partners</span></button></li></ol></div>
+<div id="vor" aria-hidden="true"><p class="n caption"></p><p class="t"><span class="p"><span class="pn"></span><span class="pt"></span></span></p><p class="te caption"></p><p class="d"></p></div>
+<p id="hint" class="caption">Scrollen, um den Stapel aufzuklappen</p>
 
 <nav class="fbar caption" aria-label="Practice">
-  <span class="l"><a class="pill" href="#zus" id="zusb">Zusammenarbeit</a></span>
+  <span class="l"><button type="button" class="pill" id="inhb" aria-expanded="false" aria-controls="lst">Inhalt</button></span>
   <span class="c"><span class="fdots" id="fdots" role="navigation" aria-label="Themen"></span></span>
-  <span class="r"><span id="cnt" class="n"></span><a class="pill" href="../impressum/">Impressum</a><a class="pill" href="../datenschutz/">Datenschutz</a></span>
+  <span class="r"><span id="cnt" class="n"></span><span id="navmode" role="group" aria-label="Overview / Walk"><span class="seg"><button type="button" data-nav="oben" aria-pressed="true">Overview</button><span class="sep" aria-hidden="true">›</span><button type="button" data-nav="rund" aria-pressed="false">Walk</button></span></span></span>
 </nav>
 
 <script>
@@ -275,12 +335,12 @@ const S=[
   "We take the challenges of an existing building as the starting point for our design. Low ceilings, old beams or little daylight are not concealed; we make them part of the work."],
  ["Wir entwickeln partizipative und soziale Projekte, die Menschen und Communities aktiv einbeziehen. Gesellschaftliche Themen, Selbstwirksamkeit und Teilhabe werden dabei zur gelebten Situation, nicht zur illustrierten Botschaft.",
   "We develop participatory and social projects that actively involve people and communities. Social issues, self-efficacy and participation become a lived situation rather than an illustrated message."],
- ["Wir machen sichtbar, was sonst im Hintergrund bleibt, von Technik bis zu Arbeitsprozessen. Unsere Arbeiten haben oft mehrere Zugangsebenen: Auch wer sich nicht für Kunst interessiert, kann sie nutzen und mit ihnen interagieren.",
-  "We make visible what usually stays in the background, from technology to working processes. Our works often have several levels of access: even people with no interest in art can use them and interact with them."],
+ ["Unsere Projekte beginnen mit einem Konzept, das Raum, Nutzung und Wirkung zusammendenkt. 3D-Modelle und Pläne sind unsere Werkzeuge, um diese Idee auszuarbeiten und mit allen Beteiligten abzustimmen.",
+  "Our projects begin with a concept that brings space, use and effect together. 3D models and plans are our tools for developing this idea and coordinating it with everyone involved."],
  ["Große Projekte begleiten wir von der ersten Idee bis zur fertigen Umsetzung. Mit unserer Erfahrung von zahlreichen Projektbaustellen, auf denen wir selbst gebaut haben, kennen wir Material, Konstruktion und Aufwand und halten, was wir zusagen.",
   "We take large projects from the first idea through to completion. With experience from many building sites where we did the construction ourselves, we know materials, construction and effort, and we deliver what we promise."],
- ["Für die Umsetzung unserer Konzepte koordinieren wir die beteiligten Gewerke und übernehmen bei Bedarf die Projektsteuerung für unsere Auftraggeber*innen. Dazu gehören die Abstimmung mit Behörden und Fachplanung ebenso wie Budget und Ablauf.",
-  "To realise our concepts, we coordinate the trades involved and take on project management for our clients where needed. This includes coordinating with authorities and specialist planners as well as managing budget and schedule."]
+ ["Für große Projekte stellen wir das passende Team zusammen, oft mit Partnern für Fachplanung, Statik und Produktion. Wir übernehmen die Projektsteuerung, stimmen uns mit Behörden ab und behalten Budget und Ablauf im Blick.",
+  "For large projects we put together the right team, often with partners for specialist planning, structural engineering and production. We take on project management, coordinate with the authorities and keep budget and schedule in view."]
 
 ];
 // Bilder und Filme, Zuordnung zu den Saetzen wie in zeitlos.html
@@ -310,7 +370,14 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, touch=match
 const ROT=-90;   // Ruhelage: Bilder quer zum Band (Ruben 07.11.)
 // Ansicht (Ruben 07.11.): Perspektive, Raster 45 Grad (Isometrie verworfen).
 // Zum Vergleich: ?iso = isometrisch, ?raster=20 andere Drehung, ?mix = Bild dreht nur 45 Grad
-const Q=new URLSearchParams(location.search||'?vorschlag&format=32&nb=.2')   /* Hauptseite (Ruben 07.11.): Vorschlag, alle Formate 3:2, Nachbarn mittlerer Abstand */, MIX=Q.has('mix'), VOR=Q.has('vorschlag')||Q.has('kreis');
+/* Sprache (Ruben 08.11.): Seite einsprachig, DE unter practice/, EN unter practice/?en, kein Umschalter (es wird gezielt verschickt) */
+const Q0=new URLSearchParams(location.search), EN=Q0.has('en'); Q0.delete('en'); window.__EN=EN; const L=EN?1:0;
+if(EN){ document.documentElement.lang='en'; document.documentElement.classList.add('en');
+  document.querySelectorAll('#lst li > button').forEach(b=>{ const e=b.querySelector('.e'); if(e&&b.childNodes[1]) b.childNodes[1].textContent=e.textContent; });
+  const g=document.querySelectorAll('#lst .g'); if(g[0]) g[0].textContent='Fields of work'; if(g[1]) g[1].textContent='Competences';   /* Wortwahl Entwurf, zur Freigabe */
+  document.querySelector('#lst .k').textContent='Contents'; document.getElementById('inhb').textContent='Contents'; document.getElementById('lst').lang='en'; document.getElementById('de').lang='en'; }
+if(Q0.get('wp')==='label') document.documentElement.classList.add('wp-label'); Q0.delete('wp');
+const Q=new URLSearchParams(Q0.toString()||'vorschlag&format=32&nb=.2')   /* Hauptseite (Ruben 07.11.): Vorschlag, alle Formate 3:2, Nachbarn mittlerer Abstand */, MIX=Q.has('mix'), VOR=Q.has('vorschlag')||Q.has('kreis');
 const KREIS=Q.has('kreis');   // ?kreis: Stapel als Ring, von aussen gedreht (Gegenstueck zum 3D-Walk, Ruben 07.11.)
 if(KREIS){ Q.set('vorschlag',''); document.documentElement.classList.add('kreis'); }
 if(VOR||KREIS){ Q.set('schwenk',''); Q.set('unten',''); document.documentElement.classList.add('vorschlag'); }   // Vorschlag Claude 07.11.
@@ -425,7 +492,7 @@ function tick(){
   segGuard();
   if(KREIS){ kreisTick(); requestAnimationFrame(tick); return; }
   layout();
-  const k=reduce?1:.07;   // ruhige Fahrt
+  const k=reduce?1:(performance.now()<snapUntil?.2:.07);   // ruhige Fahrt; nach dem Wischen schnell einrasten wie im 3D-Walk
   if(SCHWENK&&ISOV&&VOR){
     /* Iso-Ueberblick (08.11.): ein gemeinsamer Fortschritt u (0 = Ueberblick, 1 = Lesen), Perspektive bleibt 1600 px;
        die isometrische Wirkung entsteht ueber grossen Abstand plus Massstab, so bleibt die Bildgroesse unterwegs stimmig */
@@ -444,7 +511,8 @@ function tick(){
     /* Anordnung als System (Ruben 08.11., Ziele): das Band so gross wie moeglich, kein Bild (auch herausgezogen) ueberlappt Verzeichnis,
        Textfeldbereich, Kopfzeile oder Leiste oder wird angeschnitten; gesucht wird die groesste Skalierung, bei der eine Lage passt,
        bevorzugt mittig. Sperrflaechen liefert das Verzeichnis-Skript (window.__sperr). */
-    if(uNow<.02&&!MOBO&&fitN<220&&window.__sperr&&!document.getElementById('stack').classList.contains('toc')&&!document.querySelector('#stack .card.on,#stack .card.zieh')){ fitN++;
+    if(fitN>=220||MOBO) document.documentElement.classList.add("fitok");
+    if(uNow<.02&&!MOBO&&fitN<220&&window.__sperr&&rigTop!==null&&Math.abs(rigTop-innerHeight*(ISO?.52:(ISOV?IH:.66)))<1.5&&(tick.ruhe||0)>10&&!document.getElementById('stack').classList.contains('toc')&&!document.querySelector('#stack .card.on,#stack .card.zieh')){ fitN++;
       const Rr=[], Vv=[]; els.forEach(a=>{ const r=a.querySelector('.pic').getBoundingClientRect(); if(r.width){ Rr.push([r.left-.21*r.width, r.top-.76*r.height, r.right+.21*r.width, r.bottom]); Vv.push([r.left,r.top,r.right,r.bottom]); } });   /* Platzbedarf herausgezogen, gemessen mit Playwright: oben 0,72 Bildhoehen, seitlich 0,19 Bildbreiten (plus Reserve) */
       if(Rr.length){
         const hb=document.querySelector('.nav a').getBoundingClientRect().bottom, fb=document.querySelector('.fbar').getBoundingClientRect().top;
@@ -470,24 +538,26 @@ function tick(){
     c.yy=(c.yy||0)+(((VOR&&hov<0)?(ISOV&&SPIEGEL?1:-1)*(i-(C.length-1)/2)*H*RISE:0)-(c.yy||0))*k;   // Ueberblick: Stapel steigt nach hinten an
     const fl=-(1-(c.sc||1))*H*FLUCHT;   // kleinere Aussenbilder fluchten zur Augenhoehe (Bildmitte) statt auf der Bodenlinie zu stehen (Ruben 07.11.)
     els[i].style.transform="translate3d("+c.x.toFixed(1)+"px,"+(c.yy+fl).toFixed(1)+"px,"+(c.z-(c.o!==undefined?c.o:i)*2+(c.dp||0)).toFixed(1)+"px) rotateY("+c.r.toFixed(2)+"deg) scale("+(c.sc||1).toFixed(3)+")"; });
+  { let mv=0; C.forEach(c=>{ mv=Math.max(mv,Math.abs((c.yy||0)-(c.pyy||0)),Math.abs(c.x-(c.px||0))); c.pyy=c.yy||0; c.px=c.x; }); tick.ruhe=mv<.3?(tick.ruhe||0)+1:0; }   /* Band erst einpassen, wenn die Bilder nach dem Laden fertig aufgefaechert sind (vorher wurde ein gestauchtes Band gemessen) */
   // gewaehltes Bild in die Bildmitte: der ganze Stapel schiebt sich nach, bis es mittig steht
   // gewaehltes Bild auf 50 % / 50 % (Ruben 07.11.): waagerecht schiebt sich der Stapel, senkrecht der ganze Raum
   const rig=document.getElementById("rig");
   if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
   if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect();
-    anchor-=((r.left+r.width/2)-innerWidth/2)*(reduce?1:.06);
+    if(!(dr&&dr.on)) anchor-=((r.left+r.width/2)-innerWidth/2)*(reduce?1:(performance.now()<snapUntil?.2:.06));   /* waehrend des Wischens nicht gegensteuern, danach schnell einrasten */
     // bei niedrigen Fenstern rueckt das Bild hoeher, damit die Texte ueber der Leiste Platz haben
     const MOB=VOR&&innerWidth<=700;
     if(MOB){ const pad=16, tw=innerWidth-2*pad; distRead-=(r.width-tw)*(reduce?2:.6); distRead=Math.max(-4000,Math.min(-150,distRead)); }
-    let cy=innerHeight*MY, lim=innerHeight; if(MOB) cy=64+r.height/2; else if(VOR&&innerWidth>700){ const th=Math.max(de.offsetHeight,en.offsetHeight); lim=document.querySelector(".fbar").getBoundingClientRect().top-20-th; cy=Math.min(cy,lim-36-r.height/2); }
+    let cy=innerHeight*MY, lim=innerHeight; if(MOB){ const t0=document.querySelector(".nav a").getBoundingClientRect().bottom+24, t1=document.querySelector(".fbar").getBoundingClientRect().top-16, bh=r.height+18+de.scrollHeight; cy=Math.max(t0,t0+(t1-t0-bh)/2)+r.height/2; }   /* Handy (Ruben 08.11.): Bild und Text als Ganzes senkrecht mittig zwischen Kopfzeile und Leiste */ else if(VOR&&innerWidth>700){ const th=Math.max(de.offsetHeight,en.offsetHeight); lim=document.querySelector(".fbar").getBoundingClientRect().top-36-th;   /* Review 08.11.: unter dem Text so viel Luft wie zwischen Bild und Text */ cy=Math.min(cy,lim-36-r.height/2); }
     rigTop-=((r.top+r.height/2)-cy)*(reduce?1:.06);
     // Vorschlag: Texte beziehen sich auf das Bild, DE an der linken, EN an der rechten Bildkante (Ruben 07.11.)
-    if(VOR&&innerWidth>700){ const half=Math.max(160,r.width/2-14); de.style.left=r.left.toFixed(1)+"px"; de.style.right="auto"; de.style.width=half.toFixed(1)+"px";
-      en.style.left=(r.right-half).toFixed(1)+"px"; en.style.right="auto"; en.style.width=half.toFixed(1)+"px";
-      const top=Math.min(r.bottom+36,lim)+"px"; de.style.top=en.style.top=top; de.style.bottom=en.style.bottom="auto"; }
+    if(VOR&&innerWidth>700){ const wpw=(de.querySelector('.wp')||{}).offsetWidth||0, half=Math.max(160,r.width*2/3,Math.min(wpw,r.width));   /* einsprachig (Ruben 08.11.): eine Spalte, zwei Drittel der Bildbreite, die Pille passt immer hinein */ de.style.left=r.left.toFixed(1)+"px"; de.style.right="auto"; de.style.width=half.toFixed(1)+"px";
+      const top=Math.min(r.bottom+36,lim)+"px"; de.style.top=top; de.style.bottom="auto"; }
     if(MOB){ de.style.left=en.style.left="16px"; de.style.right=en.style.right="16px"; de.style.width=en.style.width="auto"; de.style.bottom=en.style.bottom="auto";
-      de.style.top=(r.bottom+18).toFixed(1)+"px"; en.style.top=(r.bottom+18+de.offsetHeight+10).toFixed(1)+"px"; } }   // beide Texte haengen gleich hoch unter dem Bild
+      const dT=r.bottom+18; de.style.top=dT.toFixed(1)+"px";
+      const room=document.querySelector(".fbar").getBoundingClientRect().top-16-dT, full=de.scrollHeight; de.style.maxHeight=room<full-1?Math.max(80,room).toFixed(0)+"px":""; de.classList.toggle("eng",room<full-1); } }   /* Handy (08.11.): Text scrollt, statt unter die Leiste zu laufen */   // beide Texte haengen gleich hoch unter dem Bild
   else { rigTop+=(innerHeight*(ISO?.52:(ISOV?IH:.66))-rigTop)*(reduce?1:(ISOV&&VOR?.14:.05));   /* Iso-Ueberblick: Hoehe schneller zurueck, sonst laeuft das Band nach dem Lesen in die Navigation */
+    if(de.style.maxHeight){ de.style.maxHeight=""; de.classList.remove("eng"); }
     if(VOR&&de.style.width){ de.style.left=de.style.right=de.style.width=de.style.top=de.style.bottom=""; en.style.left=en.style.right=en.style.width=en.style.top=en.style.bottom=""; } }
   rig.style.top=rigTop.toFixed(1)+"px";
   requestAnimationFrame(tick);
@@ -496,7 +566,7 @@ function tick(){
 // Text
 let curS=-1;
 function say(s,cap){
-  if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][0]; en.querySelector('.s').textContent=S[s][1]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
+  if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][L]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
   de.querySelector('.c').textContent=cap; en.querySelector('.c').textContent=cap;
 }
 function pick(i){
@@ -506,12 +576,16 @@ function pick(i){
   const v=els[i].querySelector('video'); if(v) v.play().catch(()=>{});
   say(C[i].s,C[i].c); dots(C[i].s);
   cnt.textContent=VOR?C[i].c:String(i+1).padStart(2,'0')+' / '+String(C.length).padStart(2,'0');   // Vorschlag: Nummer steht schon ueber dem Text
-  document.documentElement.classList.add('lesen');
+  document.documentElement.classList.add('lesen'); lastHov=i; navSet(true);
 }
 function release(){
   if(hov>=0){ const v=els[hov].querySelector('video'); if(v) v.pause(); els[hov].classList.remove('on'); }
-  hov=-1; anchor=null; cnt.textContent=VOR?HINT:''; document.documentElement.classList.remove('lesen');
+  hov=-1; anchor=null; cnt.textContent=VOR?HINT:''; document.documentElement.classList.remove('lesen'); navSet(false);
 }
+/* Overview / Walk in der Leiste: Walk oeffnet die zuletzt gelesene Tafel (sonst die erste), Overview klappt zu */
+let lastHov=0; const navB=document.querySelectorAll("#navmode button");
+function navSet(w){ navB.forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.nav==="rund")===w))); }
+navB.forEach(b=>b.addEventListener("click",e=>{ e.stopPropagation(); if(b.dataset.nav==="rund"){ if(hov<0) pick(lastHov); } else if(hov>=0) release(); }));
 // Steuerung in Schritten (Ruben 07.11.: Mausregler war zu unruhig). Eine Geste = ein Bild, danach steht alles still.
 const sc=document.getElementById('scene'); let rt=null;
 function step(d){ if(KREIS||VOR){ pick(hov<0?0:(hov+d+C.length)%C.length); return; }   // Ring: endlos weiterdrehen, Esc schliesst
@@ -522,6 +596,18 @@ addEventListener('wheel',e=>{ e.preventDefault(); clearTimeout(wT); wT=setTimeou
 let px=null;
 sc.addEventListener('pointerdown',e=>{ px=e.clientX; });
 let swiped=0;
+/* Wischen im Walk mit dem Finger wie im 3D-Walk der Hauptseite (Ruben 09.11., Regel aus 3d/index.html rundFling): das Band folgt dem Finger direkt;
+   beim Loslassen hoechstens ein Bild weiter, wenn der Finger mehr als 30 % der Breite gefahren ist oder geschnippt hat (ueber 0,3 px/ms), sonst federt es zurueck; danach schnell einrasten */
+let dr=null, snapUntil=0;
+sc.addEventListener('pointerdown',e=>{ if(e.pointerType!=='touch'||!VOR||KREIS||hov<0) return; px=null; const r=els[hov].querySelector('.pic').getBoundingClientRect(), now=performance.now();
+  dr={x0:e.clientX,t0:now,x:e.clientX,t:now,v:0,on:false,s:(r.width/(1.1*C[hov].w))||1}; });
+addEventListener('pointermove',e=>{ if(!dr) return; const now=performance.now(), d=e.clientX-dr.x0; if(!dr.on&&Math.abs(d)>6) dr.on=true; if(!dr.on) return;
+  dr.v=.6*dr.v+.4*((e.clientX-dr.x)/Math.max(8,now-dr.t)); dr.x=e.clientX; dr.t=now; stack.style.transform='translate3d('+(d/dr.s).toFixed(1)+'px,0,0)'; },{passive:true});
+function drEnd(e){ if(!dr) return; const o=dr; dr=null; if(!o.on) return; const now=performance.now(), ov=o.x-o.x0, off=ov/o.s;
+  const sp=Math.max(now-o.t<90?Math.abs(o.v):0, Math.abs(ov)/Math.max(16,now-o.t0));
+  C.forEach(c=>{ c.x+=off; c.t+=off; }); anchor+=off; stack.style.transform=''; snapUntil=now+700; swiped=Date.now();   /* Versatz in die Lage uebernehmen, damit nichts springt */
+  if(Math.abs(ov)>innerWidth*.3||(sp>.3&&Math.abs(ov)>12)) step(ov<0?1:-1); }
+addEventListener('pointerup',drEnd); addEventListener('pointercancel',drEnd);
 addEventListener('pointerup',e=>{ if(px===null) return; const d=e.clientX-px; px=null; if(Math.abs(d)>40){ step(d<0?1:-1); swiped=Date.now(); } });
 // Vorschlag beim Lesen: linke Haelfte zurueck, rechte weiter, Zeiger zeigt die Richtung
 sc.addEventListener('mousemove',e=>{ const r=e.clientX>=innerWidth/2; sc.classList.toggle('c-r',r); sc.classList.toggle('c-l',!r); });
@@ -542,11 +628,10 @@ dots(0);
   document.addEventListener("click",e=>{ if(!l.hidden&&!l.contains(e.target)&&e.target!==b){ l.hidden=true; b.setAttribute("aria-expanded","false"); } }); }
 
 // zu Beginn steht der erste Satz
-const HINT="Scrollen, um aufzuklappen / Scroll to open"; if(VOR) cnt.textContent=HINT;
-window.__LZ=null; const LZ=["Zwischennutzung · Bau · Betrieb","Intervention im Stadtraum · Bau","Temporäre Architektur · Stadtraum","Temporäre Architektur · Beteiligung","Ausstellungsarchitektur · Planung · Bau","Lernort · Planung · Bau","Rauminstallation · Bau","Bühne · Veranstaltung","Konzept · Bau · Betrieb","Umbau · Betrieb · Programm","Entwurf · Bau im Bestand","Beteiligung · Veranstaltung","Rauminstallation · Veranstaltung","Planung · Bau · Projektsteuerung","Projektsteuerung · Genehmigung · Bau"];   /* Probe: Leistungszeile je Tafel, Entwurf */
-window.__LZ=LZ;
-function num(k){ const t=String(k+1).padStart(2,'0')+' / '+String(S.length).padStart(2,'0'); de.querySelector('.num').innerHTML=t+'<span class="lz">'+LZ[k]+'</span>'; en.querySelector('.num').textContent=t; }
-de.querySelector('.s').textContent=S[0][0]; en.querySelector('.s').textContent=S[0][1]; num(0); curS=0;
+const HINT=EN?"Scroll to open":"Scrollen, um aufzuklappen"; if(VOR) cnt.textContent=HINT;
+function num(k){ const b=document.querySelector('#lst li > button[data-k="'+k+'"]'), tt=(b&&b.childNodes[1])?b.childNodes[1].textContent:'';   /* Walk: dieselbe Pille wie im Verzeichnis als Ueberschrift (Ruben 08.11.), statt Nummer und Leistungszeile */
+  [de,en].forEach(el=>{ const n=el.querySelector('.num'); n.textContent=''; const p=document.createElement('span'); p.className='wp'; const z=document.createElement('span'); z.className='wn'; z.textContent=String(k+1).padStart(2,'0'); p.appendChild(z); p.appendChild(document.createTextNode(tt)); n.appendChild(p); }); }
+de.querySelector('.s').textContent=S[0][L]; num(0); curS=0;
 document.getElementById('scene').style.pointerEvents='auto';
 // Start: Stapel geschlossen, erst der erste Schritt dreht ein Bild (Ruben 07.11.)
 requestAnimationFrame(tick);
@@ -590,30 +675,35 @@ requestAnimationFrame(tick);
 })();
 </script>
 <script>
-/* Zusammenarbeit oeffnen und schliessen; solange offen, blaettert der Stapel nicht */
-(function(){
-  var z=document.getElementById("zus"), b=document.getElementById("zusb");
-  function set(o){ z.classList.toggle("auf",o); if(o) z.querySelector(".x").focus(); else b.focus(); }
-  b.addEventListener("click",function(e){ e.preventDefault(); set(true); });
-  var m=document.querySelector("#mml .zusm"); if(m) m.addEventListener("click",function(e){ e.preventDefault(); document.getElementById("mml").hidden=true; set(true); });   /* Handy: Zusammenarbeit im Menue */
-  z.querySelector(".x").addEventListener("click",function(){ set(false); });
-  z.addEventListener("wheel",function(e){ e.stopPropagation(); },{passive:true});
-  z.addEventListener("click",function(e){ e.stopPropagation(); });
-  window.addEventListener("keydown",function(e){ if(!z.classList.contains("auf")) return; if(e.key==="Escape") set(false); e.stopImmediatePropagation(); },true);
-})();
-</script>
-<script>
 /* Inhaltsverzeichnis im Ueberblick. Hover hebt das Bild im Stapel an (.on wie beim Zeigen), Klick klappt bei dieser Tafel auf (ueber den Themenpunkt) */
 (function(){
   var cards=function(){ return document.querySelectorAll("#stack .card"); };
   var vor=document.getElementById("vor"), titel=[].map.call(document.querySelectorAll("#lst button"),function(b){ var c=b.cloneNode(true), e=c.querySelector(".e"), n=c.querySelector(".n"), en=e?e.textContent:""; if(e) e.remove(); if(n) n.remove(); return [c.textContent.trim(),en]; });
-  function fuell(k){ vor.querySelector(".n").textContent=String(k+1).padStart(2,"0")+" / 15"; vor.querySelector(".pn").textContent=String(k+1).padStart(2,"0"); vor.querySelector(".pt").textContent=(titel[k]||[""])[0]; vor.querySelector(".te").textContent=(titel[k]||["",""])[1];
-    vor.querySelector(".l").innerHTML=((window.__LZ&&window.__LZ[k])||"").split(" · ").filter(Boolean).map(function(x){ return "<span>"+x+"</span>"; }).join(""); vor.querySelector(".d").textContent=S[k][0]; }
-  function zeig(k){ if(k<0||document.documentElement.classList.contains("lesen")){ vor.classList.remove("auf"); return; } fuell(k); vor.classList.add("auf"); }
+  var KL=(new URLSearchParams(location.search)).get("klapp")||"hover"; if(KL!=="schieben"&&KL!=="decken"&&KL!=="hover") KL=null;   /* Standard seit 08.11. (Ruben): Text klappt beim Ueberfahren unter der Pille auf; ?klapp=aus zeigt das fruehere Textfeld rechts, ?klapp=schieben und ?klapp=decken die Proben */
+  if(KL){ document.documentElement.classList.add("klapp","klapp-"+(KL==="hover"?"schieben":KL)); if(KL==="hover") document.documentElement.classList.add("klapp-hover"); document.querySelectorAll("#lst li").forEach(function(li){ var b=li.querySelector("button"), k=+b.dataset.k, d=document.createElement("div"); d.className="kt"; d.id="kt"+k; var p=document.createElement("p"); p.textContent=S[k][window.__EN?1:0]; if(KL!=="decken"){ var i=document.createElement("div"); i.className="in"; i.appendChild(p); if(KL==="schieben"){ var z=document.createElement("button"); z.type="button"; z.className="zu"; z.textContent="Tafel ansehen"; z.addEventListener("click",function(e){ e.stopPropagation(); var dd=document.querySelectorAll("#fdots button")[k]; if(dd) dd.click(); }); i.appendChild(z); } d.appendChild(i); } else d.appendChild(p); li.appendChild(d); b.setAttribute("aria-controls",d.id); }); }
+  var VZ=(new URLSearchParams(location.search)).get("vz"); if(!KL||(VZ!=="mitte"&&VZ!=="split")) VZ=null;
+  if(VZ){ document.documentElement.classList.add("vz-"+VZ); if(VZ==="split"){ var g2=document.querySelector("#lst .g.trenn"), ol2=g2&&g2.nextElementSibling; if(g2&&ol2){ var bk0=document.createElement("div"); bk0.className="blk2"; g2.parentNode.insertBefore(bk0,g2); bk0.appendChild(g2); bk0.appendChild(ol2); } } }
+  function klappAuf(k){ document.querySelectorAll("#lst li").forEach(function(li){ var b=li.querySelector("button"), on=(+b.dataset.k===k), d=li.querySelector(".kt"); li.classList.toggle("auf",on); if(KL!=="decken"&&d){ d.style.height=on?(d.scrollHeight+"px"):"0px"; b.setAttribute("aria-expanded",String(on)); } }); }
+  function fuell(k){ vor.querySelector(".n").textContent=String(k+1).padStart(2,"0")+" / 15"; vor.querySelector(".pn").textContent=String(k+1).padStart(2,"0"); vor.querySelector(".pt").textContent=(titel[k]||[""])[0]; vor.querySelector(".te").textContent=(titel[k]||["",""])[1];  vor.querySelector(".d").textContent=S[k][window.__EN?1:0]; }
+  var imVz=false; if(KL==="hover"){ document.querySelectorAll("#lst ol").forEach(function(olv){ olv.addEventListener("mouseenter",function(){ imVz=true; }); olv.addEventListener("mouseleave",function(){ imVz=false; zeig(-1); }); }); }
+  function zeig(k){ if(KL==="hover"){ if(k<0&&imVz) return; var zu=(k<0||document.documentElement.classList.contains("lesen")); clearTimeout(zeig.t); zeig.t=setTimeout(function(){ klappAuf(zu?-1:k); },zu?260:200); return; }   /* ?klapp=hover: kurz warten, damit nicht jede ueberfahrene Pille aufklappt */
+    if(KL){ if(KL==="decken") klappAuf((k<0||document.documentElement.classList.contains("lesen"))?-1:k); return; } if(k<0||document.documentElement.classList.contains("lesen")){ vor.classList.remove("auf"); return; } fuell(k); vor.classList.add("auf"); }
   /* Lage des Textfelds (gleich breit wie das Verzeichnis, gleiche Oberkante) und Sperrflaechen fuer das Band */
-  function lage(){ if(innerWidth<=700){ window.__sperr=null; return; } var lst=document.getElementById("lst"), L=lst.getBoundingClientRect(), bs=document.querySelectorAll("#lst button"), mr=0, lb=0;
+  function lage(){ if(innerWidth<=700){ window.__sperr=null; return; } var lst=document.getElementById("lst"), L=lst.getBoundingClientRect(), bs=document.querySelectorAll("#lst li > button"), mr=0, lb=0;
     bs.forEach(function(b){ var r=b.getBoundingClientRect(); mr=Math.max(mr,r.right); lb=Math.max(lb,r.bottom); });
-    var dy=L.top-lst.offsetTop; var W=Math.max(260,mr-L.left); vor.style.width=W+"px"; vor.style.top=lst.offsetTop+"px";   /* ohne die Einblend-Verschiebung des Verzeichnisses messen */
+    var dy=L.top-lst.offsetTop; var W=Math.max(260,mr-L.left); lst.style.setProperty("--lw",W+"px");
+    if(KL){ var b1=bs[0], tn=b1&&b1.childNodes[1]; if(tn&&tn.nodeType===3){ var rg=document.createRange(); rg.selectNodeContents(tn); lst.style.setProperty("--ktin",Math.max(0,rg.getBoundingClientRect().left-b1.getBoundingClientRect().left)+"px"); }   /* Klapptext auf Hoehe des Titels nach der Nummer (Ruben 08.11.) */
+      var auf=-1; document.querySelectorAll("#lst li").forEach(function(li,i){ if(li.classList.contains("auf")) auf=i; }); klappAuf(-1);
+      var bk=(VZ==="split")?lst.querySelector(".blk2"):null, inB=function(e){ return !!(bk&&bk.contains(e)); };   /* Probe ?vz=mitte / ?vz=split (Ruben 08.11.): Lage des Verzeichnisses */
+      if(VZ==="mitte"){ lst.style.top=""; var hb0=document.querySelector(".nav a").getBoundingClientRect().bottom, fb0=document.querySelector(".fbar").getBoundingClientRect().top; lst.style.top=Math.max(hb0+24,(hb0+fb0)/2-lst.offsetHeight/2)+"px"; }
+      L=lst.getBoundingClientRect(); dy=L.top-lst.offsetTop;
+      var mrA=0, lbA=0, lbB=0, W2=0, xB=0, mkA=0, mkB=0, pl=1e9;
+      bs.forEach(function(b){ var r=b.getBoundingClientRect(); if(!inB(b)){ mrA=Math.max(mrA,r.right); lbA=Math.max(lbA,r.bottom); pl=Math.min(pl,r.left); } });
+      W=Math.max(260,mrA-L.left); lst.style.setProperty("--lw",W+"px");
+      if(bk){ bk.style.left="0px"; var b0l=bk.getBoundingClientRect().left, mnB=1e9, mxB=0; bs.forEach(function(b){ if(inB(b)){ var r=b.getBoundingClientRect(); mnB=Math.min(mnB,r.left); mxB=Math.max(mxB,r.right); } }); W2=Math.max(260,mxB-mnB); xB=innerWidth-pl-W2; bk.style.left=(xB-b0l)+"px"; bs.forEach(function(b){ if(inB(b)) lbB=Math.max(lbB,b.getBoundingClientRect().bottom); }); }
+      document.querySelectorAll("#lst .kt").forEach(function(d){ var b=inB(d); d.style.width=(b?W2:W)+"px"; var hh=(KL!=="decken"?d.scrollHeight:d.offsetHeight); if(b) mkB=Math.max(mkB,hh); else mkA=Math.max(mkA,hh); });
+      if(auf>=0) klappAuf(auf);
+      window.__sperr=[{l:0,t:lst.offsetTop-10,r:L.left+W+28,b:lbA-dy+mkA+18}]; if(bk) window.__sperr.push({l:xB-28,t:lst.offsetTop-10,r:innerWidth,b:lbB-dy+mkB+18}); return; } vor.style.width=W+"px"; vor.style.top=lst.offsetTop+"px";   /* ohne die Einblend-Verschiebung des Verzeichnisses messen */
     var kk=document.querySelector("#lst .k"), ks=getComputedStyle(kk), vn=vor.querySelector(".n"); vn.style.fontSize=ks.fontSize; vn.style.lineHeight=ks.lineHeight; vn.style.marginBottom=ks.marginBottom; vn.style.paddingTop=ks.paddingTop;   /* Kopfzeilen links und rechts exakt gleich gesetzt */
     fuell(0); vn.style.marginBottom="0px"; var b0=document.querySelector("#lst button"), tp=vor.querySelector(".t .p"); var dyp=(b0.getBoundingClientRect().top-dy)-tp.getBoundingClientRect().top; vn.style.marginBottom=Math.max(0,dyp)+"px";   /* gefuellte Pille rechts auf Hoehe der ersten Pille links (Ruben 08.11.) */
     var mh=0; for(var k=0;k<15;k++){ fuell(k); mh=Math.max(mh,vor.offsetHeight); } var vr=vor.getBoundingClientRect();
@@ -622,15 +712,28 @@ requestAnimationFrame(tick);
   addEventListener("resize",function(){ clearTimeout(lage.t); lage.t=setTimeout(lage,120); });
   /* Hover ueber ein Bild im Ueberblick zeigt dasselbe Textfeld */
   cards().forEach(function(c,k){ c.addEventListener("mouseenter",function(){ if(!document.documentElement.classList.contains("lesen")){ zeig(k); c.classList.add("zieh"); var b=document.querySelector("#lst button[data-k=\""+k+"\"]"); if(b) b.classList.add("aktiv"); } }); c.addEventListener("mouseleave",function(){ zeig(-1); c.classList.remove("zieh"); var b=document.querySelector("#lst button[data-k=\""+k+"\"]"); if(b) b.classList.remove("aktiv"); }); });   /* Hover ueber ein Bild faerbt auch die passende Pille (Ruben 08.11.: in beide Richtungen) */
-  document.querySelectorAll("#lst button").forEach(function(b){
+  document.querySelectorAll("#lst li > button").forEach(function(b){
     var k=+b.dataset.k;
-    function on(v){ var c=cards()[k]; if(c) c.classList.toggle("on",v); zeig(v?k:-1); }   /* kein Abblassen mehr, das Bild wird herausgezogen (Ruben 08.11.) */
-    b.addEventListener("mouseenter",function(){ on(true); });
-    b.addEventListener("mouseleave",function(){ on(false); });
+    function on(v){ if(document.documentElement.classList.contains("lesen")){ zeig(-1); return; }   /* im Walk nichts umsetzen: sonst nimmt das Verlassen der ausgeblendeten Liste dem gewaehlten Bild die Markierung (Fund 09.11.) */ var c=cards()[k]; if(c) c.classList.toggle("on",v); zeig(v?k:-1); }   /* kein Abblassen mehr, das Bild wird herausgezogen (Ruben 08.11.) */
+    var hv=KL?b.parentNode:b;   /* Probe Klapptext: Hover gilt fuer Pille und Text zusammen */
+    hv.addEventListener("mouseenter",function(){ on(true); });
+    hv.addEventListener("mouseleave",function(){ on(false); });
     b.addEventListener("focus",function(){ on(true); });
     b.addEventListener("blur",function(){ on(false); });
-    b.addEventListener("click",function(e){ e.stopPropagation(); on(false); var d=document.querySelectorAll("#fdots button")[k]; if(d) d.click(); });
+    b.addEventListener("click",function(e){ if(KL==="schieben"){ e.stopPropagation(); klappAuf(b.parentNode.classList.contains("auf")?-1:k); return; } e.stopPropagation(); on(false); var d=document.querySelectorAll("#fdots button")[k]; if(d) d.click(); });
   });
+})();
+</script>
+<script>
+/* Handy (Ruben 08.11.): Pille Inhalt in der Leiste oeffnet und schliesst das Verzeichnis als Liste; Tippen auf eine Pille oeffnet die Tafel im Walk und schliesst die Liste, Tippen daneben oder Esc schliesst sie */
+(function(){
+  var b=document.getElementById("inhb"), h=document.documentElement, l=document.getElementById("lst");
+  function set(o){ h.classList.toggle("inh",o); b.setAttribute("aria-expanded",String(o)); b.classList.toggle("an",o); }
+  b.addEventListener("click",function(e){ e.stopPropagation(); set(!h.classList.contains("inh")); });
+  l.addEventListener("click",function(e){ if(h.classList.contains("inh")&&!e.target.closest("button")) set(false); });
+  l.querySelectorAll("li > button").forEach(function(x){ x.addEventListener("click",function(){ set(false); }); });
+  addEventListener("keydown",function(e){ if(e.key==="Escape") set(false); });
+  addEventListener("resize",function(){ if(innerWidth>700) set(false); });
 })();
 </script>
 <script>
