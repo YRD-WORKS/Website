@@ -635,7 +635,7 @@ if(WALK) setTimeout(()=>{ if(hov<0) pick(0); },900);
 // Steuerung in Schritten (Ruben 07.11.: Mausregler war zu unruhig). Eine Geste = ein Bild, danach steht alles still.
 const sc=document.getElementById('scene'); let rt=null;
 function step(d){ if(KREIS||VOR){ pick(hov<0?0:(hov+d+C.length)%C.length); return; }   // Ring: endlos weiterdrehen, Esc schliesst
-  if(hov===0&&d<0){ release(); return; } pick(Math.max(0,Math.min(C.length-1,hov+d))); }
+  if(hov===0&&d<0) return;   /* am ersten Bild zurueck: stehen bleiben; den alten Stapel-Ueberblick gibt es im Walk nicht mehr, Overview ist die Startseite (Ruben 09.11.) */ pick(Math.max(0,Math.min(C.length-1,hov+d))); }
 let wAcc=0, wLock=false, wT=null;
 addEventListener('wheel',e=>{ e.preventDefault(); clearTimeout(wT); wT=setTimeout(()=>{ wLock=false; wAcc=0; },240);
   if(wLock) return; wAcc+=e.deltaY+e.deltaX; if(Math.abs(wAcc)>40){ step(wAcc>0?1:-1); wLock=true; } },{passive:false});
