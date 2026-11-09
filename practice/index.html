@@ -238,6 +238,35 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
   .streifen span i{font-style:normal;color:var(--ink-4);margin-left:.35em}
   .links-sp .arbeit{margin-top:28px!important}
 }
+/* Handy, Fassung 2 (Ruben 09.11.): Vollbild-Bilder, moeglichst hochkant, Schrift darueber.
+   Senkrecht: je Satz ein Kapitelbild, danach je Arbeitsfeld ein Bild. Waagerecht wischen: die Projekte des Feldes. */
+#feed{display:none}
+@media (max-width:800px){
+  html{scroll-snap-type:y mandatory}
+  .held{display:none}
+  #feed{display:block}
+  .nav{background:none;color:#fff;text-shadow:0 0 12px rgba(0,0,0,.35)}
+  .nav .links a[aria-current]{text-decoration-color:#fff}
+  .sl{position:relative;height:100svh;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:var(--ink);color:#fff}
+  .sl .bahn{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+  .sl .bahn::-webkit-scrollbar{display:none}
+  .sl .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
+  .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .sl .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,0) 20%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
+  .sl.kap::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.45) 45%,rgba(0,0,0,0) 75%)}
+  .sl .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right}
+  .sl .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
+  .sl .ueber{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px));z-index:2;pointer-events:none;display:grid;gap:12px;justify-items:start}
+  .sl .ueber .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
+  .sl .ueber p{margin:0;font-size:1.1rem;line-height:1.3;font-weight:550;text-wrap:pretty;hyphens:auto}
+  .sl .ueber .zahl{font-size:13px;font-weight:420;opacity:.8}
+  .sl.kap .ueber{bottom:auto;top:96px}
+  .sl.kap h2{margin:0;font-size:2.6rem;line-height:1.04;font-weight:550;letter-spacing:-.01em}
+  .sl.kap .felder-k{font-size:1.05rem;line-height:1.35;font-weight:550;opacity:.9}
+  .sl.ende{background:#fff;color:var(--ink);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);gap:1rem}
+  .sl.ende p{margin:0;font-size:1.6rem;line-height:1.15}
+  .sl.ende a{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -255,6 +284,8 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
   </div>
   <p class="weiter-arbeit caption">Von der ersten Idee bis zur Umsetzung: Konzept und Entwurf, Bau, Projektsteuerung mit Partnern.</p>
 </section>
+
+<main id="feed" aria-label="Was wir tun"></main>
 
 <nav class="fbar caption" aria-label="Practice">
   <span class="l"><a class="fl" href="../index/index.html">Alle Projekte im Index</a></span>
@@ -508,6 +539,26 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
 
   const Q=new URLSearchParams(location.search); const vw=S.find(s=>Q.has(s.k)); if(vw) waehlen(vw.k);
   window.__ein={waehlen,heben,projVon,S};
+
+  /* Handy-Feed (Fassung 2): Bild je Projekt, hochkant bevorzugt */
+  (function(){
+    const feed=document.getElementById('feed'), HB={};
+    PROJECTS.forEach(p=>{ const g=p.gallery||[]; if(!g[0]) return; const o=g[0][0].split('/')[1]; const h=g.find(x=>x[2]>x[1]); HB[o]='../'+(h||g[0])[0]; });
+    const bild=o=>HB[o]||P[idx[o]].src;
+    const bahn=os=>'<div class="bahn">'+os.map(o=>{ const q=P[idx[o]]; return '<a href="'+q.seite+'"><img alt="" loading="lazy" src="'+bild(o)+'"><span>'+q.titel+'<i>'+q.jahr+'</i></span></a>'; }).join('')+'</div>';
+    let h=''; const benutzt=new Set();
+    S.forEach(s=>{
+      const ersteF=new Set(s.f.map(i=>F[i][2].find(o=>o in idx))); const erst=projVon(s.f).find(o=>!ersteF.has(o)&&!benutzt.has(o))||projVon(s.f)[0]; benutzt.add(erst);
+      h+='<section class="sl kap" id="k-'+s.k+'"><img alt="" src="'+bild(erst)+'"><div class="ueber"><h2>'+s.satz+'</h2><div class="felder-k">'+s.f.map(i=>F[i][1]).join('<br>')+'</div></div></section>';
+      s.f.forEach(i=>{ const os=F[i][2].filter(o=>o in idx);
+        h+='<section class="sl"'+'>'+bahn(os)+'<div class="ueber"><span class="pill">'+F[i][1]+'</span><p>'+TXT[i]+'</p><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
+    });
+    h+='<section class="sl ende"><p>Von der ersten Idee bis zur Umsetzung: Konzept und Entwurf, Bau, Projektsteuerung mit Partnern.</p><a href="../index/index.html">Alle Projekte im Index</a></section>';
+    feed.innerHTML=h;
+    feed.querySelectorAll('.sl:not(.kap):not(.ende)').forEach(sl=>{ const b=sl.querySelector('.bahn'), z=sl.querySelector('.zahl'), n=b.children.length; if(n<2) return;
+      b.addEventListener('scroll',()=>{ const k=Math.round(b.scrollLeft/b.clientWidth)+1; z.textContent=k+' / '+n+(k===1?'  ·  wischen für mehr':''); },{passive:true}); });
+    const q=location.search.match(/[?&]([rtm])(&|=|$)/); if(q&&innerWidth<=800){ const z=document.getElementById('k-'+q[1]); z&&z.scrollIntoView(); }
+  })();
 })();
 </script>
 </body>
