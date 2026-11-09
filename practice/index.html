@@ -215,6 +215,29 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
   .satz .felder{grid-template-rows:1fr;opacity:1}
 }
 @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} .card .pic,.bild,.felder{transition:none} }
+/* Handy (Ruben 09.11.): drei Saetze als Kapitel zum Antippen. Satz tippen klappt seine Pillen darunter auf,
+   Pille tippen zeigt Text und eine Bilderreihe zum Wischen. Kein Stapel, kein Hover. */
+.streifen{display:none}
+@media (max-width:800px){
+  #scene,#isogrid,#raster2d,#flach{display:none}
+  .held{min-height:100svh;padding-bottom:calc(var(--fb-h) + 2.5rem)!important}
+  .links-sp,html:not(.v-spalten):not(.v-treppe):not(.v-raum) .links-sp{left:0!important;padding-top:96px!important;gap:22px}
+  #saetze{gap:22px}
+  .kz > button:first-child{font-size:2.3rem!important;line-height:1.05}
+  .satz .kz{display:flex;align-items:flex-start;justify-content:space-between;gap:.5em}
+  .satz.fest .minus{margin-top:.25em}
+  .satz #panel{margin-top:16px}
+  #pl{padding-left:0!important;gap:10px}
+  .pill{font-size:1.1rem;padding:.45em .95em .4em}
+  .fi .kt p{padding:.7rem 0 .2rem 0!important;font-size:1.1rem;line-height:1.3}
+  .streifen{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;margin:.9rem calc(var(--pad)*-1) .6rem;padding:0 var(--pad);scrollbar-width:none}
+  .streifen::-webkit-scrollbar{display:none}
+  .streifen a{flex:none;width:72vw;scroll-snap-align:start;scroll-margin-left:var(--pad);text-decoration:none;display:grid;gap:5px}
+  .streifen img{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;background:rgba(0,0,255,.06)}
+  .streifen span{font-size:13px;font-weight:420}
+  .streifen span i{font-style:normal;color:var(--ink-4);margin-left:.35em}
+  .links-sp .arbeit{margin-top:28px!important}
+}
 </style>
 </head>
 <body>
@@ -296,15 +319,20 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
      Klick waehlt den Satz: seine Pillen erscheinen im festen Bereich darunter, die Bilder legen sich flach.
      Klick auf eine Pille: ihr Text erscheint im festen Textfeld, die gemeinten Bilder ruecken nach vorn; zweiter Klick schliesst. */
   const box=document.getElementById('saetze'), pl=document.getElementById('pl'), kx=document.getElementById('ktext'), kp=kx.querySelector('p');
-  let fest=null, feld=null; const sEl={};
+  let fest=null, feld=null; const sEl={}; const sp0=document.querySelector('.links-sp');
   function satzKlassen(hov){ const k=fest||hov; Object.keys(sEl).forEach(x=>{ sEl[x].classList.toggle('an',x===k); sEl[x].classList.toggle('fest',x===fest); sEl[x].querySelector('button').setAttribute('aria-expanded',String(x===fest)); }); H.classList.toggle('wahl',!!k); }
-  function pillenBauen(k){ pl.innerHTML=''; if(k) document.getElementById('panel').style.setProperty('--spalte',String(S.findIndex(x=>x.k===k)+1)); if(!k) return; S.find(x=>x.k===k).f.forEach(i=>{
+  function pillenBauen(k){ panelOrt(k); pl.innerHTML=''; if(k) document.getElementById('panel').style.setProperty('--spalte',String(S.findIndex(x=>x.k===k)+1)); if(!k) return; S.find(x=>x.k===k).f.forEach(i=>{
       const fi=document.createElement('div'); fi.className='fi'; fi.dataset.i=i;
       const p=document.createElement('button'); p.type='button'; p.className='pill'+(OFFEN.includes(i)?' offen':''); p.dataset.i=i; p.setAttribute('aria-expanded','false');
       p.innerHTML=F[i][1]+(OFFEN.includes(i)?'<span class="z">?</span>':'');
-      p.addEventListener('click',()=>feldWahl(feld===i?null:i));
+      p.addEventListener('click',()=>{ const neu=feld===i?null:i; feldWahl(neu); if(neu!=null) mobScroll(fi); });
       const kt=document.createElement('div'); kt.className='kt'; kt.innerHTML='<div class="in"><p>'+TXT[i]+'</p></div>';
+      const st=document.createElement('div'); st.className='streifen'; st.innerHTML=F[i][2].filter(o=>o in idx).map(o=>{ const q=P[idx[o]]; return '<a href="'+q.seite+'"><img alt="" loading="lazy" src="'+q.src+'"><span>'+q.titel+'<i>'+q.jahr+'</i></span></a>'; }).join(''); kt.firstChild.appendChild(st);
       fi.appendChild(p); fi.appendChild(kt); pl.appendChild(fi); }); }
+  /* Handy: Pillen direkt unter den gewaehlten Satz haengen, am Computer bleibt der feste Bereich */
+  const panel=document.getElementById('panel');
+  function panelOrt(k){ if(innerWidth<=800&&k){ if(panel.parentNode!==sEl[k]) sEl[k].appendChild(panel); } else if(panel.parentNode!==sp0){ box.after(panel); } }
+  const mobScroll=el=>{ if(innerWidth<=800) setTimeout(()=>{ const y=el.getBoundingClientRect().top+scrollY-80; scrollTo({top:y,behavior:'smooth'}); },220); };
   function blende(el,fn){ el.classList.add('aus'); clearTimeout(el._t); el._t=setTimeout(()=>{ fn(); el.classList.remove('aus'); },180); }
   function feldWahl(i){ feld=i;
     pl.querySelectorAll('.fi').forEach(fi=>{ const on=+fi.dataset.i===i; fi.classList.toggle('auf',on); fi.querySelector('.pill').classList.toggle('an',on); fi.querySelector('.pill').setAttribute('aria-expanded',String(on)); });
@@ -320,7 +348,7 @@ html.v-raum .arbeit{position:absolute;left:var(--pad);bottom:var(--pad);margin:0
     const b=document.createElement('button'); b.type='button'; b.textContent=s.satz; b.setAttribute('aria-expanded','false');
     b.addEventListener('mouseenter',()=>{ if(fest) return; satzKlassen(s.k); heben(projVon(s.f)); });
     b.addEventListener('mouseleave',()=>{ if(fest) return; satzKlassen(null); heben(null); });
-    b.addEventListener('click',()=>satzWahl(fest===s.k?null:s.k));
+    b.addEventListener('click',()=>{ const neu=fest===s.k?null:s.k; satzWahl(neu); if(neu) mobScroll(d); });
     const mi=document.createElement('button'); mi.type='button'; mi.className='minus'; mi.textContent='–'; mi.setAttribute('aria-label','Schließen und zurück zum Stapel');
     mi.addEventListener('click',()=>satzWahl(null));
     kz.appendChild(b); kz.appendChild(mi); d.appendChild(kz); box.appendChild(d);
