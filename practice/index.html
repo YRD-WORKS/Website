@@ -192,8 +192,8 @@ html.pillen #lst ol{font-size:1.15rem;display:flex;flex-direction:column;align-i
 html.pillen #lst li.ab{margin-top:.5rem}
 html.pillen #lst button{padding:.28em .8em .24em .55em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);line-height:1.1}
 html.pillen #lst button .n{width:auto;margin-right:.55em}
-html.pillen #lst button.aktiv,html.pillen #lst button:hover,html.pillen #lst button:focus-visible{text-decoration:none;background:var(--ink);color:var(--bg)}
-html.pillen #lst button.aktiv .n,html.pillen #lst button:hover .n,html.pillen #lst button:focus-visible .n{color:rgba(255,255,255,.7)}
+html.pillen #lst button.aktiv,html.pillen #lst button:hover,html.pillen #lst button:focus-visible,html.pillen #lst li.auf > button{text-decoration:none;background:var(--ink);color:var(--bg)}
+html.pillen #lst button.aktiv .n,html.pillen #lst button:hover .n,html.pillen #lst button:focus-visible .n,html.pillen #lst li.auf > button .n{color:rgba(255,255,255,.7)}   /* aufgeklappter Text: seine Pille bleibt blau (Ruben 09.11.) */
 html.pillen #lst .g{font-size:1.15rem;margin:1.2rem 0 .5rem}
 html.pillen #lst{width:min(34rem,40vw)}   /* Was wir machen: Orte (01-04) und Raeume (05-10) durch Abstand getrennt */   /* Eintraege unter dem Kapiteltitel eingerueckt (Ruben 08.11.) */
 #lst ol{list-style:none;margin:0;padding:0;font-size:1.08rem;line-height:1.2}
@@ -283,6 +283,11 @@ html.vorschlag .say .num{margin-bottom:.7rem}
 }
 
 
+/* Probe ?orbit: Zeiger zeigt, dass man den Stapel greifen kann; waehrend des Drehens keine Hover-Effekte auf den Bildern */
+html.orbit:not(.lesen) #scene{cursor:grab}
+html.orbit.dreht #scene{cursor:grabbing}
+html.orbit.dreht #stack .card{pointer-events:none}
+html.orbit.ruecken #stack .card .pic > *{scale:-1 1}
 </style>
 </head>
 <body>
@@ -378,6 +383,7 @@ if(EN){ document.documentElement.lang='en'; document.documentElement.classList.a
   const g=document.querySelectorAll('#lst .g'); if(g[0]) g[0].textContent='Fields of work'; if(g[1]) g[1].textContent='Competences';   /* Wortwahl Entwurf, zur Freigabe */
   document.querySelector('#lst .k').textContent='Contents'; document.getElementById('inhb').textContent='Contents'; document.getElementById('lst').lang='en'; document.getElementById('de').lang='en'; }
 if(Q0.get('wp')==='label') document.documentElement.classList.add('wp-label'); Q0.delete('wp');
+const ORBIT=Q0.has('orbit'); Q0.delete('orbit'); if(ORBIT) document.documentElement.classList.add('orbit');   /* Probe ?orbit (Ruben 09.11.): Stapel im Overview per Ziehen drehen und neigen wie in einem 3D-Programm */
 const Q=new URLSearchParams(Q0.toString()||'vorschlag&format=32&nb=.2')   /* Hauptseite (Ruben 07.11.): Vorschlag, alle Formate 3:2, Nachbarn mittlerer Abstand */, MIX=Q.has('mix'), VOR=Q.has('vorschlag')||Q.has('kreis');
 const KREIS=Q.has('kreis');   // ?kreis: Stapel als Ring, von aussen gedreht (Gegenstueck zum 3D-Walk, Ruben 07.11.)
 if(KREIS){ Q.set('vorschlag',''); document.documentElement.classList.add('kreis'); }
@@ -423,6 +429,7 @@ const NB=Q.has('nb')?+Q.get('nb'):0;   // Test: Abstand der direkten Nachbarn zu
 const FLUCHT=Q.has('flucht')?+Q.get('flucht'):.5;   // .5 = Mitte (perspektivisch richtig), 0 = alle auf der Bodenlinie
 const ISOV=!Q.has('noiso'), P_OV=Q.has('ip')?+Q.get('ip'):14000, S_OV=Q.has('is')?+Q.get('is'):.5, X_OV=Q.has('ix')?+Q.get('ix'):.065;   /* Band mittig, rechts Platz fuer das Textfeld (Ruben 08.11.) */   /* Probe Iso-Ueberblick (Ruben 08.11., Skizze: steiles Band links unten nach rechts oben) */
 const DREH=Q.has('dreh')?+Q.get('dreh'):20;   /* Standard seit 08.11.: 20 Grad (Ruben: mit Drehung besser); ?dreh=0 zum Vergleich */   /* Variante: Bilder im Ueberblick um DREH Grad zum Betrachter gedreht (Ruben 08.11.) */
+let oY=0, oX=0, orb=null, orbT=0; const O_Y=90, O_X=30, O_HALT=2000;   /* Probe ?orbit: Drehung/Neigung durch den Nutzer, Grenzen in Grad, Haltezeit bis zum Zurueckfedern */
 let uNow=0, rotNow=-90, fitK=1, fitY=0, fitX=0, fitN=0; addEventListener('resize',()=>{ fitN=0; }); const SPIEGEL=!Q.has("nospiegel"), IH=.6, IY=Q.has("iy")?+Q.get("iy"):-50, U_DAUER=1.1, D_OV=Q.has('id')?+Q.get('id'):1400, F_OV=Q.has("if")?+Q.get("if"):.255;   /* Abstand und Massstab im Ueberblick, entspricht Perspektive 14000 px, Stapel 50 % */
 if(!SPIEGEL) document.documentElement.classList.add('nosp');
 if(ISOV) document.documentElement.classList.add('isov');
@@ -498,14 +505,16 @@ function tick(){
     /* Iso-Ueberblick (08.11.): ein gemeinsamer Fortschritt u (0 = Ueberblick, 1 = Lesen), Perspektive bleibt 1600 px;
        die isometrische Wirkung entsteht ueber grossen Abstand plus Massstab, so bleibt die Bildgroesse unterwegs stimmig */
     const now=performance.now(), dt=Math.min(.05,(now-(tick.t||now))/1000); tick.t=now;
-    uNow+=((hov<0?0:1)>uNow?1:-1)*dt/U_DAUER; uNow=Math.max(0,Math.min(1,uNow)); if(reduce) uNow=hov<0?0:1;
+    { const uZ=hov<0?0:1, uS=dt/U_DAUER; uNow=uZ>uNow?Math.min(uZ,uNow+uS):Math.max(uZ,uNow-uS); }   /* Zittern behoben (Ruben 09.11.): frueher lief u bei 1 jedes zweite Bild wieder zurueck, die Perspektive sprang zwischen 1600 und 1604 px */ if(reduce) uNow=hov<0?0:1;
     const w=uNow*uNow*(3-2*uNow);
     /* Perspektive selbst veraendern statt weit weg und gross (grosse Texturen ueberfordern die Grafikkarte, Chrome verwirft dann Kacheln des Verzeichnisses).
        Sichtbare Groesse f wird logarithmisch ueberblendet, der Massstab kk ergibt sich daraus und bleibt unter 1 */
     const wd=Math.pow(w,1.7), P=Math.exp(Math.log(P_OV)+(Math.log(1600)-Math.log(P_OV))*wd), D=D_OV+(-distRead-D_OV)*wd;
     const MOBO=innerWidth<=700, f0=(MOBO?F_OV*.62:F_OV)*fitK, f1=1600/(1600-distRead), f=Math.exp(Math.log(f0)+(Math.log(f1)-Math.log(f0))*wd), kk=f*(P+D)/P;
     document.getElementById('scene').style.perspective=P.toFixed(0)+'px';
-    rigR=(SPIEGEL?-45:45)*(1-w); rotNow=SPIEGEL?(-90+(180-DREH)*(1-w)):ROT; tiltNow=-35.264*(1-w)+TILT*w; distNow=-D;
+    if(ORBIT&&!orb&&(hov>=0||now>orbT)){ oY+=-oY*(reduce?1:.06); oX+=-oX*(reduce?1:.06); if(Math.abs(oY)+Math.abs(oX)<.02) oY=oX=0; }   /* nach dem Loslassen kurz halten, dann sanft in die Grundansicht */
+    rigR=((SPIEGEL?-45:45)+oY)*(1-w); rotNow=SPIEGEL?(-90+(180-DREH)*(1-w)):ROT; tiltNow=(-35.264+oX)*(1-w)+TILT*w; distNow=-D;
+    if(ORBIT) document.documentElement.classList.toggle('ruecken',Math.cos((rigR+rotNow)*Math.PI/180)<0);   /* weit gedreht sieht man die Karten von hinten: Bild spiegeln, damit es richtig herum bleibt (Ruben 09.11.: beide Richtungen gleich weit, auch ueber die Pillen) */
     const sf=(P+D)/P*(1-w);   /* Bildschirm-Pixel in Tiefe umrechnen */
     document.getElementById('rig').style.transform='translate('+(MOBO?0:((SPIEGEL?1:-1)*innerWidth*X_OV+fitX)*sf).toFixed(1)+'px,'+(((MOBO?-30:IY)+fitY)*sf).toFixed(1)+'px) translateZ('+(-D).toFixed(1)+'px) scale('+kk.toFixed(4)+') rotateX('+tiltNow.toFixed(2)+'deg) rotateY('+rigR.toFixed(2)+'deg)';
     document.documentElement.classList.toggle('ovda',uNow<.02);
@@ -513,7 +522,7 @@ function tick(){
        Textfeldbereich, Kopfzeile oder Leiste oder wird angeschnitten; gesucht wird die groesste Skalierung, bei der eine Lage passt,
        bevorzugt mittig. Sperrflaechen liefert das Verzeichnis-Skript (window.__sperr). */
     if(fitN>=220||MOBO) document.documentElement.classList.add("fitok");
-    if(uNow<.02&&!MOBO&&fitN<220&&window.__sperr&&rigTop!==null&&Math.abs(rigTop-innerHeight*(ISO?.52:(ISOV?IH:.66)))<1.5&&(tick.ruhe||0)>10&&!document.getElementById('stack').classList.contains('toc')&&!document.querySelector('#stack .card.on,#stack .card.zieh')){ fitN++;
+    if(uNow<.02&&!MOBO&&fitN<220&&!orb&&oY===0&&oX===0&&window.__sperr&&rigTop!==null&&Math.abs(rigTop-innerHeight*(ISO?.52:(ISOV?IH:.66)))<1.5&&(tick.ruhe||0)>10&&!document.getElementById('stack').classList.contains('toc')&&!document.querySelector('#stack .card.on,#stack .card.zieh')){ fitN++;
       const Rr=[], Vv=[]; els.forEach(a=>{ const r=a.querySelector('.pic').getBoundingClientRect(); if(r.width){ Rr.push([r.left-.21*r.width, r.top-.76*r.height, r.right+.21*r.width, r.bottom]); Vv.push([r.left,r.top,r.right,r.bottom]); } });   /* Platzbedarf herausgezogen, gemessen mit Playwright: oben 0,72 Bildhoehen, seitlich 0,19 Bildbreiten (plus Reserve) */
       if(Rr.length){
         const hb=document.querySelector('.nav a').getBoundingClientRect().bottom, fb=document.querySelector('.fbar').getBoundingClientRect().top;
@@ -526,6 +535,7 @@ function tick(){
         let lo=.2, hi=3, sol=null; for(let it=0;it<14;it++){ const m=(lo+hi)/2, r=lage(m); if(r){ lo=m; sol=[m,r]; } else hi=m; }
         if(sol){ const s=sol[0], tx=sol[1][0], ty=sol[1][1]; fitK*=Math.pow(s,.5); fitX+=tx*.5; fitY+=ty*.5; if(Math.abs(s-1)<.004&&Math.abs(tx)<1.5&&Math.abs(ty)<1.5) fitN=999; }
       } }
+    if(orb||oY||oX) tick.gw=0;   /* Raster folgt der Drehung sofort */
     if(uNow<.02&&!(tick.gw>0&&tick.gw--)){ tick.gw=20; const a=els[0].querySelector('.pic').getBoundingClientRect(), b=els[C.length-1].querySelector('.pic').getBoundingClientRect(); const ang=Math.atan2((b.top+b.height/2)-(a.top+a.height/2),(b.left+b.width/2)-(a.left+a.width/2))*180/Math.PI; if(isFinite(ang)) document.getElementById('isogrid').style.setProperty('--bandw',ang.toFixed(1)+'deg');
       const aa=(rigR+rotNow)*Math.PI/180, tt=tiltNow*Math.PI/180, kw=Math.atan2(Math.sin(aa)*Math.sin(tt),Math.cos(aa))*180/Math.PI; document.getElementById('isogrid').style.setProperty('--kantew',kw.toFixed(1)+'deg'); }   /* zweite Rasterschar parallel zu den unteren Bildkanten, folgt der Drehung */   /* eine Rasterschar parallel zum Band (Ruben 08.11.) */ document.documentElement.classList.toggle('angekommen',uNow>.92); }
   else if(SCHWENK){ rigR+=((hov<0?45:0)-rigR)*(reduce?1:.045); tiltNow+=(((VOR&&hov<0)?-12:TILT)-tiltNow)*(reduce?1:.045); distNow+=(((VOR&&hov<0)?-DIST:distRead)-distNow)*(reduce?1:.045);
@@ -545,20 +555,25 @@ function tick(){
   const rig=document.getElementById("rig");
   if(rigTop===null) rigTop=rig.getBoundingClientRect().top;
   if(hov>=0){ const r=els[hov].querySelector(".pic").getBoundingClientRect();
-    if(!(dr&&dr.on)) anchor-=((r.left+r.width/2)-innerWidth/2)*(reduce?1:(performance.now()<snapUntil?.2:.06));   /* waehrend des Wischens nicht gegensteuern, danach schnell einrasten */
+    const exA=(r.left+r.width/2)-innerWidth/2; if(!(dr&&dr.on)&&Math.abs(exA)>.5) anchor-=exA*(reduce?1:(performance.now()<snapUntil?.2:.06));   /* waehrend des Wischens nicht gegensteuern, danach schnell einrasten */
     // bei niedrigen Fenstern rueckt das Bild hoeher, damit die Texte ueber der Leiste Platz haben
     const MOB=VOR&&innerWidth<=700;
     if(MOB){ const pad=16, tw=innerWidth-2*pad; distRead-=(r.width-tw)*(reduce?2:.6); distRead=Math.max(-4000,Math.min(-150,distRead)); }
     let cy=innerHeight*MY, lim=innerHeight; if(MOB){ const t0=document.querySelector(".nav a").getBoundingClientRect().bottom+24, t1=document.querySelector(".fbar").getBoundingClientRect().top-16, bh=r.height+18+de.scrollHeight; cy=Math.max(t0,t0+(t1-t0-bh)/2)+r.height/2; }   /* Handy (Ruben 08.11.): Bild und Text als Ganzes senkrecht mittig zwischen Kopfzeile und Leiste */ else if(VOR&&innerWidth>700){ const th=Math.max(de.offsetHeight,en.offsetHeight); lim=document.querySelector(".fbar").getBoundingClientRect().top-36-th;   /* Review 08.11.: unter dem Text so viel Luft wie zwischen Bild und Text */ cy=Math.min(cy,lim-36-r.height/2); }
-    rigTop-=((r.top+r.height/2)-cy)*(reduce?1:.06);
+    { const exY=(r.top+r.height/2)-cy; if(Math.abs(exY)>.5) rigTop-=exY*(reduce?1:.06); }   /* Totzone: kein Pendeln um Bruchteile eines Pixels (Ruben 09.11.: Zittern) */
     // Vorschlag: Texte beziehen sich auf das Bild, DE an der linken, EN an der rechten Bildkante (Ruben 07.11.)
-    if(VOR&&innerWidth>700){ const wpw=(de.querySelector('.wp')||{}).offsetWidth||0, half=Math.max(160,r.width*2/3,Math.min(wpw,r.width));   /* einsprachig (Ruben 08.11.): eine Spalte, zwei Drittel der Bildbreite, die Pille passt immer hinein */ de.style.left=r.left.toFixed(1)+"px"; de.style.right="auto"; de.style.width=half.toFixed(1)+"px";
-      const top=Math.min(r.bottom+36,lim)+"px"; de.style.top=top; de.style.bottom="auto"; }
+    if(VOR&&innerWidth>700){ const wpw=(de.querySelector('.wp')||{}).offsetWidth||0, half=Math.max(160,r.width*2/3,Math.min(wpw,r.width));   /* einsprachig (Ruben 08.11.): eine Spalte, zwei Drittel der Bildbreite, die Pille passt immer hinein */ de.style.left=Math.round(r.left)+"px"; de.style.right="auto"; de.style.width=Math.round(half)+"px";
+      const top=Math.round(Math.min(r.bottom+36,lim))+"px"; de.style.top=top; de.style.bottom="auto"; }
     if(MOB){ de.style.left=en.style.left="16px"; de.style.right=en.style.right="16px"; de.style.width=en.style.width="auto"; de.style.bottom=en.style.bottom="auto";
       const dT=r.bottom+18; de.style.top=dT.toFixed(1)+"px";
-      const room=document.querySelector(".fbar").getBoundingClientRect().top-16-dT, full=de.scrollHeight; de.style.maxHeight=room<full-1?Math.max(80,room).toFixed(0)+"px":""; de.classList.toggle("eng",room<full-1); } }   /* Handy (08.11.): Text scrollt, statt unter die Leiste zu laufen */   // beide Texte haengen gleich hoch unter dem Bild
+      const room=document.querySelector(".fbar").getBoundingClientRect().top-16-dT, full=de.scrollHeight; de.style.maxHeight=room<full-1?Math.max(80,room).toFixed(0)+"px":""; de.classList.toggle("eng",room<full-1);
+      /* Text haengt am Bild (Ruben 09.11.): folgt beim Wischen der Bildlage und dreht mit dem Bild ein, ueber dessen sichtbare Breite */
+      const sx=Math.max(0,Math.min(1,r.width/(innerWidth-32))); de.style.transition='none'; de.style.transformOrigin='0 0';
+      de.style.transform='translateX('+(r.left-16).toFixed(1)+'px) scaleX('+sx.toFixed(3)+')'; de.style.opacity=Math.min(1,sx*1.6).toFixed(2); }
+    else if(de.style.transform){ de.style.transform=de.style.transformOrigin=de.style.transition=de.style.opacity=''; } }   /* Handy (08.11.): Text scrollt, statt unter die Leiste zu laufen */   // beide Texte haengen gleich hoch unter dem Bild
   else { rigTop+=(innerHeight*(ISO?.52:(ISOV?IH:.66))-rigTop)*(reduce?1:(ISOV&&VOR?.14:.05));   /* Iso-Ueberblick: Hoehe schneller zurueck, sonst laeuft das Band nach dem Lesen in die Navigation */
     if(de.style.maxHeight){ de.style.maxHeight=""; de.classList.remove("eng"); }
+    if(de.style.transform){ de.style.transform=de.style.transformOrigin=de.style.transition=de.style.opacity=''; }
     if(VOR&&de.style.width){ de.style.left=de.style.right=de.style.width=de.style.top=de.style.bottom=""; en.style.left=en.style.right=en.style.width=en.style.top=en.style.bottom=""; } }
   rig.style.top=rigTop.toFixed(1)+"px";
   requestAnimationFrame(tick);
@@ -567,7 +582,8 @@ function tick(){
 // Text
 let curS=-1;
 function say(s,cap){
-  if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][L]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
+  if(s!==curS&&VOR&&innerWidth<=700&&hov>=0){ curS=s; de.querySelector('.s').textContent=S[s][L]; num(s); de.classList.remove('out'); }   /* Handy-Walk (Ruben 09.11.): Text sofort tauschen, er dreht mit dem Bild ein statt aufzublenden */
+  else if(s!==curS){ curS=s; [de,en].forEach(el=>{ el.classList.add('out'); }); setTimeout(()=>{ de.querySelector('.s').textContent=S[s][L]; num(s); de.classList.remove('out'); en.classList.remove('out'); }, reduce?0:180); }
   de.querySelector('.c').textContent=cap; en.querySelector('.c').textContent=cap;
 }
 function pick(i){
@@ -601,22 +617,26 @@ let swiped=0;
    beim Loslassen hoechstens ein Bild weiter, wenn der Finger mehr als 30 % der Breite gefahren ist oder geschnippt hat (ueber 0,3 px/ms), sonst federt es zurueck; danach schnell einrasten */
 let dr=null, snapUntil=0;
 function drStart(e){ if(e.pointerType!=='touch'||!VOR||KREIS||hov<0) return; px=null; const r=els[hov].querySelector('.pic').getBoundingClientRect(), now=performance.now();
-  clearTimeout(drStart.t); de.style.transition='none'; dr={x0:e.clientX,t0:now,x:e.clientX,t:now,v:0,on:false,s:(r.width/(1.1*C[hov].w))||1}; }
+  dr={x0:e.clientX,t0:now,x:e.clientX,t:now,v:0,on:false,s:(r.width/(1.1*C[hov].w))||1}; }
 sc.addEventListener('pointerdown',drStart); de.addEventListener('pointerdown',drStart);   /* Text wischt mit (Ruben 09.11.): Wischen geht auch auf dem Text, der Text faehrt mit dem Finger */
-const TXT_T='opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out),translate .3s var(--e-out)';
 addEventListener('pointermove',e=>{ if(!dr) return; const now=performance.now(), d=e.clientX-dr.x0; if(!dr.on&&Math.abs(d)>6) dr.on=true; if(!dr.on) return;
-  dr.v=.6*dr.v+.4*((e.clientX-dr.x)/Math.max(8,now-dr.t)); dr.x=e.clientX; dr.t=now; stack.style.transform='translate3d('+(d/dr.s).toFixed(1)+'px,0,0)'; de.style.translate=d.toFixed(1)+'px 0'; },{passive:true});
-function drEnd(e){ if(!dr) return; const o=dr; dr=null; if(!o.on){ de.style.transition=''; return; } const now=performance.now(), ov=o.x-o.x0, off=ov/o.s;
+  dr.v=.6*dr.v+.4*((e.clientX-dr.x)/Math.max(8,now-dr.t)); dr.x=e.clientX; dr.t=now; stack.style.transform='translate3d('+(d/dr.s).toFixed(1)+'px,0,0)'; },{passive:true});
+function drEnd(e){ if(!dr) return; const o=dr; dr=null; if(!o.on) return; const now=performance.now(), ov=o.x-o.x0, off=ov/o.s;
   const sp=Math.max(now-o.t<90?Math.abs(o.v):0, Math.abs(ov)/Math.max(16,now-o.t0));
   C.forEach(c=>{ c.x+=off; c.t+=off; }); anchor+=off; stack.style.transform=''; snapUntil=now+700; swiped=Date.now();   /* Versatz in die Lage uebernehmen, damit nichts springt */
-  const oldS=curS; if(Math.abs(ov)>innerWidth*.3||(sp>.3&&Math.abs(ov)>12)) step(ov<0?1:-1);
-  /* Text: bei neuer Tafel weiter hinaus, der neue Text kommt von der anderen Seite; sonst federt er zurueck */
-  de.style.transition=TXT_T;
-  if(curS!==oldS&&!reduce){ const dir=ov<0?-1:1; de.style.translate=(dir*innerWidth*.5).toFixed(0)+'px 0';
-    drStart.t=setTimeout(()=>{ de.style.transition='none'; de.style.translate=(-dir*innerWidth*.25).toFixed(0)+'px 0'; void de.offsetWidth; de.style.transition=TXT_T; de.style.translate='0px 0';
-      drStart.t=setTimeout(()=>{ de.style.transition=''; de.style.translate=''; },350); },190); }
-  else { de.style.translate='0px 0'; drStart.t=setTimeout(()=>{ de.style.transition=''; de.style.translate=''; },350); } }
+  if(Math.abs(ov)>innerWidth*.3||(sp>.3&&Math.abs(ov)>12)) step(ov<0?1:-1); }
 addEventListener('pointerup',drEnd); addEventListener('pointercancel',drEnd);
+/* Probe ?orbit (Ruben 09.11.): im Overview mit Maus oder Finger ziehen = Stapel drehen (waagerecht) und neigen (senkrecht), begrenzt,
+   damit man die Bilder nicht von hinten sieht; ein Klick ohne Ziehen oeffnet weiter das Bild */
+if(ORBIT&&VOR&&!KREIS){
+  sc.addEventListener('pointerdown',e=>{ if(hov>=0||e.button>0) return; px=null; orb={x0:e.clientX,y0:e.clientY,y:oY,x:oX,on:false,id:e.pointerId}; });
+  addEventListener('pointermove',e=>{ if(!orb||e.pointerId!==orb.id) return; const dx=e.clientX-orb.x0, dy=e.clientY-orb.y0;
+    if(!orb.on&&Math.hypot(dx,dy)>6){ orb.on=true; document.documentElement.classList.add('dreht'); }
+    if(!orb.on) return; oY=Math.max(-O_Y,Math.min(O_Y,orb.y+dx*.25)); oX=Math.max(-O_X,Math.min(O_X,orb.x-dy*.2)); },{passive:true});
+  const orbEnd=()=>{ if(!orb) return; if(orb.on){ swiped=Date.now(); orbT=performance.now()+O_HALT; } orb=null; document.documentElement.classList.remove('dreht'); };
+  addEventListener('pointerup',orbEnd); addEventListener('pointercancel',orbEnd);
+  sc.addEventListener('click',e=>{ if(hov<0&&Date.now()-swiped<350){ e.stopPropagation(); e.preventDefault(); } },true);   /* nach dem Drehen kein Bild oeffnen */
+}
 addEventListener('pointerup',e=>{ if(px===null) return; const d=e.clientX-px; px=null; if(Math.abs(d)>40){ step(d<0?1:-1); swiped=Date.now(); } });
 // Vorschlag beim Lesen: linke Haelfte zurueck, rechte weiter, Zeiger zeigt die Richtung
 sc.addEventListener('mousemove',e=>{ const r=e.clientX>=innerWidth/2; sc.classList.toggle('c-r',r); sc.classList.toggle('c-l',!r); });
@@ -698,7 +718,7 @@ requestAnimationFrame(tick);
   function zeig(k){ if(KL==="hover"){ if(k<0&&imVz) return; var zu=(k<0||document.documentElement.classList.contains("lesen")); clearTimeout(zeig.t); zeig.t=setTimeout(function(){ klappAuf(zu?-1:k); },zu?260:200); return; }   /* ?klapp=hover: kurz warten, damit nicht jede ueberfahrene Pille aufklappt */
     if(KL){ if(KL==="decken") klappAuf((k<0||document.documentElement.classList.contains("lesen"))?-1:k); return; } if(k<0||document.documentElement.classList.contains("lesen")){ vor.classList.remove("auf"); return; } fuell(k); vor.classList.add("auf"); }
   /* Lage des Textfelds (gleich breit wie das Verzeichnis, gleiche Oberkante) und Sperrflaechen fuer das Band */
-  function lage(){ if(innerWidth<=700){ window.__sperr=null; return; } var lst=document.getElementById("lst"), L=lst.getBoundingClientRect(), bs=document.querySelectorAll("#lst li > button"), mr=0, lb=0;
+  function lage(){ var lst=document.getElementById("lst"); lst.style.scale=""; if(innerWidth<=700){ window.__sperr=null; return; } var L=lst.getBoundingClientRect(), bs=document.querySelectorAll("#lst li > button"), mr=0, lb=0;
     bs.forEach(function(b){ var r=b.getBoundingClientRect(); mr=Math.max(mr,r.right); lb=Math.max(lb,r.bottom); });
     var dy=L.top-lst.offsetTop; var W=Math.max(260,mr-L.left); lst.style.setProperty("--lw",W+"px");
     if(KL){ var b1=bs[0], tn=b1&&b1.childNodes[1]; if(tn&&tn.nodeType===3){ var rg=document.createRange(); rg.selectNodeContents(tn); lst.style.setProperty("--ktin",Math.max(0,rg.getBoundingClientRect().left-b1.getBoundingClientRect().left)+"px"); }   /* Klapptext auf Hoehe des Titels nach der Nummer (Ruben 08.11.) */
@@ -712,7 +732,10 @@ requestAnimationFrame(tick);
       if(bk){ bk.style.left="0px"; var b0l=bk.getBoundingClientRect().left, mnB=1e9, mxB=0; bs.forEach(function(b){ if(inB(b)){ var r=b.getBoundingClientRect(); mnB=Math.min(mnB,r.left); mxB=Math.max(mxB,r.right); } }); W2=Math.max(260,mxB-mnB); xB=innerWidth-pl-W2; bk.style.left=(xB-b0l)+"px"; bs.forEach(function(b){ if(inB(b)) lbB=Math.max(lbB,b.getBoundingClientRect().bottom); }); }
       document.querySelectorAll("#lst .kt").forEach(function(d){ var b=inB(d); d.style.width=(b?W2:W)+"px"; var hh=(KL!=="decken"?d.scrollHeight:d.offsetHeight); if(b) mkB=Math.max(mkB,hh); else mkA=Math.max(mkA,hh); });
       if(auf>=0) klappAuf(auf);
-      window.__sperr=[{l:0,t:lst.offsetTop-10,r:L.left+W+28,b:lbA-dy+mkA+18}]; if(bk) window.__sperr.push({l:xB-28,t:lst.offsetTop-10,r:innerWidth,b:lbB-dy+mkB+18}); return; } vor.style.width=W+"px"; vor.style.top=lst.offsetTop+"px";   /* ohne die Einblend-Verschiebung des Verzeichnisses messen */
+      /* Verzeichnis passt sich der Fensterhoehe an (Ruben 09.11.): auch mit dem laengsten aufgeklappten Text endet es ueber der Leiste */
+      var fbT=document.querySelector(".fbar").getBoundingClientRect().top, need=(lbA-L.top)+mkA, sk=Math.min(1,(fbT-24-L.top)/Math.max(1,need));
+      lst.style.transformOrigin="0 0"; lst.style.scale=sk<.999?sk.toFixed(3):"";
+      window.__sperr=[{l:0,t:lst.offsetTop-10,r:L.left+W*sk+28,b:(L.top-dy)+need*sk+18}]; if(bk) window.__sperr.push({l:xB-28,t:lst.offsetTop-10,r:innerWidth,b:lbB-dy+mkB+18}); return; } vor.style.width=W+"px"; vor.style.top=lst.offsetTop+"px";   /* ohne die Einblend-Verschiebung des Verzeichnisses messen */
     var kk=document.querySelector("#lst .k"), ks=getComputedStyle(kk), vn=vor.querySelector(".n"); vn.style.fontSize=ks.fontSize; vn.style.lineHeight=ks.lineHeight; vn.style.marginBottom=ks.marginBottom; vn.style.paddingTop=ks.paddingTop;   /* Kopfzeilen links und rechts exakt gleich gesetzt */
     fuell(0); vn.style.marginBottom="0px"; var b0=document.querySelector("#lst button"), tp=vor.querySelector(".t .p"); var dyp=(b0.getBoundingClientRect().top-dy)-tp.getBoundingClientRect().top; vn.style.marginBottom=Math.max(0,dyp)+"px";   /* gefuellte Pille rechts auf Hoehe der ersten Pille links (Ruben 08.11.) */
     var mh=0; for(var k=0;k<15;k++){ fuell(k); mh=Math.max(mh,vor.offsetHeight); } var vr=vor.getBoundingClientRect();
