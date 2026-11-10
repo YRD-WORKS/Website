@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works / Surf (Probe)</title>
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{
+  --bg:#fff; --ink:rgb(0,0,255); --ink-4:rgba(0,0,255,.65); --line:rgba(0,0,255,.3);
+  --base:clamp(10px,.88vw,22px); --pad:max(16px,1rem); font-size:var(--base);
+  --fb-b:1rem; --fb-h:3.2rem; --fb-in:1.3rem;
+  --t-fast:.2s; --t-mid:.35s; --e-out:cubic-bezier(.2,.7,.2,1);
+}
+@media (max-width:700px){ :root{ --base:10px; font-size:15px; --pad:16px } }
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--ink);font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1.3rem;font-weight:550;line-height:1.22;-webkit-font-smoothing:antialiased}
+a{color:var(--ink);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.caption{font-size:1.05rem;font-weight:420}
+
+/* Kopfzeile wie auf der Seite */
+.nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;padding:var(--pad);pointer-events:none}
+.nav a{pointer-events:auto}
+.nav .links{display:flex;gap:1em}
+@media (hover:hover){ .nav a:hover{text-decoration:underline;text-underline-offset:.18em} }
+
+/* Raum */
+#scene{position:fixed;inset:0;perspective:1500px;perspective-origin:50% 34%;overflow:hidden;touch-action:none;cursor:grab}
+#scene.drag{cursor:grabbing}
+#rig{position:absolute;left:50%;top:62%;width:0;height:0;transform-style:preserve-3d;transform:translateZ(-900px) rotateX(-20deg) rotateY(32deg)}
+#floor{position:absolute;left:-3500px;top:-3500px;width:7000px;height:7000px;transform:rotateX(90deg);
+  background-image:linear-gradient(rgba(0,0,255,.16) 1.5px,transparent 1px),linear-gradient(90deg,rgba(0,0,255,.16) 1.5px,transparent 1px);
+  background-size:80px 80px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 35%,transparent 100%);mask-image:radial-gradient(closest-side,#000 35%,transparent 100%)}
+#band{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card{position:absolute;left:0;top:0;transform-style:preserve-3d;cursor:pointer}
+.card .pic{position:absolute;bottom:0;left:0;transform-origin:50% 100%;transition:transform var(--t-mid) var(--e-out)}
+.card img{display:block;height:var(--h);width:auto;user-select:none;-webkit-user-drag:none;background:rgba(0,0,255,.08)}
+.card .sh{position:absolute;left:-10%;bottom:-45px;width:120%;height:90px;transform-origin:50% 50%;transform:translateY(-2px) rotateX(90deg);
+  background:radial-gradient(closest-side,rgba(0,0,60,.32),transparent);pointer-events:none;transition:opacity var(--t-mid)}
+.card.on .pic{transform:translateY(-22px)}
+.card.on .sh{opacity:.55}
+
+/* Motiv-Texte: DE oben rechts, EN unten rechts */
+.mot{position:fixed;right:var(--pad);z-index:9;width:min(34rem,44vw);background:rgba(255,255,255,.95);padding:.7rem .9rem;margin-right:-.9rem;pointer-events:none;opacity:0;transition:opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out)}
+.mot.vis{opacity:1}
+#de{top:4.2rem;transform:translateY(-8px)}
+#en{bottom:calc(var(--fb-b) + var(--fb-h) + 1.4rem);transform:translateY(8px)}
+.mot.vis{transform:none}
+.mot .lab{display:block;color:var(--ink-4);margin-bottom:.35rem}
+.mot .t{display:block;font-size:1.9rem;line-height:1.05;margin-bottom:.7rem}
+.mot .s{display:block}
+@media (max-width:700px){ .mot{width:auto;left:var(--pad)} .mot .t{font-size:1.4rem} #de{top:3.2rem} }
+
+/* Leiste wie auf der 3D-Seite */
+.fbar{position:fixed;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-b) + env(safe-area-inset-bottom,0px));height:var(--fb-h);z-index:12;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 var(--fb-in);border-radius:10em;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink)}
+.fbar .l{justify-self:start;display:flex;align-items:center;gap:.6em}
+.fbar .c{justify-self:center;display:flex;gap:.6em}
+.fbar .r{justify-self:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.n{color:var(--ink-4)}
+.seg{display:inline-flex;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);line-height:1}
+.seg a,.seg span{display:block;padding:.3em .8em .26em;border-radius:10em}
+.seg .on{background:var(--ink);color:var(--bg)}
+.pill{font:inherit;display:inline-block;line-height:1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg);color:var(--ink);border:0;cursor:pointer}
+@media (hover:hover){ .pill:hover,.seg a:hover{background:rgba(0,0,255,.08)} }
+@media (max-width:700px){ .fbar{font-size:13px} .fbar .c{display:none} .fbar{grid-template-columns:auto 1fr} }
+</style>
+</head>
+<body>
+<header class="nav"><a href="../">YRD.Works</a><span class="links"><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></span></header>
+
+<div id="scene" aria-label="Alle Projekte als Band, mit Mausrad oder Ziehen bewegen">
+  <div id="rig"><div id="floor"></div><div id="band"></div></div>
+</div>
+
+<div id="de" class="mot caption" lang="de" aria-live="polite"><span class="lab"></span><span class="t"></span><span class="s"></span></div>
+<div id="en" class="mot caption" lang="en"><span class="lab"></span><span class="t"></span><span class="s"></span></div>
+
+<nav class="fbar caption" aria-label="Ansicht">
+  <div class="l"><span>View</span><span class="seg"><a href="../">2D</a><a href="../3d/">3D</a><span class="on" aria-current="page">Surf</span></span></div>
+  <div class="c"><button class="pill" id="prev" type="button">← Newer</button><button class="pill" id="next" type="button">Older →</button></div>
+  <div class="r" id="lab"></div>
+</nav>
+
+<script>
+const M={"bin":["Binäre Raumfiguren","Viele Arbeiten organisieren sich als Doppelfigur: zwei gleichwertige, gegensätzlich codierte Register, die einander bedingen.","Binary spatial figures","Many works are organised as a double figure: two equal, oppositely coded registers that depend on each other."],"real":["Das Reale als knappes Gut","In einer zunehmend synthetischen Öffentlichkeit wird körperliche Präsenz, Zufälligkeit und echte Begegnung zu etwas Knappem.","The real as a scarce good","In an increasingly synthetic public sphere, physical presence, chance and real encounter become scarce."],"bild":["Das komponierte Bild","Das Bild ist nicht Aufzeichnung eines Geschehens, sondern komponiert, und Menschen wie Architektur sind seine Zutaten.","The composed image","The image is not a record of what happens but is composed, and people and architecture are its ingredients."],"masch":["Die Maschine als Mitspieler","Maschinen sind nicht Hilfsmittel im Hintergrund, sondern sichtbare Akteure des Werkvollzugs.","The machine as a player","Machines are not tools in the background but visible actors in how the work operates."],"doku":["Dokumentation als Werkebene","Die Dokumentation ist kein nachgelagerter Bericht, sondern eine eigenständige zweite Werkebene, die das physische Werk mitbestimmt.","Documentation as a layer of the work","Documentation is not a report after the fact but a second layer of the work in its own right, shaping the physical work."],"dritt":["Dritte Orte als soziale Infrastruktur","Räume jenseits von Zuhause und Arbeit, die Begegnung ohne Zweck ermöglichen.","Third places as social infrastructure","Spaces beyond home and work that allow encounter without a purpose."],"koll":["Kollektivität als Methode","Geteilte Autorenschaft, konstruktive Diskussionskultur, gegenseitige Verantwortung: das ist nicht Hintergrund, sondern Inhalt.","Collectivity as method","Shared authorship, a constructive culture of debate, mutual responsibility: not background, but content."],"mass":["Maßstabssprung als Verfahren","Skalierung als bildgebendes Verfahren: Vergrößerung, Verkleinerung, Überdimensionierung, Miniatur.","Change of scale as method","Scaling as an image-making method: enlargement, reduction, oversizing, miniature."],"fict":["Productive Fiction","Projekte entstehen häufig aus einer Behauptung heraus: Ein Raum wird umgedeutet, bevor er gesichert ist.","Productive fiction","Projects often begin with a claim: a space is reinterpreted before it is secured."],"app":["Raum als sozialer Apparat","Räume funktionieren nicht über Botschaften, sondern über Bedingungen. Sie legen Regeln fest, ohne Verhalten vorzuschreiben.","Space as a social apparatus","Spaces work through conditions, not messages. They set rules without prescribing behaviour."],"sicht":["Sichtbarmachen des Verborgenen","Hinter jeder Institution, jedem Raum, jeder Gemeinschaft steckt ein unsichtbares Rückgrat. Wir machen diese Schichten sichtbar, nicht durch Erklärung, sondern durch räumliche Übersetzung.","Making the hidden visible","Behind every institution, space and community there is an invisible backbone. We make these layers visible, not through explanation but through spatial translation."],"oeko":["Ökonomische Systeme als Werkstoff","Ganze ökonomische Systeme werden in die Werke eingebaut: Bestellung, Verkauf, Versand, Währung, Selbstfinanzierung.","Economic systems as material","Entire economic systems are built into the works: ordering, selling, shipping, currency, self-financing."]};
+const C=[{"src":"../Bilder/2026-display/01-900.webp","t":"Display","y":"2026","n":1,"k":0,"href":"../display/","m":["real","dritt","fict"]},{"src":"../Bilder/2026-display/02.webp","t":"Display","y":"2026","n":1,"k":1,"href":"../display/","m":["real","dritt","fict"]},{"src":"../Bilder/2026-display/03.webp","t":"Display","y":"2026","n":1,"k":2,"href":"../display/","m":["real","dritt","fict"]},{"src":"../Bilder/2025-bingenheim/hero-900.webp","t":"Bingenheim","y":"2025","n":2,"k":0,"href":"../bingenheim/","m":[]},{"src":"../Bilder/2025-bingenheim/02.webp","t":"Bingenheim","y":"2025","n":2,"k":1,"href":"../bingenheim/","m":[]},{"src":"../Bilder/2025-bingenheim/03.webp","t":"Bingenheim","y":"2025","n":2,"k":2,"href":"../bingenheim/","m":[]},{"src":"../Bilder/2024-transition-1-7/01-900.webp","t":"Transition 1-7","y":"2024","n":3,"k":0,"href":"../transition-1-7/","m":["bild","doku","koll","fict"]},{"src":"../Bilder/2024-transition-1-7/02.webp","t":"Transition 1-7","y":"2024","n":3,"k":1,"href":"../transition-1-7/","m":["bild","doku","koll","fict"]},{"src":"../Bilder/2024-transition-1-7/03.webp","t":"Transition 1-7","y":"2024","n":3,"k":2,"href":"../transition-1-7/","m":["bild","doku","koll","fict"]},{"src":"../Bilder/2024-im-angesicht-des-todes/01-900.webp","t":"Im Angesicht des Todes","y":"2024","n":4,"k":0,"href":"../im-angesicht-des-todes/","m":[]},{"src":"../Bilder/2024-im-angesicht-des-todes/02.webp","t":"Im Angesicht des Todes","y":"2024","n":4,"k":1,"href":"../im-angesicht-des-todes/","m":[]},{"src":"../Bilder/2024-im-angesicht-des-todes/03.webp","t":"Im Angesicht des Todes","y":"2024","n":4,"k":2,"href":"../im-angesicht-des-todes/","m":[]},{"src":"../Bilder/2023-tables/hero-900.webp","t":"Tables","y":"2023","n":5,"k":0,"href":"../tables/","m":["bild","masch","doku"]},{"src":"../Bilder/2023-tables/02.webp","t":"Tables","y":"2023","n":5,"k":1,"href":"../tables/","m":["bild","masch","doku"]},{"src":"../Bilder/2023-tables/03.webp","t":"Tables","y":"2023","n":5,"k":2,"href":"../tables/","m":["bild","masch","doku"]},{"src":"../Bilder/2023-hole-mound/hero-900.webp","t":"Hole/Mound","y":"2023","n":6,"k":0,"href":"../hole-mound/","m":["bin","masch","sicht","app","doku","real","koll"]},{"src":"../Bilder/2023-hole-mound/02.webp","t":"Hole/Mound","y":"2023","n":6,"k":1,"href":"../hole-mound/","m":["bin","masch","sicht","app","doku","real","koll"]},{"src":"../Bilder/2023-hole-mound/03.webp","t":"Hole/Mound","y":"2023","n":6,"k":2,"href":"../hole-mound/","m":["bin","masch","sicht","app","doku","real","koll"]},{"src":"../Bilder/2023-soups/01-900.webp","t":"Soups","y":"2023","n":7,"k":0,"href":"../soups/","m":["bin","real","dritt","koll","fict"]},{"src":"../Bilder/2023-soups/02.webp","t":"Soups","y":"2023","n":7,"k":1,"href":"../soups/","m":["bin","real","dritt","koll","fict"]},{"src":"../Bilder/2023-soups/03.webp","t":"Soups","y":"2023","n":7,"k":2,"href":"../soups/","m":["bin","real","dritt","koll","fict"]},{"src":"../Bilder/2022-steady-burn/hero-900.webp","t":"Steady Burn","y":"2022","n":8,"k":0,"href":"../steady-burn/","m":["bild","doku"]},{"src":"../Bilder/2022-steady-burn/02.webp","t":"Steady Burn","y":"2022","n":8,"k":1,"href":"../steady-burn/","m":["bild","doku"]},{"src":"../Bilder/2022-steady-burn/03.webp","t":"Steady Burn","y":"2022","n":8,"k":2,"href":"../steady-burn/","m":["bild","doku"]},{"src":"../Bilder/2022-forschungswerkstatt/01-900.webp","t":"Forschungswerkstatt","y":"2022","n":9,"k":0,"href":"../forschungswerkstatt/","m":["app","sicht"]},{"src":"../Bilder/2022-forschungswerkstatt/02.webp","t":"Forschungswerkstatt","y":"2022","n":9,"k":1,"href":"../forschungswerkstatt/","m":["app","sicht"]},{"src":"../Bilder/2022-forschungswerkstatt/03.webp","t":"Forschungswerkstatt","y":"2022","n":9,"k":2,"href":"../forschungswerkstatt/","m":["app","sicht"]},{"src":"../Bilder/2022-current-tours/01-900.webp","t":"Current Tours","y":"2021","n":10,"k":0,"href":"../current-tours/","m":["masch","doku","sicht","oeko"]},{"src":"../Bilder/2022-current-tours/02.webp","t":"Current Tours","y":"2021","n":10,"k":1,"href":"../current-tours/","m":["masch","doku","sicht","oeko"]},{"src":"../Bilder/2022-current-tours/03.webp","t":"Current Tours","y":"2021","n":10,"k":2,"href":"../current-tours/","m":["masch","doku","sicht","oeko"]},{"src":"../Bilder/2021-bread-dispenser/01-900.webp","t":"Bread Dispenser","y":"2021","n":11,"k":0,"href":"../bread-dispenser/","m":["bin","masch"]},{"src":"../Bilder/2021-bread-dispenser/02.webp","t":"Bread Dispenser","y":"2021","n":11,"k":1,"href":"../bread-dispenser/","m":["bin","masch"]},{"src":"../Bilder/2021-bread-dispenser/03.webp","t":"Bread Dispenser","y":"2021","n":11,"k":2,"href":"../bread-dispenser/","m":["bin","masch"]},{"src":"../Bilder/2021-logis/01-900.webp","t":"Logis","y":"2020","n":12,"k":0,"href":"../logis/","m":["mass","real"]},{"src":"../Bilder/2021-logis/02.webp","t":"Logis","y":"2020","n":12,"k":1,"href":"../logis/","m":["mass","real"]},{"src":"../Bilder/2021-logis/03.webp","t":"Logis","y":"2020","n":12,"k":2,"href":"../logis/","m":["mass","real"]},{"src":"../Bilder/2020-canned-99-63/01-900.webp","t":"Canned (99/63)","y":"2020","n":13,"k":0,"href":"../canned-99-63/","m":["bild","doku","oeko"]},{"src":"../Bilder/2020-canned-99-63/02.webp","t":"Canned (99/63)","y":"2020","n":13,"k":1,"href":"../canned-99-63/","m":["bild","doku","oeko"]},{"src":"../Bilder/2020-canned-99-63/03.webp","t":"Canned (99/63)","y":"2020","n":13,"k":2,"href":"../canned-99-63/","m":["bild","doku","oeko"]},{"src":"../Bilder/2020-access/01-900.webp","t":"Access","y":"2020","n":14,"k":0,"href":"../access/","m":["bin"]},{"src":"../Bilder/2020-access/02.webp","t":"Access","y":"2020","n":14,"k":1,"href":"../access/","m":["bin"]},{"src":"../Bilder/2020-access/03.webp","t":"Access","y":"2020","n":14,"k":2,"href":"../access/","m":["bin"]},{"src":"../Bilder/2019-doubles/01-900.webp","t":"Doubles","y":"2019","n":15,"k":0,"href":"../doubles/","m":[]},{"src":"../Bilder/2019-doubles/02.webp","t":"Doubles","y":"2019","n":15,"k":1,"href":"../doubles/","m":[]},{"src":"../Bilder/2019-doubles/03.webp","t":"Doubles","y":"2019","n":15,"k":2,"href":"../doubles/","m":[]},{"src":"../Bilder/2019-copy-service/hero-900.webp","t":"Copy Service","y":"2019","n":16,"k":0,"href":"../copy-service/","m":["mass"]},{"src":"../Bilder/2019-copy-service/02.webp","t":"Copy Service","y":"2019","n":16,"k":1,"href":"../copy-service/","m":["mass"]},{"src":"../Bilder/2019-copy-service/03.webp","t":"Copy Service","y":"2019","n":16,"k":2,"href":"../copy-service/","m":["mass"]},{"src":"../Bilder/2018-white-out/hero-900.webp","t":"White Out","y":"2018","n":17,"k":0,"href":"../white-out/","m":["app"]},{"src":"../Bilder/2018-white-out/02.webp","t":"White Out","y":"2018","n":17,"k":1,"href":"../white-out/","m":["app"]},{"src":"../Bilder/2018-white-out/03.webp","t":"White Out","y":"2018","n":17,"k":2,"href":"../white-out/","m":["app"]},{"src":"../Bilder/2018-oper-offenbach/01-900.webp","t":"Oper Offenbach","y":"2018","n":18,"k":0,"href":"../oper-offenbach/","m":["masch","mass"]},{"src":"../Bilder/2018-oper-offenbach/02.webp","t":"Oper Offenbach","y":"2018","n":18,"k":1,"href":"../oper-offenbach/","m":["masch","mass"]},{"src":"../Bilder/2018-oper-offenbach/03.webp","t":"Oper Offenbach","y":"2018","n":18,"k":2,"href":"../oper-offenbach/","m":["masch","mass"]},{"src":"../Bilder/2018-not-not-pizza/01-900.webp","t":"Not Not Pizza","y":"2018","n":19,"k":0,"href":"../not-not-pizza/","m":["oeko"]},{"src":"../Bilder/2018-not-not-pizza/02.webp","t":"Not Not Pizza","y":"2018","n":19,"k":1,"href":"../not-not-pizza/","m":["oeko"]},{"src":"../Bilder/2018-not-not-pizza/03.webp","t":"Not Not Pizza","y":"2018","n":19,"k":2,"href":"../not-not-pizza/","m":["oeko"]},{"src":"../Bilder/2018-insight-out/01-900.webp","t":"Insight Out","y":"2018","n":20,"k":0,"href":"../insight-out/","m":["bin","app"]},{"src":"../Bilder/2018-insight-out/02.webp","t":"Insight Out","y":"2018","n":20,"k":1,"href":"../insight-out/","m":["bin","app"]},{"src":"../Bilder/2018-insight-out/03.webp","t":"Insight Out","y":"2018","n":20,"k":2,"href":"../insight-out/","m":["bin","app"]},{"src":"../Bilder/2017-offenbacher-seefestspiele/hero-900.webp","t":"1. Offenbacher Seefestspiele","y":"2017","n":21,"k":0,"href":"../1-offenbacher-seefestspiele/","m":[]},{"src":"../Bilder/2017-offenbacher-seefestspiele/02.webp","t":"1. Offenbacher Seefestspiele","y":"2017","n":21,"k":1,"href":"../1-offenbacher-seefestspiele/","m":[]},{"src":"../Bilder/2017-offenbacher-seefestspiele/03.webp","t":"1. Offenbacher Seefestspiele","y":"2017","n":21,"k":2,"href":"../1-offenbacher-seefestspiele/","m":[]},{"src":"../Bilder/2017-messerschmiede/01-900.webp","t":"Messerschmiede","y":"2017","n":22,"k":0,"href":"../messerschmiede/","m":["oeko"]},{"src":"../Bilder/2017-messerschmiede/02.webp","t":"Messerschmiede","y":"2017","n":22,"k":1,"href":"../messerschmiede/","m":["oeko"]},{"src":"../Bilder/2017-messerschmiede/03.webp","t":"Messerschmiede","y":"2017","n":22,"k":2,"href":"../messerschmiede/","m":["oeko"]},{"src":"../Bilder/2017-eins-zu-eins/01-900.webp","t":"Eins zu Eins","y":"2017","n":23,"k":0,"href":"../eins-zu-eins/","m":["app","sicht"]},{"src":"../Bilder/2017-eins-zu-eins/02.webp","t":"Eins zu Eins","y":"2017","n":23,"k":1,"href":"../eins-zu-eins/","m":["app","sicht"]},{"src":"../Bilder/2017-eins-zu-eins/03.webp","t":"Eins zu Eins","y":"2017","n":23,"k":2,"href":"../eins-zu-eins/","m":["app","sicht"]},{"src":"../Bilder/2017-busy-sculpture/01-900.webp","t":"Busy Sculpture","y":"2017","n":24,"k":0,"href":"../busy-sculpture/","m":["masch","oeko"]},{"src":"../Bilder/2017-busy-sculpture/02.webp","t":"Busy Sculpture","y":"2017","n":24,"k":1,"href":"../busy-sculpture/","m":["masch","oeko"]},{"src":"../Bilder/2017-busy-sculpture/03.webp","t":"Busy Sculpture","y":"2017","n":24,"k":2,"href":"../busy-sculpture/","m":["masch","oeko"]},{"src":"../Bilder/2016-sirenen/01-900.webp","t":"Sirenen","y":"2016","n":25,"k":0,"href":"../sirenen/","m":[]},{"src":"../Bilder/2016-sirenen/02.webp","t":"Sirenen","y":"2016","n":25,"k":1,"href":"../sirenen/","m":[]},{"src":"../Bilder/2016-sirenen/03.webp","t":"Sirenen","y":"2016","n":25,"k":2,"href":"../sirenen/","m":[]},{"src":"../Bilder/2016-scale-scale-scale/01-900.webp","t":"Scale Scale Scale","y":"2016","n":26,"k":0,"href":"../scale-scale-scale/","m":["mass","bin"]},{"src":"../Bilder/2016-scale-scale-scale/02.webp","t":"Scale Scale Scale","y":"2016","n":26,"k":1,"href":"../scale-scale-scale/","m":["mass","bin"]},{"src":"../Bilder/2016-scale-scale-scale/03.webp","t":"Scale Scale Scale","y":"2016","n":26,"k":2,"href":"../scale-scale-scale/","m":["mass","bin"]},{"src":"../Bilder/2016-kressmann-halle/01-900.webp","t":"Kressmann-Halle","y":"2016","n":27,"k":0,"href":"../kressmann-halle/","m":["dritt","fict"]},{"src":"../Bilder/2016-kressmann-halle/02.webp","t":"Kressmann-Halle","y":"2016","n":27,"k":1,"href":"../kressmann-halle/","m":["dritt","fict"]},{"src":"../Bilder/2016-kressmann-halle/03.webp","t":"Kressmann-Halle","y":"2016","n":27,"k":2,"href":"../kressmann-halle/","m":["dritt","fict"]},{"src":"../Bilder/2015-pool/01.webp","t":"Pool","y":"2015","n":28,"k":0,"href":"../pool/","m":[]},{"src":"../Bilder/2015-pool/02.webp","t":"Pool","y":"2015","n":28,"k":1,"href":"../pool/","m":[]},{"src":"../Bilder/2015-pool/03.webp","t":"Pool","y":"2015","n":28,"k":2,"href":"../pool/","m":[]},{"src":"../Bilder/2014-hafenmeisterei/01-900.webp","t":"Hafenmeisterei","y":"2015","n":29,"k":0,"href":"../hafenmeisterei/","m":["dritt"]},{"src":"../Bilder/2014-hafenmeisterei/02.webp","t":"Hafenmeisterei","y":"2015","n":29,"k":1,"href":"../hafenmeisterei/","m":["dritt"]},{"src":"../Bilder/2014-hafenmeisterei/03.webp","t":"Hafenmeisterei","y":"2015","n":29,"k":2,"href":"../hafenmeisterei/","m":["dritt"]},{"src":"../Bilder/2014-pelican-bay/01-900.webp","t":"Pelican Bay","y":"2014","n":30,"k":0,"href":"../pelican-bay/","m":[]},{"src":"../Bilder/2014-pelican-bay/02.webp","t":"Pelican Bay","y":"2014","n":30,"k":1,"href":"../pelican-bay/","m":[]},{"src":"../Bilder/2014-pelican-bay/03.webp","t":"Pelican Bay","y":"2014","n":30,"k":2,"href":"../pelican-bay/","m":[]},{"src":"../Bilder/2014-makoko/01-900.webp","t":"Makoko","y":"2014","n":31,"k":0,"href":"../makoko/","m":[]},{"src":"../Bilder/2014-makoko/02.webp","t":"Makoko","y":"2014","n":31,"k":1,"href":"../makoko/","m":[]},{"src":"../Bilder/2014-makoko/03.webp","t":"Makoko","y":"2014","n":31,"k":2,"href":"../makoko/","m":[]},{"src":"../Bilder/2014-holzhausen/01-900.webp","t":"Holzhausen","y":"2014","n":32,"k":0,"href":"../holzhausen/","m":["dritt","koll","fict"]},{"src":"../Bilder/2014-holzhausen/02.webp","t":"Holzhausen","y":"2014","n":32,"k":1,"href":"../holzhausen/","m":["dritt","koll","fict"]},{"src":"../Bilder/2014-holzhausen/03.webp","t":"Holzhausen","y":"2014","n":32,"k":2,"href":"../holzhausen/","m":["dritt","koll","fict"]},{"src":"../Bilder/2012-holzhausenstrasse/01-900.webp","t":"Holzhausenstraße","y":"2012","n":33,"k":0,"href":"../holzhausenstrasse/","m":[]},{"src":"../Bilder/2012-holzhausenstrasse/02.webp","t":"Holzhausenstraße","y":"2012","n":33,"k":1,"href":"../holzhausenstrasse/","m":[]},{"src":"../Bilder/2012-holzhausenstrasse/03.webp","t":"Holzhausenstraße","y":"2012","n":33,"k":2,"href":"../holzhausenstrasse/","m":[]}];
+(function(){
+const band=document.getElementById('band'), floor=document.getElementById('floor'), scene=document.getElementById('scene');
+const de=document.getElementById('de'), en=document.getElementById('en'), lab=document.getElementById('lab');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const touch=matchMedia('(hover:none)').matches;
+const ROT=-90;   // Bilder quer zum Band gedreht (Ruben 07.11.)
+const H=Math.round(Math.min(innerHeight*.42,420)), GAP=Math.round(H*.5);
+document.documentElement.style.setProperty('--h',H+'px');
+
+// Karten auf das Band setzen: eine Spur pro Bild eines Projekts, leicht versetzt in der Tiefe
+const els=C.map((c,i)=>{
+  const a=document.createElement('a'); a.className='card'; a.href=c.href; a.dataset.i=i;
+  a.setAttribute('aria-label',c.t+', '+c.y);
+  const x=i*GAP, z=[0,-170,90][c.k]+Math.sin(i*.7)*40;
+  a.style.transform="translate3d("+x+"px,0,"+z+"px) rotateY("+ROT+"deg)";
+  a.innerHTML='<span class="sh"></span><span class="pic"><img alt="" decoding="async" src="'+c.src+'"></span>';
+  band.appendChild(a); c.x=x; return a;
+});
+const START=Math.round(GAP*2.2);
+const MAX=(C.length-1)*GAP;
+let off=0, target=0;
+
+// Bewegung: Mausrad, Ziehen, Pfeiltasten, Knöpfe
+addEventListener('wheel',e=>{ e.preventDefault(); target=clamp(target+(e.deltaY+e.deltaX)*1.1); },{passive:false});
+let dragX=null, moved=0;
+scene.addEventListener('pointerdown',e=>{ dragX=e.clientX; moved=0; scene.classList.add('drag'); });
+addEventListener('pointermove',e=>{ if(dragX===null) return; const d=e.clientX-dragX; dragX=e.clientX; moved+=Math.abs(d); target=clamp(target-d*2.2); });
+addEventListener('pointerup',()=>{ dragX=null; scene.classList.remove('drag'); });
+addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowDown') target=clamp(target+GAP*3); if(e.key==='ArrowLeft'||e.key==='ArrowUp') target=clamp(target-GAP*3); });
+document.getElementById('next').onclick=()=>{ target=clamp(target+GAP*6); };
+document.getElementById('prev').onclick=()=>{ target=clamp(target-GAP*6); };
+function clamp(v){ return Math.max(0,Math.min(MAX,v)); }
+
+function tick(){
+  off+= reduce ? (target-off) : (target-off)*.09;
+  band.style.transform="translate3d("+(-off-START)+"px,0,0)";
+  floor.style.backgroundPosition=(-off%80)+'px 0';
+  // nur Karten in der Nähe zeigen
+  for(let i=0;i<els.length;i++){ const d=C[i].x-off; els[i].style.visibility=(d<-2600||d>5200)?'hidden':'visible'; }
+  if(!cur) showLab(nearest());
+  requestAnimationFrame(tick);
+}
+function nearest(){ return Math.max(0,Math.min(C.length-1,Math.round(off/GAP))); }
+function showLab(i){ const c=C[i], t='('+String(c.n).padStart(2,'0')+') '+c.t+' / '+c.y; if(lab.textContent!==t) lab.textContent=t; }
+
+// Hover: Motiv des Projekts zeigen, bei jedem neuen Hover das nächste
+const step={}; let cur=null;
+function show(i){
+  const c=C[i]; cur=els[i];
+  els.forEach(e=>e.classList.toggle('on',e===cur));
+  showLab(i);
+  if(!c.m.length){ de.classList.remove('vis'); en.classList.remove('vis'); return; }
+  const k=(step[c.t]||0)%c.m.length; step[c.t]=k+1;
+  const m=M[c.m[k]];
+  fill(de,'Motiv '+(k+1)+' von '+c.m.length,m[0],m[1]);
+  fill(en,'Motif '+(k+1)+' of '+c.m.length,m[2],m[3]);
+}
+function fill(el,l,t,s){ el.classList.remove('vis'); void el.offsetWidth; el.querySelector('.lab').textContent=l; el.querySelector('.t').textContent=t; el.querySelector('.s').textContent=s; el.classList.add('vis'); }
+function hide(){ cur=null; els.forEach(e=>e.classList.remove('on')); de.classList.remove('vis'); en.classList.remove('vis'); }
+els.forEach((a,i)=>{
+  if(!touch){ a.addEventListener('mouseenter',()=>show(i)); a.addEventListener('mouseleave',hide); }
+  a.addEventListener('click',e=>{
+    if(moved>6){ e.preventDefault(); return; }          // nach Ziehen nicht öffnen
+    if(touch && cur!==a){ e.preventDefault(); show(i); }  // Handy: erst Motiv, zweiter Tipp öffnet
+  });
+});
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

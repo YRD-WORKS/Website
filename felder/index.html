@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works / Felder (Probe)</title>
+<!-- Probe (Ruben 09.11.2026): die 15 Pillen aus Practice, je zwei Woerter (wie practice/?wort=2).
+     Hovern ueber eine Pille zeigt alle Arbeiten, die darunter fallen, als kleine Bilder: keine Ueberlagerung, alles auf einem Grundlinienraster (--bl).
+     Projektdaten zur Laufzeit aus ../projects.js. Die Zuordnung Pille -> Projekte (Z unten) ist ein ENTWURF von Claude, abgeleitet aus Tags und Mappen; Ruben prueft.
+     ?raster blendet das Grundlinienraster staerker ein, ?ohne blendet es aus. -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{--bg:#fff;--ink:rgb(0,0,255);--ink-4:rgba(0,0,255,.65);--pad:16px;--bl:10px;--gl:rgba(0,0,255,.07)}
+html.raster{--gl:rgba(0,0,255,.18)} html.ohne{--gl:transparent}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"ABC Areal",system-ui,sans-serif}
+a{color:inherit}
+#grid{position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(to bottom,var(--gl) 0 1px,transparent 1px var(--bl))}
+.nav{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;padding:14px var(--pad);font-size:1.15rem;font-weight:550;background:linear-gradient(var(--bg) 70%,transparent)}
+.nav a{text-decoration:none}
+.nav .r{display:flex;gap:1rem}
+.nav .r a.akt{text-decoration:underline;text-underline-offset:.18em}
+#info{position:fixed;left:var(--pad);bottom:var(--pad);z-index:5;font-size:13px;line-height:var(--bl);color:var(--ink-4);pointer-events:none}
+#info b{color:var(--ink);font-weight:550}
+
+#lst{position:absolute;left:var(--pad);top:0;margin:0;padding:0;list-style:none}
+#lst li{position:absolute;left:0;white-space:nowrap}
+#lst .g{font-size:13px;color:var(--ink-4);line-height:var(--bl)}
+.pill{border:0;margin:0;font:inherit;font-size:15px;font-weight:550;line-height:1.1;padding:.3em .85em .26em .6em;border-radius:10em;background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);cursor:pointer;display:inline-flex;align-items:baseline;white-space:nowrap}
+.pill .n{font-weight:420;color:var(--ink-4);margin-right:.55em;font-variant-numeric:tabular-nums}
+.pill .z{font-weight:420;color:var(--ink-4);margin-left:.5em;font-size:.85em}
+.pill.an,.pill:focus-visible{background:var(--ink);color:var(--bg);outline:0}
+.pill.an .n,.pill.an .z,.pill:focus-visible .n,.pill:focus-visible .z{color:rgba(255,255,255,.7)}
+html.offen .pill:not(.an){opacity:.35}
+
+#feld{position:absolute;left:0;top:0;width:0;height:0}
+.bild{position:absolute;display:block;text-decoration:none;opacity:0;transform:translateY(var(--bl)) scale(.92);transform-origin:0 100%;transition:opacity .3s cubic-bezier(.2,.7,.2,1),transform .35s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.bild.da{opacity:1;transform:none;pointer-events:auto}
+.bild img{display:block;width:100%;object-fit:cover;background:rgba(0,0,255,.06)}
+.bild .t{display:block;font-size:11px;line-height:calc(var(--bl)*2);height:calc(var(--bl)*2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bild .t span{color:var(--ink-4);margin-left:.4em}
+.bild:hover img{box-shadow:0 0 0 2px var(--ink)}
+
+/* Handy: Liste im Fluss, Bilder klappen unter der Pille auf */
+html.mob #lst{position:static;padding:calc(var(--bl)*8) var(--pad) calc(var(--bl)*8)}
+html.mob #lst li{position:static;white-space:normal;margin-bottom:var(--bl)}
+html.mob #lst li.gl{margin:calc(var(--bl)*2) 0 var(--bl)}
+html.mob .mf{display:flex;flex-wrap:wrap;gap:calc(var(--bl)*2) var(--bl);margin:var(--bl) 0 var(--bl)}
+html.mob .mf:empty{display:none}
+html.mob .bild{position:relative}
+html.mob #info{display:none}
+@media (max-width:700px){ .nav .r a:not(.akt){display:none} }
+@media (prefers-reduced-motion:reduce){ .bild{transition:none} }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div class="nav"><a href="../">YRD.Works</a><div class="r"><a href="../practice/">Practice</a><a href="../index/">Index</a><a class="akt" href="./">Felder</a></div></div>
+<ul id="lst"></ul>
+<div id="feld"></div>
+<p id="info"><b>Probe Felder.</b> Über eine Pille fahren zeigt alle Arbeiten darunter. Zuordnung ist ein Entwurf.</p>
+<script src="../projects.js"></script>
+<script>
+(function(){
+  const Q=new URLSearchParams(location.search), H=document.documentElement;
+  if(Q.has('raster')) H.classList.add('raster'); if(Q.has('ohne')) H.classList.add('ohne');
+  const BL=10;
+
+  /* Pillen: Fassung zwei Woerter (practice/?wort=2) */
+  const F=[["Ungenutzte Orte","Bildstarke Interventionen","Temporäre Architektur","Ländlicher Raum","Immersive Ausstellungen","Außerschulische Lernorte","Begehbare Skulpturen","Offene Bühnen","Ungewöhnliche Formate","Dritte Orte","Schwierige Räume","Gelebte Teilhabe"],
+           ["Räume entwerfen","Projekte umsetzen","Teams steuern"]];
+
+  /* ENTWURF Claude (09.11.), nicht von Ruben bestaetigt: Arbeiten je Pille, abgeleitet aus Tags (portfolio/tags.js),
+     den Mappen (portfolio/mappen.js) und dem Bild, das Practice der Pille schon zuordnet. Reihenfolge: neueste zuerst. */
+  const Z=[
+    ["2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"],            // 01 Leerstand & Zwischennutzung, Mappe fam-1
+    ["2021-logis","2019-copy-service","2018-oper-offenbach","2018-not-not-pizza","2017-offenbacher-seefestspiele","2022-current-tours"], // 02 Tag Intervention, Mappe fam-3
+    ["2024-transition-1-7","2023-hole-mound","2020-access","2018-oper-offenbach","2015-pool"],                        // 03 Pavillon/Architektur, Practice-Bild Transition
+    ["2025-bingenheim","2023-hole-mound","2021-logis"],                                                               // 04 Tag Ländlicher Raum, Bingenheim (Wetterau)
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"],                          // 05 Tag Ausstellungsarchitektur
+    ["2026-display","2024-transition-1-7","2022-forschungswerkstatt","2020-access"],                                  // 06 Mappe fam-8
+    ["2025-bingenheim","2019-doubles","2018-white-out","2018-insight-out","2017-eins-zu-eins","2016-scale-scale-scale"], // 07 Mappe fam-2
+    ["2024-transition-1-7","2018-oper-offenbach","2018-insight-out","2017-offenbacher-seefestspiele","2016-kressmann-halle","2015-pool"], // 08 Mappe fam-4, Tag Buehne
+    ["2022-steady-burn","2022-current-tours","2021-bread-dispenser","2020-canned-99-63","2018-not-not-pizza","2017-messerschmiede"], // 09 Mappe fam-6
+    ["2026-display","2023-soups","2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"], // 10 Tag Begegnungsort
+    ["2026-display","2025-bingenheim","2016-kressmann-halle","2014-holzhausen"],                                      // 11 unsicher: Bestand als Ausgangspunkt
+    ["2023-tables","2023-soups","2023-hole-mound","2022-forschungswerkstatt","2022-current-tours","2021-logis","2021-bread-dispenser"], // 12 Tag Partizipation, Mappe fam-7
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access","2018-insight-out"],        // 13 unsicher
+    ["2026-display","2023-hole-mound","2022-forschungswerkstatt","2020-access","2018-oper-offenbach"],                // 14 unsicher
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"]                           // 15 unsicher
+  ];
+
+  /* Projekte: Schluessel = Bildordner, Seite = Ordner ohne Jahr */
+  const P={}; PROJECTS.forEach(p=>{ const g=p.gallery&&p.gallery[0]; if(!g) return; const ord=g[0].split('/')[1];
+    P[ord]={titel:p.title,jahr:p.jahr||p.year,seite:'../'+({'offenbacher-seefestspiele':'1-offenbacher-seefestspiele'}[ord.replace(/^\d{4}-/,'')]||ord.replace(/^\d{4}-/,''))+'/',src:'../'+g[0],w:g[1],h:g[2]}; });
+  const fehlt=[]; Z.forEach(l=>l.forEach(o=>{ if(!P[o]) fehlt.push(o); })); if(fehlt.length) console.warn('Felder: ohne Projektdaten',fehlt);
+
+  const lst=document.getElementById('lst'), feld=document.getElementById('feld');
+  const pills=[], items=[]; let k=0;
+  F.forEach((grp,gi)=>{
+    const g=document.createElement('li'); g.className='gl'; g.innerHTML='<span class="g">'+(gi?'Kompetenzen':'Arbeitsfelder')+'</span>'; lst.appendChild(g); items.push({el:g,gl:true});
+    grp.forEach(name=>{ const i=k++, n=Z[i].filter(o=>P[o]).length;
+      const li=document.createElement('li'), b=document.createElement('button'); b.type='button'; b.className='pill';
+      b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+name+'<span class="z">'+n+'</span>';
+      const mf=document.createElement('div'); mf.className='mf';
+      li.appendChild(b); li.appendChild(mf); lst.appendChild(li); pills.push({b,li,mf,i}); items.push({el:li});
+    });
+  });
+
+  let mob=false, offen=-1, zu=0;
+  const snap=v=>Math.round(v/BL)*BL, snapD=v=>Math.floor(v/BL)*BL;
+
+  /* Desktop: Pillen auf das Raster legen (Abstand 3 oder 4 Grundlinien je nach Fensterhoehe) */
+  function lage(){
+    mob=innerWidth<=700; H.classList.toggle('mob',mob);
+    if(mob){ items.forEach(x=>{ x.el.style.top=''; }); feld.innerHTML=''; return; }
+    const T0=9*BL, rows=items.length+1, step=(T0+rows*4*BL<innerHeight-6*BL)?4*BL:3*BL;
+    let y=T0;
+    items.forEach((x,j)=>{ if(x.gl&&j) y+=BL*1; x.el.style.top=y+'px'; x.y=y; y+=x.gl?3*BL:step; });
+    pills.forEach(p=>{ p.y=p.li.offsetTop; });
+    let wl=0; items.forEach(x=>{ wl=Math.max(wl,x.el.getBoundingClientRect().right); }); lage.x0=snap(wl+6*BL); lage.T0=T0;
+    if(offen>=0) zeigen(offen,true);
+  }
+
+  /* Bilder einer Pille: Hoehe fest auf dem Raster, Breite nach Seitenverhaeltnis auf ganze Grundlinien gerundet, Reihen ohne Ueberlagerung */
+  function reihen(liste,h,x0,x1){
+    const gap=2*BL, out=[]; let x=x0, r=0;
+    liste.forEach(o=>{ const p=P[o]; let w=snap(h*p.w/p.h); w=Math.max(9*BL,Math.min(w,Math.round(h*1.8/BL)*BL));
+      if(x>x0&&x+w>x1){ x=x0; r++; } out.push({o,x,r,w}); x+=w+gap; });
+    return {out,n:r+1};
+  }
+  function zeigen(i,still){
+    clearTimeout(zu); const neu=offen!==i; offen=i; H.classList.add('offen');
+    pills.forEach(p=>p.b.classList.toggle('an',p.i===i));
+    const liste=Z[i].filter(o=>P[o]);
+    if(mob){ pills.forEach(p=>{ if(p.i!==i) p.mf.innerHTML=''; }); const mf=pills[i].mf; if(!neu&&mf.children.length) return;
+      mf.innerHTML=''; const h=7*BL;
+      liste.forEach((o,j)=>{ const a=bild(o,h,snap(Math.max(9*BL,Math.min(h*1.8,h*P[o].w/P[o].h)))); mf.appendChild(a); auf(a,j); }); return; }
+    if(!neu&&!still) return;
+    const x0=lage.x0, x1=innerWidth-2*BL, unten=innerHeight-5*BL; let h=8*BL, L, pitch;
+    for(;;){ L=reihen(liste,h,x0,x1); pitch=h+4*BL; if(L.n*pitch-2*BL<=unten-lage.T0||h<=5*BL) break; h-=BL; }
+    let y0=snapD(pills[i].y); const hoch=L.n*pitch-2*BL; if(y0+hoch>unten) y0=Math.max(lage.T0,snapD(unten-hoch));
+    feld.innerHTML='';
+    L.out.forEach((it,j)=>{ const a=bild(it.o,h,it.w); a.style.left=it.x+'px'; a.style.top=(y0+it.r*pitch)+'px'; feld.appendChild(a); still&&!neu?a.classList.add('da'):auf(a,j); });
+  }
+  function bild(o,h,w){ const p=P[o], a=document.createElement('a'); a.className='bild'; a.href=p.seite; a.style.width=w+'px';
+    a.innerHTML='<img alt="" loading="eager" decoding="async" style="height:'+h+'px" src="'+p.src+'"><span class="t">'+p.titel+'<span>'+p.jahr+'</span></span>'; return a; }
+  function auf(a,j){ a.style.transitionDelay=(j*40)+'ms'; requestAnimationFrame(()=>requestAnimationFrame(()=>a.classList.add('da'))); }
+  function schliessen(){ zu=setTimeout(()=>{ if(mob) return; offen=-1; H.classList.remove('offen'); pills.forEach(p=>p.b.classList.remove('an'));
+    [...feld.children].forEach(a=>{ a.style.transitionDelay='0ms'; a.classList.remove('da'); }); setTimeout(()=>{ if(offen<0) feld.innerHTML=''; },350); },300); }
+
+  pills.forEach(p=>{
+    p.b.addEventListener('mouseenter',()=>{ if(!mob) zeigen(p.i); });
+    p.b.addEventListener('mouseleave',()=>{ if(!mob) schliessen(); });
+    p.b.addEventListener('focus',()=>{ if(!mob) zeigen(p.i); });
+    p.b.addEventListener('blur',()=>{ if(!mob) schliessen(); });
+    p.b.addEventListener('click',()=>{ if(!mob) return; if(offen===p.i){ p.mf.innerHTML=''; offen=-1; H.classList.remove('offen'); p.b.classList.remove('an'); } else zeigen(p.i); });
+  });
+  feld.addEventListener('mouseover',()=>clearTimeout(zu));
+  feld.addEventListener('mouseout',e=>{ if(!feld.contains(e.relatedTarget)) schliessen(); });
+
+  addEventListener('resize',lage); document.fonts&&document.fonts.ready.then(lage); lage();
+  window.__felder={zeigen,P,Z};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works / Begriffe (Probe)</title>
+<!-- Probe (Ruben 09.11.2026): die Tags der Projekte als Pillen im Raum; beim Hovern erscheinen alle getaggten Projekte als Bildwolke.
+     Daten zur Laufzeit aus ../portfolio/tags.js (TAGS) und ../projects.js (PROJECTS), kein eigener Build.
+     ?alle zeigt alle Tags statt nur der Themen-Knoepfe (filter=true). -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{--bg:#fff;--ink:rgb(0,0,255);--ink-4:rgba(0,0,255,.65);--line:rgba(0,0,255,.3);--pad:16px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"ABC Areal",system-ui,sans-serif;overflow:hidden}
+a{color:inherit}
+#grid{position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(30deg,rgba(0,0,255,.08) 0 1px,transparent 1px 46px),repeating-linear-gradient(150deg,rgba(0,0,255,.08) 0 1px,transparent 1px 46px);-webkit-mask-image:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 50%,#000 30%,transparent 75%)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;padding:14px var(--pad);font-size:1.15rem;font-weight:550;pointer-events:none}
+.nav a{text-decoration:none;pointer-events:auto}
+.nav .r{display:flex;gap:1rem;font-weight:550}
+.nav .r a.akt{text-decoration:underline;text-underline-offset:.18em}
+#info{position:fixed;left:var(--pad);bottom:var(--pad);z-index:5;font-size:.95rem;color:var(--ink-4);max-width:34rem;pointer-events:none;line-height:1.3}
+#info b{color:var(--ink);font-weight:550}
+#scene{position:fixed;inset:0;perspective:1400px;perspective-origin:50% 50%;touch-action:none;cursor:grab}
+html.dreht #scene{cursor:grabbing}
+#rig{position:absolute;left:50%;top:52%;width:0;height:0;transform-style:preserve-3d}
+.it{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
+.pill{border:0;margin:0;font-family:inherit;display:inline-block;white-space:nowrap;font-size:1.15rem;font-weight:550;line-height:1.1;padding:.3em .85em .26em;border-radius:10em;background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);cursor:pointer;translate:-50% -50%;transition:background .2s,color .2s,opacity .35s}
+.pill .z{color:var(--ink-4);font-weight:420;margin-left:.45em;font-size:.85em}
+.pill.an{background:var(--ink);color:var(--bg)}
+.pill.an .z{color:rgba(255,255,255,.7)}
+html.wolke .pill:not(.an){opacity:.18}
+.bild{display:block;translate:-50% -50%;opacity:0;scale:.6;transition:opacity .45s cubic-bezier(.2,.7,.2,1),scale .45s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.bild.da{opacity:1;scale:1;pointer-events:auto}
+.bild img{display:block;height:var(--bh,96px);width:auto;box-shadow:0 0 0 1px rgba(0,0,255,.15)}
+.bild .t{position:absolute;left:0;top:100%;margin-top:4px;font-size:.78rem;white-space:nowrap;color:var(--ink);background:rgba(255,255,255,.9);padding:0 .25em;opacity:0;transition:opacity .2s}
+.bild:hover .t{opacity:1}
+.bild:hover img{box-shadow:0 0 0 2px var(--ink)}
+@media (max-width:700px){ .nav .r a:not(.akt){display:none} .pill{font-size:15px} #info{font-size:13px;right:var(--pad)} }
+@media (prefers-reduced-motion:reduce){ .bild,.pill{transition:none} }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div class="nav"><a href="../">YRD.Works</a><div class="r"><a href="../practice/">Practice</a><a href="../index/">Index</a><a class="akt" href="./">Begriffe</a></div></div>
+<div id="scene"><div id="rig"></div></div>
+<p id="info"><b>Probe Begriffe.</b> Über einen Begriff fahren zeigt alle Projekte mit diesem Tag. Ziehen dreht den Raum.</p>
+<script src="../portfolio/tags.js"></script>
+<script src="../projects.js"></script>
+<script>
+(function(){
+  const Q=new URLSearchParams(location.search), ALLE=Q.has('alle'), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, touch=matchMedia('(hover:none)').matches;
+  const rig=document.getElementById('rig'), sc=document.getElementById('scene'), info=document.getElementById('info'), H=document.documentElement;
+
+  /* Projekte: Schluessel = Bildordner (z. B. 2026-display), Seite = Ordner ohne Jahr */
+  const P={}; PROJECTS.forEach(p=>{ const g=p.gallery&&p.gallery[0]; if(!g) return; const ord=g[0].split('/')[1]; P[ord]={titel:p.title,jahr:p.jahr||p.year,seite:'../'+({'offenbacher-seefestspiele':'1-offenbacher-seefestspiele'}[ord.replace(/^\d{4}-/,'')]||ord.replace(/^\d{4}-/,''))+'/',bilder:p.gallery.map(x=>({src:'../'+x[0],w:x[1],h:x[2]}))}; });
+  const zu={}; Object.keys(TAGS.projekte).forEach(ord=>{ if(!P[ord]) return; (TAGS.projekte[ord].tags||[]).forEach(t=>{ (zu[t]=zu[t]||[]).push(ord); }); });
+  const namen=(ALLE?Object.keys(zu):TAGS.filter).filter(t=>zu[t]&&zu[t].length).sort((a,b)=>zu[b].length-zu[a].length);
+
+  /* Pillen gleichmaessig auf einer Kugel (Fibonacci) */
+  let R=0; const items=[];
+  function radius(){ R=Math.min(innerWidth,innerHeight)*(innerWidth<=700?.36:.34); }
+  radius();
+  const N=namen.length, ga=Math.PI*(3-Math.sqrt(5));
+  namen.forEach((t,i)=>{ const y=1-(i+.5)/N*2, r=Math.sqrt(1-y*y), a=i*ga;
+    const el=document.createElement('div'); el.className='it'; const b=document.createElement('button'); b.type='button'; b.className='pill'; b.appendChild(document.createTextNode(t)); const z=document.createElement('span'); z.className='z'; z.textContent=zu[t].length; b.appendChild(z);
+    el.appendChild(b); rig.appendChild(el);
+    items.push({el,b,t,u:[Math.cos(a)*r,y,Math.sin(a)*r],pill:true}); });
+
+  /* Drehung: langsames Treiben, Ziehen dreht und neigt, nach dem Loslassen weiter mit Schwung */
+  let ry=0, rx=-12, vy=reduce?0:.05, vx=0, drag=null, offen=null, zuT=null, wolke=[];
+  sc.addEventListener('pointerdown',e=>{ if(e.target.closest('.pill,.bild')&&!touch) return; drag={x:e.clientX,y:e.clientY,ry,rx,on:false,t:performance.now(),lx:e.clientX,ly:e.clientY}; });
+  addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; if(!drag.on&&Math.hypot(dx,dy)>6){ drag.on=true; H.classList.add('dreht'); } if(!drag.on) return;
+    const now=performance.now(), dt=Math.max(8,now-drag.t); vy=(e.clientX-drag.lx)*.25/dt*16; vx=-(e.clientY-drag.ly)*.2/dt*16; drag.t=now; drag.lx=e.clientX; drag.ly=e.clientY;
+    ry=drag.ry+dx*.25; rx=Math.max(-70,Math.min(70,drag.rx-dy*.2)); },{passive:true});
+  const ende=()=>{ if(drag&&drag.on){ dragEnde=Date.now(); } drag=null; H.classList.remove('dreht'); };
+  let dragEnde=0; addEventListener('pointerup',ende); addEventListener('pointercancel',ende);
+
+  /* Bildwolke um eine Pille */
+  function zeig(it){ clearTimeout(zuT); if(offen===it) return; weg(true); offen=it; it.b.classList.add('an'); H.classList.add('wolke');
+    const ords=zu[it.t], proP=ords.length>12?1:(ords.length>6?2:3), liste=[]; ords.forEach(o=>{ P[o].bilder.slice(0,proP).forEach((bi,j)=>liste.push({o,bi,j})); });
+    const M=liste.length, bh=Math.round(Math.max(64,Math.min(130,R*.42*(M>24?.75:1)))), rw=R*.62;
+    liste.forEach((x,i)=>{ const y=1-(i+.5)/M*2, r=Math.sqrt(1-y*y), a=i*ga+.7, s=rw*(.75+.5*((i*7919)%13)/13);
+      const el=document.createElement('div'); el.className='it'; const a2=document.createElement('a'); a2.className='bild'; a2.href=P[x.o].seite; a2.style.setProperty('--bh',bh+'px');
+      const img=new Image(); img.src=x.bi.src; img.alt=P[x.o].titel; img.decoding='async'; a2.appendChild(img);
+      const t=document.createElement('span'); t.className='t'; t.textContent=P[x.o].titel+', '+P[x.o].jahr; a2.appendChild(t);
+      a2.addEventListener('click',e=>{ if(Date.now()-dragEnde<350) e.preventDefault(); });
+      el.appendChild(a2); rig.appendChild(el);
+      const w={el,b:a2,off:[Math.cos(a)*r*s,y*s*.8,Math.sin(a)*r*s],um:it};
+      wolke.push(w); items.push(w); setTimeout(()=>a2.classList.add('da'),reduce?0:20+i*18); });
+    info.innerHTML='<b>'+it.t+'</b> · '+ords.length+(ords.length===1?' Projekt':' Projekte');
+  }
+  function weg(sofort){ if(!offen) return; offen.b.classList.remove('an'); H.classList.remove('wolke'); const alt=wolke; wolke=[]; offen=null;
+    const raus=()=>alt.forEach(w=>{ const k=items.indexOf(w); if(k>=0) items.splice(k,1); w.el.remove(); });
+    alt.forEach(w=>w.b.classList.remove('da')); if(sofort) raus(); else setTimeout(raus,460);
+    info.innerHTML='<b>Probe Begriffe.</b> Über einen Begriff fahren zeigt alle Projekte mit diesem Tag. Ziehen dreht den Raum.'; }
+  function spaeterWeg(){ clearTimeout(zuT); zuT=setTimeout(()=>weg(false),350); }
+  items.filter(x=>x.pill).forEach(it=>{
+    if(touch){ it.b.addEventListener('click',e=>{ e.stopPropagation(); if(Date.now()-dragEnde<350) return; offen===it?weg(false):zeig(it); }); }
+    else { it.b.addEventListener('mouseenter',()=>{ if(!drag||!drag.on) zeig(it); }); it.b.addEventListener('mouseleave',spaeterWeg); } });
+  rig.addEventListener('mouseover',e=>{ if(e.target.closest('.bild')) clearTimeout(zuT); });
+  rig.addEventListener('mouseout',e=>{ if(e.target.closest('.bild')&&offen) spaeterWeg(); });
+  if(touch) sc.addEventListener('click',e=>{ if(!e.target.closest('.pill,.bild')&&Date.now()-dragEnde>350) weg(false); });
+
+  addEventListener('resize',radius);
+  function tick(){
+    if(!drag||!drag.on){ if(!offen){ ry+=vy; rx+=vx; vx*=.95; vy+=((reduce?0:.05)-vy)*.02; if(rx>70||rx<-70){ rx=Math.max(-70,Math.min(70,rx)); vx=0; } rx+=(-12-rx)*.004; } else { vy*=.9; vx*=.9; ry+=vy; rx+=vx; } }
+    rig.style.transform='rotateX('+rx.toFixed(2)+'deg) rotateY('+ry.toFixed(2)+'deg)';
+    const bb='rotateY('+(-ry).toFixed(2)+'deg) rotateX('+(-rx).toFixed(2)+'deg)';   /* Pillen und Bilder schauen immer zum Betrachter */
+    items.forEach(it=>{ let x,y,z; if(it.pill){ x=it.u[0]*R; y=it.u[1]*R; z=it.u[2]*R; } else { const c=it.um; x=c.u[0]*R*.55+it.off[0]; y=c.u[1]*R*.55+it.off[1]; z=c.u[2]*R*.55+it.off[2]; }
+      it.el.style.transform='translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,'+z.toFixed(1)+'px) '+bb+(it===offen?' translateZ('+(R*1.1).toFixed(0)+'px) scale(.8)':''); });   /* gewaehlte Pille rueckt vor die Bildwolke */
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>

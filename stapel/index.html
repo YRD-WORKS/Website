@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works / Stapel (Probe)</title>
+<!-- Probe (Ruben 09.11.2026): Overview wie Practice, aber im Stapel alle Projekte (eins je Bildordner, aelteste hinten).
+     Hovern ueber eine Pille (Zwei-Wort-Fassung) faehrt die gemeinten Projekte aus dem Stapel hoch, die uebrigen werden blass.
+     Klick auf eine Pille oeffnet die Themenseite thema/?k=N, Klick auf ein Bild oeffnet das Projekt.
+     Zuordnung Pille -> Projekte (Z) = ENTWURF Claude aus Tags und Mappen, wie felder/, von Ruben nicht bestaetigt. -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{--bg:#fff;--ink:rgb(0,0,255);--ink-4:rgba(0,0,255,.65);--pad:16px;--e:cubic-bezier(.2,.7,.2,1);--h:150px}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"ABC Areal",system-ui,sans-serif}
+a{color:inherit}
+#isogrid{position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(30deg,rgba(0,0,255,.1) 0 1px,transparent 1px 46px),repeating-linear-gradient(150deg,rgba(0,0,255,.1) 0 1px,transparent 1px 46px);-webkit-mask-image:radial-gradient(ellipse at 62% 55%,#000 25%,transparent 70%);mask-image:radial-gradient(ellipse at 62% 55%,#000 25%,transparent 70%)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;padding:14px var(--pad);font-size:1.15rem;font-weight:550;pointer-events:none}
+.nav a{text-decoration:none;pointer-events:auto}
+.nav .r{display:flex;gap:1rem}
+.nav .r a.akt{text-decoration:underline;text-underline-offset:.18em}
+
+#lst{position:fixed;left:var(--pad);top:62px;z-index:4;margin:0;padding:0;list-style:none;transform-origin:0 0}
+#lst .g{display:block;font-size:13px;color:var(--ink-4);margin:0 0 8px}
+#lst li{margin:0 0 6px}
+#lst li.gl{margin-top:16px} #lst li.gl:first-child{margin-top:0}
+.pill{border:0;margin:0;font:inherit;font-size:15px;font-weight:550;line-height:1.1;padding:.3em .85em .26em .6em;border-radius:10em;background:var(--bg);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);cursor:pointer;display:inline-flex;align-items:baseline;white-space:nowrap}
+.pill .n{font-weight:420;color:var(--ink-4);margin-right:.55em;font-variant-numeric:tabular-nums}
+.pill .z{font-weight:420;color:var(--ink-4);margin-left:.5em;font-size:.85em}
+.pill.an,.pill:hover,.pill:focus-visible{background:var(--ink);color:var(--bg);outline:0}
+.pill.an .n,.pill.an .z,.pill:hover .n,.pill:hover .z,.pill:focus-visible .n,.pill:focus-visible .z{color:rgba(255,255,255,.7)}
+
+#scene{position:fixed;inset:0;perspective:14000px;overflow:hidden}
+#rig{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+.card{position:absolute;left:0;top:0;transform-style:preserve-3d}
+.card .pic{position:absolute;left:0;bottom:0;display:block;transform-origin:50% 100%;transition:transform .55s var(--e),opacity .35s var(--e);cursor:pointer}
+.card img{display:block;height:var(--h);width:calc(var(--h)*1.5);object-fit:cover;background:rgba(0,0,255,.08);user-select:none;-webkit-user-drag:none}
+html.wahl .card:not(.hoch) .pic{opacity:.22}
+.card.hoch .pic{transform:translateY(calc(var(--h)*-.62))}
+.card:not(.hoch) .pic:hover{transform:translateY(-8px)}
+
+#cap{position:fixed;right:var(--pad);bottom:var(--pad);z-index:5;font-size:13px;color:var(--ink-4);text-align:right;pointer-events:none;max-width:40rem;line-height:1.35}
+#cap b{color:var(--ink);font-weight:550}
+@media (max-width:700px){ .nav .r a:not(.akt){display:none} }
+@media (prefers-reduced-motion:reduce){ .card .pic{transition:none} }
+</style>
+</head>
+<body>
+<div id="isogrid"></div>
+<div class="nav"><a href="../">YRD.Works</a><div class="r"><a href="../practice/">Practice</a><a href="../index/">Index</a><a class="akt" href="./">Stapel</a></div></div>
+<div id="scene"><div id="rig"></div></div>
+<ul id="lst"></ul>
+<p id="cap"><b>Probe Stapel.</b> Alle Projekte im Stapel. Über eine Pille fahren hebt die Projekte darunter. Zuordnung ist ein Entwurf.</p>
+<script src="../projects.js"></script>
+<script>
+(function(){
+  const H=document.documentElement, rig=document.getElementById('rig'), lst=document.getElementById('lst'), cap=document.getElementById('cap');
+  const CAP0=cap.innerHTML;
+
+  const F=[["Ungenutzte Orte","Bildstarke Interventionen","Temporäre Architektur","Ländlicher Raum","Immersive Ausstellungen","Außerschulische Lernorte","Begehbare Skulpturen","Offene Bühnen","Ungewöhnliche Formate","Dritte Orte","Schwierige Räume","Gelebte Teilhabe"],
+           ["Räume entwerfen","Projekte umsetzen","Teams steuern"]];
+  /* ENTWURF Claude (09.11.), gleiche Tabelle wie felder/index.html */
+  const Z=[
+    ["2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"],
+    ["2021-logis","2019-copy-service","2018-oper-offenbach","2018-not-not-pizza","2017-offenbacher-seefestspiele","2022-current-tours"],
+    ["2024-transition-1-7","2023-hole-mound","2020-access","2018-oper-offenbach","2015-pool"],
+    ["2025-bingenheim","2023-hole-mound","2021-logis"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"],
+    ["2026-display","2024-transition-1-7","2022-forschungswerkstatt","2020-access"],
+    ["2025-bingenheim","2019-doubles","2018-white-out","2018-insight-out","2017-eins-zu-eins","2016-scale-scale-scale"],
+    ["2024-transition-1-7","2018-oper-offenbach","2018-insight-out","2017-offenbacher-seefestspiele","2016-kressmann-halle","2015-pool"],
+    ["2022-steady-burn","2022-current-tours","2021-bread-dispenser","2020-canned-99-63","2018-not-not-pizza","2017-messerschmiede"],
+    ["2026-display","2023-soups","2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"],
+    ["2026-display","2025-bingenheim","2016-kressmann-halle","2014-holzhausen"],
+    ["2023-tables","2023-soups","2023-hole-mound","2022-forschungswerkstatt","2022-current-tours","2021-logis","2021-bread-dispenser"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access","2018-insight-out"],
+    ["2026-display","2023-hole-mound","2022-forschungswerkstatt","2020-access","2018-oper-offenbach"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"]
+  ];
+
+  /* Alle Projekte, aelteste hinten, neueste vorn */
+  const P=[]; PROJECTS.forEach(p=>{ const g=p.gallery&&p.gallery[0]; if(!g) return; const ord=g[0].split('/')[1];
+    P.push({ord,titel:p.title,jahr:p.jahr||p.year,seite:'../'+({'offenbacher-seefestspiele':'1-offenbacher-seefestspiele'}[ord.replace(/^\d{4}-/,'')]||ord.replace(/^\d{4}-/,''))+'/',src:'../'+g[0]}); });
+  P.sort((a,b)=>a.ord<b.ord?-1:a.ord>b.ord?1:0);
+  const idx={}; P.forEach((p,i)=>idx[p.ord]=i);
+
+  /* Karten: Band entlang x, Bilder quer zum Band (wie Practice: Rig -45 Grad, Karte -90 Grad) */
+  const GAP=34, cards=P.map((p,i)=>{ const c=document.createElement('div'); c.className='card';
+    c.style.transform='translate3d('+((i-(P.length-1)/2)*GAP)+'px,0,'+(-i*.01)+'px) rotateY(-90deg)';
+    const a=document.createElement('a'); a.className='pic'; a.href=p.seite; a.style.left='calc(var(--h)*-.75)';
+    a.innerHTML='<img alt="" src="'+p.src+'">';
+    a.addEventListener('mouseenter',()=>{ cap.innerHTML='<b>'+p.titel+'</b> '+p.jahr; });
+    a.addEventListener('mouseleave',()=>{ cap.innerHTML=fest>=0?kopf(fest):CAP0; });
+    c.appendChild(a); rig.appendChild(c); return c; });
+
+  /* Pillen */
+  const pills=[]; let k=0;
+  F.forEach((grp,gi)=>{ const g=document.createElement('li'); g.className='gl'; g.innerHTML='<span class="g">'+(gi?'Kompetenzen':'Arbeitsfelder')+'</span>'; lst.appendChild(g);
+    grp.forEach(name=>{ const i=k++, li=document.createElement('li'), b=document.createElement('button'); b.type='button'; b.className='pill';
+      b.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span>'+name+'<span class="z">'+Z[i].filter(o=>o in idx).length+'</span>';
+      li.appendChild(b); lst.appendChild(li); pills.push(b);
+      b.addEventListener('mouseenter',()=>heben(i)); b.addEventListener('focus',()=>heben(i));
+      b.addEventListener('mouseleave',()=>heben(fest)); b.addEventListener('blur',()=>heben(fest));
+      b.addEventListener('click',()=>{ location.href='../thema/?k='+i; });   // Klick oeffnet die Themenseite (Ruben 09.11.)
+    }); });
+  let fest=-1;
+  function kopf(i){ return '<b>'+F.flat()[i]+'</b> '+Z[i].filter(o=>o in idx).length+' Projekte'+(fest===i?' · festgehalten, Themenseite folgt':''); }
+  function heben(i){
+    const set=new Set(i>=0?Z[i].map(o=>idx[o]):[]);
+    cards.forEach((c,j)=>c.classList.toggle('hoch',set.has(j)));
+    H.classList.toggle('wahl',i>=0); pills.forEach((b,j)=>b.classList.toggle('an',j===fest));
+    cap.innerHTML=i>=0?kopf(i):CAP0;
+  }
+  window.__stapel={heben,P,Z,idx};
+
+  /* Einpassen: Stapel rechts neben die Liste, mit Luft nach oben fuer die gehobenen Bilder */
+  function fit(){
+    const lh=innerHeight-62-24, lw=lst.scrollHeight; lst.style.scale=lw>lh?(lh/lw).toFixed(3):'';
+    const hh=Math.max(90,Math.min(170,innerHeight*.17)); H.style.setProperty('--h',hh+'px');
+    rig.style.transform='rotateX(-35.264deg) rotateY(-45deg)';
+    const r0=rig.getBoundingClientRect(); let L=1e9,T=1e9,R=-1e9,B=-1e9;
+    cards.forEach(c=>{ const r=c.firstChild.getBoundingClientRect(); L=Math.min(L,r.left);T=Math.min(T,r.top);R=Math.max(R,r.right);B=Math.max(B,r.bottom); });
+    T-=hh*.62;   // Platz fuer das Heben
+    const x0=lst.getBoundingClientRect().right+40, x1=innerWidth-24, y0=60, y1=innerHeight-44;
+    const s=Math.min(1.6,(x1-x0)/(R-L),(y1-y0)/(B-T));
+    const cx=(L+R)/2-r0.left, cy=(T+B)/2-r0.top;
+    rig.style.transform='translate('+((x0+x1)/2-cx*s)+'px,'+((y0+y1)/2-cy*s)+'px) scale('+s.toFixed(3)+') rotateX(-35.264deg) rotateY(-45deg)';
+  }
+  addEventListener('resize',fit); document.fonts&&document.fonts.ready.then(fit); fit();
+})();
+</script>
+</body>
+</html>

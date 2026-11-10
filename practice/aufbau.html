@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works – Practice (Probe Aufbau)</title>
+<!-- PROBE 09.11.2026, nicht verlinkt, nicht veroeffentlicht. Aufbau aus dem Gespraech mit Ruben:
+     1 Haltung „Wir schaffen Raeume.“  2 Kompetenzen (12 Felder, Arbeiten als Beleg)  3 Im Auftrag von / Gefoerdert von.
+     ?f=<feld> stellt ein Feld nach oben und klappt es auf (Vorfilter ueber den verschickten Link).
+     Zuordnung Feld -> Projekte: ENTWURF Claude, je drei, ungeprueft. Feldtexte aus practice/index.html. -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{--bg:#fff;--ink:rgb(0,0,255);--ink-4:rgba(0,0,255,.62);--ink-2:rgba(0,0,255,.35);--line:rgba(0,0,255,.25);--pad:16px;--e:cubic-bezier(.2,.7,.2,1);font-size:15px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"ABC Areal","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:1.3rem;font-weight:550;line-height:1.22;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.caption{font-size:13px;font-weight:420;line-height:1.35}
+.nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;padding:var(--pad) var(--pad) 28px;background:linear-gradient(var(--bg) 60%,rgba(255,255,255,0))}
+.nav a{text-decoration:none}
+.nav .links{display:flex;gap:1em}
+.nav .links a[aria-current]{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+main{padding:0 var(--pad) 120px}
+.haltung{min-height:72vh;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:64px}
+.haltung h1{margin:0;font-size:clamp(3rem,8.5vw,8.4rem);line-height:.98;font-weight:550;letter-spacing:-.025em}
+.offen{margin:22px 0 0;max-width:34rem;padding:10px 14px;border:1px dashed var(--ink-2);border-radius:8px;color:var(--ink-4)}
+.rubrik{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:24px;border-top:1px solid var(--ink);padding-top:14px}
+.rubrik > .caption{color:var(--ink-4)}
+.feld{border-top:1px solid var(--line);padding:14px 0}
+.feld:first-child{border-top:0;padding-top:0}
+.kopf{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:16px;width:100%}
+.kopf .name{font-size:1.3rem}
+.kopf .mini{display:flex;gap:6px}
+.kopf .mini img{width:54px;aspect-ratio:3/2;object-fit:cover;display:block;background:rgba(0,0,255,.06);transition:opacity .3s}
+.feld.auf .kopf .mini img{opacity:0}
+.kopf:hover .name{text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}
+.koerper{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .45s var(--e),opacity .3s var(--e)}
+.koerper > div{min-height:0;overflow:hidden}
+.feld.auf .koerper{grid-template-rows:1fr;opacity:1}
+.koerper p{margin:12px 0 18px;max-width:36rem;font-size:1.2rem;line-height:1.28;text-wrap:pretty;hyphens:auto}
+.belege{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-bottom:10px}
+.belege a{text-decoration:none;display:grid;gap:5px}
+.belege img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;background:rgba(0,0,255,.06)}
+.belege a:hover img{box-shadow:0 0 0 2px var(--ink)}
+.belege span i{font-style:normal;color:var(--ink-4);margin-left:.35em}
+.namen{margin-top:96px}
+.namen h3{margin:0 0 6px;font-size:13px;font-weight:420;color:var(--ink-4)}
+.namen p{margin:0 0 28px;max-width:62rem}
+.namen .sep{color:var(--ink-2);margin:0 .3em}
+.fbar{position:fixed;left:var(--pad);right:var(--pad);bottom:var(--pad);z-index:12;display:flex;justify-content:space-between;align-items:center;height:3.2rem;padding:0 1.3rem;border-radius:10em;background:var(--bg);box-shadow:inset 0 0 0 1px var(--ink)}
+.fbar .probe{color:var(--ink-4)}
+@media (max-width:800px){
+  .rubrik{grid-template-columns:1fr;gap:10px}
+  .belege{grid-template-columns:1fr 1fr}
+  .kopf .mini{display:none}
+  .nav .links a:not([aria-current]){display:none}
+  .fbar .c{display:none}
+}
+</style>
+</head>
+<body>
+<header class="nav"><a href="../">YRD.Works</a><span class="links"><a href="./" aria-current="page">Practice</a><a href="../">Projects</a><a href="../about/">About</a><a href="../news/">News</a><a href="../index/index.html">Index</a><a href="../contact/">Contact</a></span></header>
+<main>
+  <section class="haltung">
+    <h1>Wir schaffen Räume.</h1>
+    <p class="offen caption">Offen: nur der Satz, oder darunter ein kurzer Haltungsabsatz.</p>
+  </section>
+  <section class="rubrik" aria-label="Kompetenzen">
+    <span class="caption">Kompetenzen</span>
+    <div id="felder"></div>
+  </section>
+  <section class="rubrik namen" aria-label="Auftraggeber und Förderung">
+    <span class="caption"></span>
+    <div>
+      <h3>Im Auftrag von</h3>
+      <p id="auftrag"></p>
+      <h3>Gefördert von</h3>
+      <p id="foerder"></p>
+    </div>
+  </section>
+</main>
+<nav class="fbar caption" aria-label="Probe"><span class="l probe">Probe Aufbau · Zuordnung der Projekte: Entwurf</span><span class="c"><a href="./">Zur aktuellen Practice-Seite</a></span></nav>
+<script src="../projects.js"></script>
+<script>
+(function(){
+  /* [Name, Schluessel fuer ?f=, drei Belege (ENTWURF Claude)] in der Reihenfolge von F in practice/index.html */
+  const F=[
+    ["Ungenutzte Orte","leerstand",["2014-holzhausen","2016-kressmann-halle","2015-pool"]],
+    ["Bildstarke Interventionen","interventionen",["2019-copy-service","2022-current-tours","2021-logis"]],
+    ["Temporäre Architektur","temporaer",["2024-transition-1-7","2020-access","2018-oper-offenbach"]],
+    ["Ländlicher Raum","land",["2025-bingenheim","2023-hole-mound","2021-logis"]],
+    ["Immersive Ausstellungen","ausstellung",["2024-im-angesicht-des-todes","2026-display","2022-forschungswerkstatt"]],
+    ["Außerschulische Lernorte","lernorte",["2022-forschungswerkstatt","2020-access","2024-transition-1-7"]],
+    ["Begehbare Skulpturen","skulptur",["2018-white-out","2018-insight-out","2019-doubles"]],
+    ["Offene Bühnen","buehnen",["2018-oper-offenbach","2024-transition-1-7","2018-insight-out"]],
+    ["Ungewöhnliche Formate","formate",["2022-current-tours","2022-steady-burn","2021-bread-dispenser"]],
+    ["Dritte Orte","dritte-orte",["2016-kressmann-halle","2023-soups","2026-display"]],
+    ["Schwierige Räume","bestand",["2026-display","2025-bingenheim","2016-kressmann-halle"]],
+    ["Gelebte Teilhabe","teilhabe",["2023-soups","2023-tables","2023-hole-mound"]]
+  ];
+  const TXT=["Leerstehende Gebäude und Zwischennutzungen ziehen sich seit den Anfängen durch unsere Arbeit. Wir zeigen das Potenzial ungenutzter Orte und entwickeln authentische Antworten auf Strukturwandel und sich verändernde Innenstädte.","Im öffentlichen Raum setzen wir auf bildstarke Gesten, die auffallen und trotzdem einladen. Unsere Interventionen beziehen die Menschen vor Ort ein und schaffen für sie einen Mehrwert, der über das Bild hinausgeht.","Wir machen den öffentlichen Stadtraum zur Bühne. Temporäre Architektur kann einen Ort im Umbruch begleiten oder auf Bedürfnisse hinweisen. Ein bildstarkes Projekt auf Zeit ist oft das beste Argument für eine Verstetigung.","Wir arbeiten auch im ländlichen Raum, oft dort, wo es wenige Kulturangebote gibt. Gemeinsam mit den Menschen vor Ort schaffen wir Anlässe, zusammenzukommen und einen vertrauten Ort neu zu erleben.","Wir entwickeln immersive Ausstellungsarchitekturen, die selbst als künstlerische Position gelesen werden können. Freie Projekte und angewandte Auftragsarbeiten gehen in unserer Praxis ineinander über.","Wir entwerfen Räume für Wissensvermittlung und außerschulisches Lernen, über Ziel- und Altersgruppen hinweg. Gemeinsam mit Pädagog*innen übersetzen wir ihre Konzepte in Räume, in denen Wissen und Forschung real erlebbar werden.","Wir befragen die Räume, in denen wir arbeiten, und kehren ihre Logik um. Es entstehen Hybride aus Skulptur, Architektur und Installation, die im Wortsinn begehbar sind und so die Schwelle zum Kunstbetrieb senken.","Unsere Arbeiten werden oft zu Bühnen und Displays für andere. Unsere Skulpturen dienen als Plattform für Musik, Performance und zeitgenössische Kunst und treten dabei bewusst in den Hintergrund.","Wir beschränken uns nicht auf konventionelle Räume und befragen gern die Grenzen unseres Genres. Was ein Projekt braucht, eignen wir uns an, vom selbstgebauten Floß für Bootstouren bis zum temporären Pizzalieferdienst.","Seit 2012 schaffen wir sogenannte Dritte Orte jenseits von Zuhause und Arbeit, die sich Communities aneignen. Viele davon bauen und bespielen wir über Jahre selbst, und sie wirken nach, auch wenn es sie nicht mehr gibt.","Die Herausforderungen eines Bestands nehmen wir gerne als Ausgangspunkt für den Entwurf. Niedrige Decken, alte Balken oder wenig Tageslicht kaschieren wir nicht, wir machen sie zum Teil der Arbeit.","Wir entwickeln partizipative und soziale Projekte, die Menschen und Communities aktiv einbeziehen. Gesellschaftliche Themen, Selbstwirksamkeit und Teilhabe werden dabei zur gelebten Situation, nicht zur illustrierten Botschaft."];
+  /* Reihenfolge der Felder ohne Link (Ort, gebaut, Wirkung), Rubens Liste vom 09.11. fuer die Namen */
+  const ORDNUNG=[0,10,3,2,6,4,1,7,5,9,11,8];
+  const AUFTRAG=["Jüdisches Museum Frankfurt","Senckenberg Museum","Künstlerhaus Mousonturm","Stadt Frankfurt","Node e.V.","Stadt Offenbach","IG Metall","Otto Brenner Stiftung","Ensemble Modern","Kulturstiftung der Länder","Frankfurter Kunstverein","Deutsches Architekturmuseum","KunstFestSpiele Herrenhausen","HORST Arts & Music","Grube Messel","Städtische Galerie Nordhorn"];
+  const FOERDER=["Kulturstiftung des Bundes","Hessisches Ministerium für Wissenschaft und Kunst","Kulturfonds Frankfurt RheinMain","Luminale"];
+  const liste=(a)=>a.map(s=>'<span>'+s+'</span>').join('<span class="sep">·</span>');
+  document.getElementById('auftrag').innerHTML=liste(AUFTRAG);
+  document.getElementById('foerder').innerHTML=liste(FOERDER);
+
+  const P={}; PROJECTS.forEach(p=>{ const g=p.gallery&&p.gallery[0]; if(!g) return; const ord=g[0].split('/')[1];
+    const slug=({'offenbacher-seefestspiele':'1-offenbacher-seefestspiele'}[ord.replace(/^\d{4}-/,'')]||ord.replace(/^\d{4}-/,''));
+    P[ord]={titel:p.title,jahr:p.jahr||p.year,seite:'../'+slug+'/',src:'../'+g[0]}; });
+
+  const wahl=new URLSearchParams(location.search).get('f');
+  const vorn=F.findIndex(f=>f[1]===wahl);
+  const reihe=vorn>=0?[vorn,...ORDNUNG.filter(i=>i!==vorn)]:ORDNUNG;
+  const box=document.getElementById('felder');
+  reihe.forEach((i,n)=>{
+    const [name,,ords]=F[i], bs=ords.filter(o=>P[o]);
+    const d=document.createElement('div'); d.className='feld'+((vorn>=0?n===0:false)?' auf':'');
+    d.innerHTML='<button class="kopf" aria-expanded="false"><span class="name">'+name+'</span><span class="mini">'+bs.map(o=>'<img alt="" loading="lazy" src="'+P[o].src+'">').join('')+'</span></button>'+
+      '<div class="koerper"><div><p>'+TXT[i]+'</p><div class="belege">'+bs.map(o=>'<a href="'+P[o].seite+'"><img alt="" loading="lazy" src="'+P[o].src+'"><span class="caption">'+P[o].titel+'<i>'+P[o].jahr+'</i></span></a>').join('')+'</div></div></div>';
+    const k=d.querySelector('.kopf'); k.setAttribute('aria-expanded',d.classList.contains('auf'));
+    k.addEventListener('click',()=>{ d.classList.toggle('auf'); k.setAttribute('aria-expanded',d.classList.contains('auf')); });
+    box.appendChild(d);
+  });
+})();
+</script>
+</body>
+</html>

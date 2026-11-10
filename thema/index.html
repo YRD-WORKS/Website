@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>YRD.Works / Thema (Probe)</title>
+<!-- Probe (Ruben 09.11.2026): Themenseite je Pille, geoeffnet per Klick im Stapel (stapel/). ?k=0..14.
+     Links Titel und Practice-Text der Pille, rechts eine Anordnung je Projekt aus Projektfotos (projects.js) und Platzhaltern fuer Skizzen und Prozessbilder.
+     Skizzen und Prozessbilder gibt es noch nicht, sie kommen von YRD.Works. Alles auf einem 10-px-Grundlinienraster.
+     Zuordnung Pille -> Projekte (Z) = ENTWURF Claude wie felder/ und stapel/, nicht bestaetigt. Text S = DE-Fassung aus practice/index.html. -->
+<style>
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Regular.woff2") format("woff2");font-weight:300 499;font-display:swap}
+@font-face{font-family:"ABC Areal";src:url("../Schrift/ABCAreal-Medium.woff2") format("woff2");font-weight:500 900;font-display:swap}
+:root{--bg:#fff;--ink:rgb(0,0,255);--ink-4:rgba(0,0,255,.65);--pad:16px;--bl:10px;--e:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"ABC Areal",system-ui,sans-serif}
+a{color:inherit}
+#grid{position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(to bottom,rgba(0,0,255,.05) 0 1px,transparent 1px var(--bl))}
+.nav{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:baseline;padding:14px var(--pad);font-size:1.15rem;font-weight:550;background:linear-gradient(var(--bg) 75%,transparent)}
+.nav a{text-decoration:none}
+.nav .r{display:flex;gap:1rem}
+
+.wrap{display:grid;grid-template-columns:minmax(260px,28%) 1fr;gap:calc(var(--bl)*6);padding:calc(var(--bl)*9) var(--pad) calc(var(--bl)*10)}
+.kopf{position:sticky;top:calc(var(--bl)*9);align-self:start}
+.kopf .zur{display:inline-block;font-size:13px;line-height:calc(var(--bl)*2);text-decoration:none;color:var(--ink-4);margin-bottom:calc(var(--bl)*2)}
+.kopf .zur:hover{color:var(--ink)}
+.kopf .nr{font-size:13px;line-height:calc(var(--bl)*2);color:var(--ink-4)}
+.kopf h1{font-size:40px;line-height:calc(var(--bl)*5);font-weight:550;margin:var(--bl) 0 calc(var(--bl)*2);letter-spacing:-.01em}
+.kopf .txt{font-size:15px;line-height:calc(var(--bl)*2);margin:0 0 calc(var(--bl)*3);max-width:30rem}
+.kopf .entw{font-size:13px;line-height:calc(var(--bl)*2);color:var(--ink-4);margin:0 0 calc(var(--bl)*2)}
+.kopf ol{list-style:none;margin:0 0 calc(var(--bl)*3);padding:0;font-size:13px;line-height:calc(var(--bl)*2)}
+.kopf ol a{text-decoration:none} .kopf ol a:hover{text-decoration:underline}
+.kopf ol span{color:var(--ink-4);margin-left:.4em}
+.wei{display:flex;gap:var(--bl)}
+.pill{font-size:13px;font-weight:550;line-height:1.1;padding:.3em .8em .26em;border-radius:10em;box-shadow:inset 0 0 0 1px var(--ink);text-decoration:none;white-space:nowrap}
+.pill:hover{background:var(--ink);color:var(--bg)}
+
+#feld{position:relative}
+.grp{scroll-margin-top:calc(var(--bl)*9);margin-bottom:calc(var(--bl)*6)}
+.grp .gt{display:flex;justify-content:space-between;font-size:13px;line-height:calc(var(--bl)*2);height:calc(var(--bl)*2);margin-bottom:var(--bl)}
+.grp .gt a{text-decoration:none;font-weight:550} .grp .gt a:hover{text-decoration:underline}
+.grp .gt span{color:var(--ink-4)}
+.reihe{display:flex;gap:calc(var(--bl)*2);margin-bottom:calc(var(--bl)*2)}
+.it{position:relative;flex:none;opacity:0;transform:translateY(var(--bl));transition:opacity .45s var(--e),transform .5s var(--e)}
+.it.da{opacity:1;transform:none}
+.it img{display:block;width:100%;height:100%;object-fit:cover;background:rgba(0,0,255,.06)}
+.ph{width:100%;height:100%;border:1px dashed var(--ink-4);background:repeating-linear-gradient(45deg,rgba(0,0,255,.04) 0 1px,transparent 1px var(--bl));display:flex;align-items:flex-end;padding:var(--bl);font-size:13px;line-height:calc(var(--bl)*2);color:var(--ink-4)}
+@media (max-width:800px){ .wrap{grid-template-columns:1fr;gap:calc(var(--bl)*4)} .kopf{position:static} .kopf h1{font-size:30px;line-height:calc(var(--bl)*4)} .nav .r a:not(:last-child){display:none} }
+@media (prefers-reduced-motion:reduce){ .it{transition:none} }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<div class="nav"><a href="../">YRD.Works</a><div class="r"><a href="../practice/">Practice</a><a href="../index/">Index</a><a href="../stapel/">Stapel</a></div></div>
+<div class="wrap">
+  <aside class="kopf">
+    <a class="zur" href="../stapel/">← Stapel</a>
+    <div class="nr" id="nr"></div>
+    <h1 id="h1"></h1>
+    <p class="txt" id="txt"></p>
+    <p class="entw">Probe: Projekte nach Entwurf zugeordnet. Skizzen und Prozessbilder folgen.</p>
+    <ol id="pl"></ol>
+    <div class="wei" id="wei"></div>
+  </aside>
+  <main id="feld"></main>
+</div>
+<script src="../projects.js"></script>
+<script>
+(function(){
+  const BL=10, Q=new URLSearchParams(location.search), k=Math.max(0,Math.min(14,parseInt(Q.get('k')||'0',10)||0));
+  const F=["Ungenutzte Orte","Bildstarke Interventionen","Temporäre Architektur","Ländlicher Raum","Immersive Ausstellungen","Außerschulische Lernorte","Begehbare Skulpturen","Offene Bühnen","Ungewöhnliche Formate","Dritte Orte","Schwierige Räume","Gelebte Teilhabe","Räume entwerfen","Projekte umsetzen","Teams steuern"];
+  const S=["Leerstehende Gebäude und Zwischennutzungen ziehen sich seit den Anfängen durch unsere Arbeit. Wir zeigen das Potenzial ungenutzter Orte und entwickeln authentische Antworten auf Strukturwandel und sich verändernde Innenstädte.","Im öffentlichen Raum setzen wir auf bildstarke Gesten, die auffallen und trotzdem einladen. Unsere Interventionen beziehen die Menschen vor Ort ein und schaffen für sie einen Mehrwert, der über das Bild hinausgeht.","Wir machen den öffentlichen Stadtraum zur Bühne. Temporäre Architektur kann einen Ort im Umbruch begleiten oder auf Bedürfnisse hinweisen. Ein bildstarkes Projekt auf Zeit ist oft das beste Argument für eine Verstetigung.","Wir arbeiten auch im ländlichen Raum, oft dort, wo es wenige Kulturangebote gibt. Gemeinsam mit den Menschen vor Ort schaffen wir Anlässe, zusammenzukommen und einen vertrauten Ort neu zu erleben.","Wir entwickeln immersive Ausstellungsarchitekturen, die selbst als künstlerische Position gelesen werden können. Freie Projekte und angewandte Auftragsarbeiten gehen in unserer Praxis ineinander über.","Wir entwerfen Räume für Wissensvermittlung und außerschulisches Lernen, über Ziel- und Altersgruppen hinweg. Gemeinsam mit Pädagog*innen übersetzen wir ihre Konzepte in Räume, in denen Wissen und Forschung real erlebbar werden.","Wir befragen die Räume, in denen wir arbeiten, und kehren ihre Logik um. Es entstehen Hybride aus Skulptur, Architektur und Installation, die im Wortsinn begehbar sind und so die Schwelle zum Kunstbetrieb senken.","Unsere Arbeiten werden oft zu Bühnen und Displays für andere. Unsere Skulpturen dienen als Plattform für Musik, Performance und zeitgenössische Kunst und treten dabei bewusst in den Hintergrund.","Wir beschränken uns nicht auf konventionelle Räume und befragen gern die Grenzen unseres Genres. Was ein Projekt braucht, eignen wir uns an, vom selbstgebauten Floß für Bootstouren bis zum temporären Pizzalieferdienst.","Seit 2012 schaffen wir sogenannte Dritte Orte jenseits von Zuhause und Arbeit, die sich Communities aneignen. Viele davon bauen und bespielen wir über Jahre selbst, und sie wirken nach, auch wenn es sie nicht mehr gibt.","Die Herausforderungen eines Bestands nehmen wir gerne als Ausgangspunkt für den Entwurf. Niedrige Decken, alte Balken oder wenig Tageslicht kaschieren wir nicht, wir machen sie zum Teil der Arbeit.","Wir entwickeln partizipative und soziale Projekte, die Menschen und Communities aktiv einbeziehen. Gesellschaftliche Themen, Selbstwirksamkeit und Teilhabe werden dabei zur gelebten Situation, nicht zur illustrierten Botschaft.","Unsere Projekte beginnen mit einem Konzept, das Raum, Nutzung und Wirkung zusammendenkt. 3D-Modelle und Pläne sind unsere Werkzeuge, um diese Idee auszuarbeiten und mit allen Beteiligten abzustimmen.","Große Projekte begleiten wir von der ersten Idee bis zur fertigen Umsetzung. Mit unserer Erfahrung von zahlreichen Projektbaustellen, auf denen wir selbst gebaut haben, kennen wir Material, Konstruktion und Aufwand und halten, was wir zusagen.","Für große Projekte stellen wir das passende Team zusammen, oft mit Partnern für Fachplanung, Statik und Produktion. Wir übernehmen die Projektsteuerung, stimmen uns mit Behörden ab und behalten Budget und Ablauf im Blick."];
+  /* ENTWURF Claude (09.11.), gleiche Tabelle wie felder/ und stapel/ */
+  const Z=[
+    ["2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"],
+    ["2021-logis","2019-copy-service","2018-oper-offenbach","2018-not-not-pizza","2017-offenbacher-seefestspiele","2022-current-tours"],
+    ["2024-transition-1-7","2023-hole-mound","2020-access","2018-oper-offenbach","2015-pool"],
+    ["2025-bingenheim","2023-hole-mound","2021-logis"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"],
+    ["2026-display","2024-transition-1-7","2022-forschungswerkstatt","2020-access"],
+    ["2025-bingenheim","2019-doubles","2018-white-out","2018-insight-out","2017-eins-zu-eins","2016-scale-scale-scale"],
+    ["2024-transition-1-7","2018-oper-offenbach","2018-insight-out","2017-offenbacher-seefestspiele","2016-kressmann-halle","2015-pool"],
+    ["2022-steady-burn","2022-current-tours","2021-bread-dispenser","2020-canned-99-63","2018-not-not-pizza","2017-messerschmiede"],
+    ["2026-display","2023-soups","2016-kressmann-halle","2015-pool","2014-hafenmeisterei","2014-holzhausen","2012-holzhausenstrasse"],
+    ["2026-display","2025-bingenheim","2016-kressmann-halle","2014-holzhausen"],
+    ["2023-tables","2023-soups","2023-hole-mound","2022-forschungswerkstatt","2022-current-tours","2021-logis","2021-bread-dispenser"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access","2018-insight-out"],
+    ["2026-display","2023-hole-mound","2022-forschungswerkstatt","2020-access","2018-oper-offenbach"],
+    ["2026-display","2024-im-angesicht-des-todes","2022-forschungswerkstatt","2020-access"]
+  ];
+  const P={}; PROJECTS.forEach(p=>{ const g=p.gallery&&p.gallery[0]; if(!g) return; const ord=g[0].split('/')[1];
+    P[ord]={titel:p.title,jahr:p.jahr||p.year,seite:'../'+({'offenbacher-seefestspiele':'1-offenbacher-seefestspiele'}[ord.replace(/^\d{4}-/,'')]||ord.replace(/^\d{4}-/,''))+'/',bilder:p.gallery.map(x=>({src:'../'+x[0],w:x[1],h:x[2]}))}; });
+  const liste=Z[k].filter(o=>P[o]);
+
+  document.title='YRD.Works / '+F[k]+' (Probe)';
+  document.getElementById('nr').textContent=String(k+1).padStart(2,'0')+' / 15 · '+(k<12?'Arbeitsfeld':'Kompetenz');
+  document.getElementById('h1').textContent=F[k];
+  document.getElementById('txt').textContent=S[k];
+  document.getElementById('pl').innerHTML=liste.map(o=>'<li><a href="#'+o+'">'+P[o].titel+'</a><span>'+P[o].jahr+'</span></li>').join('');
+  document.getElementById('wei').innerHTML=(k>0?'<a class="pill" href="?k='+(k-1)+'">← '+F[k-1]+'</a>':'')+(k<14?'<a class="pill" href="?k='+(k+1)+'">'+F[k+1]+' →</a>':'');
+
+  /* Je Projekt: bis zu vier Fotos, dazwischen ein Skizzen- und ein Prozess-Platzhalter. Abwechselnde Reihenhoehe fuer Rhythmus. */
+  const gruppen=liste.map((o,gi)=>{ const p=P[o], b=p.bilder;
+    const fotos=[b[0],b[Math.floor(b.length/2)],b[b.length-1],b[1]].filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,4);
+    const it=fotos.map(x=>({src:x.src,r:x.w/x.h}));
+    it.splice(Math.min(1,it.length),0,{ph:'Skizze folgt',r:4/3});
+    it.push({ph:'Prozessbild folgt',r:3/4});
+    return {o,p,it,ziel:(gi%2?20:28)*BL}; });
+
+  const feld=document.getElementById('feld');
+  function bauen(){
+    const W=feld.clientWidth, gap=2*BL; feld.innerHTML=''; let n=0;
+    gruppen.forEach(g=>{
+      const d=document.createElement('section'); d.className='grp'; d.id=g.o;
+      d.innerHTML='<div class="gt"><a href="'+g.p.seite+'">'+g.p.titel+' →</a><span>'+g.p.jahr+'</span></div>';
+      /* Reihen: so viele Elemente, bis die Breite bei Zielhoehe ueberschritten ist; dann Hoehe auf Grundlinien runden, Breiten passend strecken */
+      let rest=g.it.slice();
+      while(rest.length){
+        let row=[], sum=0;
+        while(rest.length){ const x=rest[0]; const w=sum+x.r*g.ziel+(row.length?gap:0); if(row.length&&w>W*1.15) break; row.push(rest.shift()); sum=w; if(sum>=W) break; }
+        const rs=row.reduce((a,x)=>a+x.r,0), frei=W-gap*(row.length-1);
+        let h=Math.round(Math.min(frei/rs,g.ziel*1.4)/BL)*BL;
+        const r=document.createElement('div'); r.className='reihe'; r.style.height=h+'px';
+        let ws=row.map(x=>Math.round(x.r*h)); const voll=frei/rs<=g.ziel*1.4;
+        if(voll){ const diff=frei-ws.reduce((a,b)=>a+b,0); ws[ws.length-1]+=diff; }   // letzte Breite gleicht Rundung aus
+        row.forEach((x,i)=>{ const e=document.createElement('div'); e.className='it'; e.style.width=ws[i]+'px';
+          e.innerHTML=x.ph?'<div class="ph">'+x.ph+'</div>':'<img alt="" loading="'+(n<8?'eager':'lazy')+'" src="'+x.src+'">';
+          e.style.transitionDelay=Math.min(n,10)*45+'ms'; n++; r.appendChild(e); });
+        d.appendChild(r);
+      }
+      feld.appendChild(d);
+    });
+    requestAnimationFrame(()=>requestAnimationFrame(()=>feld.querySelectorAll('.it').forEach(e=>e.classList.add('da'))));
+  }
+  let rw=0; addEventListener('resize',()=>{ if(feld.clientWidth!==rw){ rw=feld.clientWidth; bauen(); } });
+  rw=feld.clientWidth; bauen();
+})();
+</script>
+</body>
+</html>
