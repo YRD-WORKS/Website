@@ -695,7 +695,11 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   @keyframes inhEin{from{opacity:0}}
   #inh button{color:#fff}
   #inh button:focus-visible{outline-color:#fff}
-  #inh .iplus{font-weight:400;opacity:.9}   /* (Ruben 12.11.) Plus zeigt: Eintrag ist ein Link */
+  /* (Ruben 12.11.) umrandetes Plus wie am Rechner (.kz > .minus): Kreis mit Haarlinie, Plus aus zwei Linien; zeigt, dass der Eintrag ein Link ist */
+  #inh .iplus{display:inline-block;position:relative;width:1.9rem;height:1.9rem;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;vertical-align:.12em;margin-left:.1em}
+  #inh .iplus::before,#inh .iplus::after{content:"";position:absolute;left:50%;top:50%;width:46%;height:1.5px;background:currentColor;transform:translate(-50%,-50%)}
+  #inh .iplus::after{transform:translate(-50%,-50%) rotate(90deg)}
+  #inh li.klein .iplus{width:1.45rem;height:1.45rem;vertical-align:.02em}
   #inh .inr{display:block;font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:6px}
   #inh:not([hidden]) li{animation:inhLi .6s var(--e) both}
   #inh li:nth-child(2){animation-delay:.06s} #inh li:nth-child(3){animation-delay:.12s} #inh li:nth-child(4){animation-delay:.18s} #inh li:nth-child(n+5){animation-delay:.24s}
@@ -1563,7 +1567,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   (function(){
     const mm=document.getElementById('mm'), mb=mm.querySelector('.mm-b'), ml=mm.querySelector('.mm-l');
     const ib=document.getElementById('inhb'), il=document.getElementById('inh'), ol=il.querySelector('ol');
-    let nr=0; ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+(s.klein?'':'<span class="inr">'+(++nr)+'</span>')+s.satz+'<span class="iplus" aria-hidden="true">\u00a0+</span></button></li>').join('');   /* (12.11.) nur die Zahl, in der Uebersicht reicht das */
+    let nr=0; ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+(s.klein?'':'<span class="inr">'+(++nr)+'</span>')+s.satz.replace(/(\S+)$/,'<span style="white-space:nowrap">$1\u00a0<span class="iplus" aria-hidden="true"></span></span>')+'</button></li>'   /* letztes Wort und Plus brechen nicht auseinander */).join('');   /* (12.11.) nur die Zahl, in der Uebersicht reicht das */
     function kopf(){ let hell=false;   /* (12.11.) Inhalt liegt dunkel ueber dem Bild, Kopf bleibt hell auf dunkel */
       if(!hell) document.querySelectorAll('#feed .sl.ende,#feed .sl.intro').forEach(e=>{ const r=e.getBoundingClientRect(); if(r.top<=56&&r.bottom>16) hell=true; });
       H.classList.toggle('kopf-hell',hell); }
