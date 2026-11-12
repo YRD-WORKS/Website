@@ -694,13 +694,14 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   #inh{background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;display:flex;flex-direction:column;justify-content:center}
   #inh:not([hidden]){animation:inhEin .3s ease both}
   @keyframes inhEin{from{opacity:0}}
-  #inh button{color:#fff}
+  #inh button{color:#fff;font-size:1.85rem}   /* (12.11.) etwas kleiner als 2,3 rem */
+  #inh li.klein button{font-size:1.15rem}
   #inh button:focus-visible{outline-color:#fff}
   /* (Ruben 12.11.) umrandetes Plus wie am Rechner (.kz > .minus): Kreis mit Haarlinie, Plus aus zwei Linien; zeigt, dass der Eintrag ein Link ist */
-  #inh .iplus{display:inline-block;position:relative;width:1.9rem;height:1.9rem;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;vertical-align:.12em;margin-left:.1em}
+  #inh .iplus{display:inline-block;position:relative;width:.78em;height:.78em;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;vertical-align:-.05em;margin-left:.08em}   /* Groesse in em: Kreis sitzt mittig auf der Versalhoehe */
   #inh .iplus::before,#inh .iplus::after{content:"";position:absolute;left:50%;top:50%;width:46%;height:1.5px;background:currentColor;transform:translate(-50%,-50%)}
   #inh .iplus::after{transform:translate(-50%,-50%) rotate(90deg)}
-  #inh li.klein .iplus{width:1.45rem;height:1.45rem;vertical-align:.02em}
+  #inh li.klein .iplus{width:.92em;height:.92em;vertical-align:-.12em}
   #inh .inr{display:block;font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:6px}
   #inh:not([hidden]) li{animation:inhLi .6s var(--e) both}
   #inh li:nth-child(2){animation-delay:.06s} #inh li:nth-child(3){animation-delay:.12s} #inh li:nth-child(4){animation-delay:.18s} #inh li:nth-child(n+5){animation-delay:.24s}
