@@ -504,7 +504,8 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .sl .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
   .sl .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
   .sl .ueber{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px));z-index:2;pointer-events:none;display:grid;gap:12px;justify-items:start}
-  .sl .ueber .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
+  .sl .fk{position:absolute;left:var(--pad);right:var(--pad);top:96px;z-index:2;pointer-events:none}   /* (Ruben 12.11.) Ueberschrift der Folie oben wie beim Kapitel, unten bleibt nur der Text */
+  .sl .ueber .pill,.sl .fk .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
   .sl .ueber p{margin:0;font-size:1.1rem;line-height:1.3;font-weight:550;text-wrap:pretty;hyphens:auto}
   .sl .ueber .zahl{font-size:13px;font-weight:420;opacity:.8}
   .sl.kap .ueber{bottom:auto;top:96px}
@@ -583,14 +584,14 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .sl.kap .felder-k button b{font-weight:550;text-decoration:none;display:inline-block}
   .sl.kap .felder-k button:focus-visible{outline:2px solid #fff;outline-offset:3px}
   /* Feldname ist Beschriftung, kein Knopf: nur umrandet */
-  .sl .ueber .pill{background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;box-shadow:inset 0 0 0 1px #fff}
+  .sl .ueber .pill,.sl .fk .pill{background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;box-shadow:inset 0 0 0 1px #fff}
   /* Weiterlesen */
   .sl .ueber .mehr{all:unset;pointer-events:auto;cursor:pointer;font-size:13px;font-weight:550;text-decoration:underline;text-underline-offset:.2em}
   .sl .ueber .mehr[hidden]{display:none}
   .sl .ueber .mehr:focus-visible{outline:2px solid #fff;outline-offset:3px}
   .sl.lang .ueber p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
   .sl.auf::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(0,0,0,.6);pointer-events:none}
-  .sl.auf .ueber{top:96px;align-content:start;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}   /* aufgeklappt: Text unter dem Kopf, scrollt selbst, wenn er nicht passt */
+  .sl.auf .ueber{top:148px;align-content:start;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}   /* aufgeklappt: Text unter dem Kopf, scrollt selbst, wenn er nicht passt */
   /* einmal anstupsen: die naechste Aufnahme schaut kurz herein (nur die ersten zwei Bildreihen) */
   .sl.stups .bahn > a{animation:stups 1.2s ease-in-out .3s}
   @keyframes stups{0%,100%{transform:none}45%,55%{transform:translateX(-64px)}}
@@ -1380,7 +1381,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       h+='<section class="sl kap" id="k-'+s.k+'" data-t="'+(kq.titel||'')+'" data-j="'+(kq.jahr||'')+'" data-s="'+(kq.seite||'')+'"><img alt=""'+(erstK?'':' loading="lazy"')+' decoding="async" src="'+kb+'"><div class="ueber"><h2>'+s.satz+'</h2><div class="felder-k">'+s.f.map(i=>fotosF(i).length?'<button type="button" data-z="f-'+i+'">'+F[i][1]+' <b aria-hidden="true">↓</b></button>':'<span>'+F[i][1]+'</span>').join('')+'</div></div></section>';   /* (Auftrag F) Felder im Kapitel sind Sprungknoepfe zu ihrer Folie */
       erstK=false;
       s.f.forEach(i=>{ const bw=hatBW(i), os=bw?fotosVon(i):F[i][2].filter(o=>o in idx); if(!os.length) return;   /* Pillen ohne Fotos (Testseite ?viele) bekommen am Handy keine leere Seite */
-        h+='<section class="sl" id="f-'+i+'">'+(bw?bahnBW(os):bahn(os))+'<div class="ueber"><span class="pill">'+F[i][1]+'</span><p>'+TXT[i]+'</p><button type="button" class="mehr" hidden>'+(EN?'Read more':'Weiterlesen')+'</button><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
+        h+='<section class="sl" id="f-'+i+'">'+(bw?bahnBW(os):bahn(os))+'<div class="fk"><span class="pill">'+F[i][1]+'</span></div><div class="ueber"><p>'+TXT[i]+'</p><button type="button" class="mehr" hidden>'+(EN?'Read more':'Weiterlesen')+'</button><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
     });
     h+='<section class="sl ende" id="k-a"><div class="anfrage"><p>'+ARB+'</p><span class="kn"><a class="cta" href="mailto:info@yrd.works?subject='+encodeURIComponent(EN?'Project enquiry':'Projektanfrage')+'">'+(EN?'Enquire about a project':'Projekt anfragen')+'</a><a class="cta2" href="../contact/">'+(EN?'Contact':'Kontakt')+'</a></span></div><p>Referenzen</p>'+REF+'<a href="../index/index.html">Alle Projekte im Index</a></section>';   /* (Auftrag D) Index-Link unter der Foerderzeile, eigener leerer Abschnitt entfaellt */
     feed.innerHTML=h;
@@ -1398,7 +1399,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const u=sl.querySelector('.ueber'), m=sl.querySelector('.mehr');
         sl.classList.remove('lang'); m.hidden=true;
         if(sl.classList.contains('auf')) return;
-        const zu=u.getBoundingClientRect().top-sl.getBoundingClientRect().top<120;   /* Text reicht bis unter den Kopf */
+        const zu=u.getBoundingClientRect().top-sl.getBoundingClientRect().top<148;   /* (12.11.) Grenze unter der Ueberschrift oben */   /* Text reicht bis unter den Kopf */
         sl.classList.toggle('lang',zu); m.hidden=!zu; }); }
     feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const sl=m.closest('.sl'), auf=!sl.classList.contains('auf');
       sl.classList.toggle('auf',auf); sl.classList.toggle('lang',!auf); H.classList.toggle('text-auf',auf); m.textContent=auf?(EN?'Close':'Schließen'):(EN?'Read more':'Weiterlesen'); });
@@ -1438,7 +1439,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     /* (Ruben 12.11.) Schrift verblasst, bevor sie unter die obere Leiste rutscht, und blendet erst ueber der unteren Leiste ein; sonst kreuzen sich Text und Leiste */
     const nav=document.querySelector('.nav'), BL=40;
     function blende(){ const nb=(nav.querySelector('a')||nav).getBoundingClientRect().bottom+4, ft=fb.getBoundingClientRect().top;
-      feed.querySelectorAll('.sl').forEach(sl=>{ const sr=sl.getBoundingClientRect(); const els=sl.classList.contains('intro')?[...sl.children]:sl.classList.contains('ende')?[...sl.querySelectorAll(':scope > p, .anfrage p, .anfrage .kn, .ref .pill, :scope > a')]:[...sl.querySelectorAll('.ueber')];   /* im Ende einzeln, damit die lange Referenzliste zeilenweise blendet */
+      feed.querySelectorAll('.sl').forEach(sl=>{ const sr=sl.getBoundingClientRect(); const els=sl.classList.contains('intro')?[...sl.children]:sl.classList.contains('ende')?[...sl.querySelectorAll(':scope > p, .anfrage p, .anfrage .kn, .ref .pill, :scope > a')]:[...sl.querySelectorAll('.fk, .ueber')];   /* im Ende einzeln, damit die lange Referenzliste zeilenweise blendet */
         els.forEach(el=>{ if(sl.classList.contains('auf')||sr.bottom<-50||sr.top>innerHeight+50){ el.style.opacity=''; return; } const r=el.getBoundingClientRect(); if(!r.height){ return; }
           let o;
           if(sl.classList.contains('ende')) o=Math.min(1,(r.top-nb)/BL,(ft-r.bottom)/BL);   /* langer Abschnitt: feste Zone an beiden Leisten */
