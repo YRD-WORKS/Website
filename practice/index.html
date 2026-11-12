@@ -650,6 +650,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   /* (Ruben 12.11.) Kapitelbild abgedunkelt, damit klar wird, dass etwas Neues beginnt; beim Weiterwischen ins erste Feld hellt es auf (--dunkel setzt das Skript) */
   .kgrp > .kbg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:#000;opacity:var(--dunkel,.45)}
   .sl.kap > img{filter:brightness(.55)}
+  /* (Ruben 12.11.) Kapitel: Satz und Pillen mittig, hebt sich von den Feldern ab */
+  .sl.kap .ueber{top:50%;bottom:auto;transform:translateY(-50%);justify-items:center;text-align:center}
+  .sl.kap .felder-k{align-items:center}
+  #k-k .felder-k{justify-content:center}
   .kgrp > .kbg{z-index:0} .kgrp > .sl{z-index:1}   /* (12.11.) Safari am iPhone legte das stehende Bild sonst ueber den Text des ersten Felds */
   .kgrp > .sl .fk,.kgrp > .sl .ueber{-webkit-transform:translateZ(0);transform:translateZ(0)}
   .kgrp > .sl.kap{grid-row:1} .kgrp > .sl:not(.kap){grid-row:2}
