@@ -1562,7 +1562,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   (function(){
     const mm=document.getElementById('mm'), mb=mm.querySelector('.mm-b'), ml=mm.querySelector('.mm-l');
     const ib=document.getElementById('inhb'), il=document.getElementById('inh'), ol=il.querySelector('ol');
-    let nr=0; ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+(s.klein?'':'<span class="inr">'+(++nr)+' / 4</span>')+s.satz+'</button></li>').join('');   /* (12.11.) Nummern wie auf den Kapitelfolien */
+    let nr=0; ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+(s.klein?'':'<span class="inr">'+(++nr)+'</span>')+s.satz+'</button></li>').join('');   /* (12.11.) nur die Zahl, in der Uebersicht reicht das */
     function kopf(){ let hell=false;   /* (12.11.) Inhalt liegt dunkel ueber dem Bild, Kopf bleibt hell auf dunkel */
       if(!hell) document.querySelectorAll('#feed .sl.ende,#feed .sl.intro').forEach(e=>{ const r=e.getBoundingClientRect(); if(r.top<=56&&r.bottom>16) hell=true; });
       H.classList.toggle('kopf-hell',hell); }
