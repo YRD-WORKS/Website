@@ -679,8 +679,35 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .kbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 }
-@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
+@media (max-width:800px){
+  /* (Ruben 12.11.) Feld: Ueberschrift-Pille und Text fahren von links herein, kuerzer als beim Kapitel; zeigt, dass ein neues Thema beginnt */
+  .sl:not(.kap):not(.ende):not(.intro) .fk .pill,.sl:not(.kap):not(.ende):not(.intro) .ueber > *{opacity:0;transform:translateX(-28px);transition:opacity .45s ease,transform .6s var(--e)}
+  .sl.da:not(.kap):not(.ende):not(.intro) .fk .pill,.sl.da:not(.kap):not(.ende):not(.intro) .ueber > *{opacity:1;transform:none}
+  .sl.da:not(.kap):not(.ende):not(.intro) .fk .pill{transition-delay:.05s} .sl.da:not(.kap):not(.ende):not(.intro) .ueber > *{transition-delay:.2s}
 }
+@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl .fk .pill,.sl .ueber > *{opacity:1!important;transform:none!important;transition:none!important}
+  .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
+}
+@media (max-width:800px){
+  /* (Ruben 12.11.) Inhalt als dunkles, durchscheinendes Overlay ueber dem Bild statt weisser Seite; Kapitel fahren von links herein */
+  #inh{background:rgba(0,0,0,.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;display:flex;flex-direction:column;justify-content:center}
+  #inh:not([hidden]){animation:inhEin .3s ease both}
+  @keyframes inhEin{from{opacity:0}}
+  #inh button{color:#fff;font-size:1.85rem}   /* (12.11.) etwas kleiner als 2,3 rem */
+  #inh li.klein button{font-size:1.15rem}
+  #inh button:focus-visible{outline-color:#fff}
+  /* (Ruben 12.11.) umrandetes Plus wie am Rechner (.kz > .minus): Kreis mit Haarlinie, Plus aus zwei Linien; zeigt, dass der Eintrag ein Link ist */
+  #inh .iplus{display:inline-block;position:relative;width:.78em;height:.78em;border-radius:50%;box-shadow:inset 0 0 0 1.5px currentColor;vertical-align:-.05em;margin-left:.08em}   /* Groesse in em: Kreis sitzt mittig auf der Versalhoehe */
+  #inh .iplus::before,#inh .iplus::after{content:"";position:absolute;left:50%;top:50%;width:46%;height:1.5px;background:currentColor;transform:translate(-50%,-50%)}
+  #inh .iplus::after{transform:translate(-50%,-50%) rotate(90deg)}
+  #inh li.klein .iplus{width:.92em;height:.92em;vertical-align:-.12em}
+  #inh .inr{display:block;font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:6px}
+  #inh:not([hidden]) li{animation:inhLi .6s var(--e) both}
+  #inh li:nth-child(2){animation-delay:.06s} #inh li:nth-child(3){animation-delay:.12s} #inh li:nth-child(4){animation-delay:.18s} #inh li:nth-child(n+5){animation-delay:.24s}
+  @keyframes inhLi{from{opacity:0;transform:translateX(-40px)}}
+  #inh[hidden]{display:none}
+}
+@media (max-width:800px) and (prefers-reduced-motion:reduce){ #inh:not([hidden]),#inh:not([hidden]) li{animation:none} }
 </style>
 </head>
 <body>
@@ -1489,6 +1516,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     feed.addEventListener('scroll',()=>{ if(!dq) dq=requestAnimationFrame(dunkel); },{passive:true}); dunkel();
     const ioK=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle('da',en.isIntersecting)),{threshold:.6});   /* (12.11.) Feld-Pillen im Kapitel blenden nacheinander ein */
     feed.querySelectorAll('.sl.kap').forEach(k=>ioK.observe(k));
+    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(k=>ioK.observe(k));   /* (Ruben 12.11.) auch Felder: Pille und Text fahren neu herein */
     feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const x=SHOW.get(m.closest('.sl')); x&&setTimeout(()=>x.zeige(x.k),0); });   /* Text auf: Diashow steht, Text zu: laeuft weiter */
     const q=location.search.match(/[?&]([ortmk])(&|=|$)/); if(q&&innerWidth<=800){ const z=document.getElementById('k-'+q[1]); z&&z.scrollIntoView(); }
   })();
@@ -1540,8 +1568,8 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   (function(){
     const mm=document.getElementById('mm'), mb=mm.querySelector('.mm-b'), ml=mm.querySelector('.mm-l');
     const ib=document.getElementById('inhb'), il=document.getElementById('inh'), ol=il.querySelector('ol');
-    ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+s.satz+'</button></li>').join('');
-    function kopf(){ let hell=!il.hidden;
+    let nr=0; ol.innerHTML=S.map(s=>'<li'+(s.klein?' class="klein"':'')+'><button type="button" data-z="k-'+s.k+'">'+(s.klein?'':'<span class="inr">'+(++nr)+'</span>')+s.satz.replace(/(\S+)$/,'<span style="white-space:nowrap">$1\u00a0<span class="iplus" aria-hidden="true"></span></span>')+'</button></li>'   /* letztes Wort und Plus brechen nicht auseinander */).join('');   /* (12.11.) nur die Zahl, in der Uebersicht reicht das */
+    function kopf(){ let hell=false;   /* (12.11.) Inhalt liegt dunkel ueber dem Bild, Kopf bleibt hell auf dunkel */
       if(!hell) document.querySelectorAll('#feed .sl.ende,#feed .sl.intro').forEach(e=>{ const r=e.getBoundingClientRect(); if(r.top<=56&&r.bottom>16) hell=true; });
       H.classList.toggle('kopf-hell',hell); }
     function menue(o){ ml.hidden=!o; mb.setAttribute('aria-expanded',String(o)); mm.classList.toggle('open',o); }
