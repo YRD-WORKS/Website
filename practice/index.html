@@ -679,7 +679,14 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .kbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 }
-@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
+@media (max-width:800px){
+  /* (Ruben 12.11.) Feld: Ueberschrift-Pille und Text fahren von links herein, kuerzer als beim Kapitel; zeigt, dass ein neues Thema beginnt */
+  .sl:not(.kap):not(.ende):not(.intro) .fk .pill,.sl:not(.kap):not(.ende):not(.intro) .ueber > *{opacity:0;transform:translateX(-28px);transition:opacity .45s ease,transform .6s var(--e)}
+  .sl.da:not(.kap):not(.ende):not(.intro) .fk .pill,.sl.da:not(.kap):not(.ende):not(.intro) .ueber > *{opacity:1;transform:none}
+  .sl.da:not(.kap):not(.ende):not(.intro) .fk .pill{transition-delay:.05s} .sl.da:not(.kap):not(.ende):not(.intro) .ueber > *{transition-delay:.2s}
+}
+@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl .fk .pill,.sl .ueber > *{opacity:1!important;transform:none!important;transition:none!important}
+  .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
 }
 </style>
 </head>
@@ -1489,6 +1496,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     feed.addEventListener('scroll',()=>{ if(!dq) dq=requestAnimationFrame(dunkel); },{passive:true}); dunkel();
     const ioK=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle('da',en.isIntersecting)),{threshold:.6});   /* (12.11.) Feld-Pillen im Kapitel blenden nacheinander ein */
     feed.querySelectorAll('.sl.kap').forEach(k=>ioK.observe(k));
+    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(k=>ioK.observe(k));   /* (Ruben 12.11.) auch Felder: Pille und Text fahren neu herein */
     feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const x=SHOW.get(m.closest('.sl')); x&&setTimeout(()=>x.zeige(x.k),0); });   /* Text auf: Diashow steht, Text zu: laeuft weiter */
     const q=location.search.match(/[?&]([ortmk])(&|=|$)/); if(q&&innerWidth<=800){ const z=document.getElementById('k-'+q[1]); z&&z.scrollIntoView(); }
   })();
