@@ -10,7 +10,8 @@
 <meta property="og:image" content="https://yrd.works/Bilder/og.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230000ff'/%3E%3C/svg%3E">
 <script>/* Merkzeichen fuer die Hauptseite: dort erscheint dann Practice in Kopf und Menue (site.js, Ruben 08.11.) */
-try{ localStorage.setItem("yrd-practice","1"); }catch(e){}
+/* Markierung nur bei echten Besuchern auf yrd.works/practice/, nicht lokal und nicht auf der Testseite (Ruben 12.11.) */
+if(/(^|\.)yrd\.works$/.test(location.hostname)&&location.pathname.indexOf("/practice/")===0){ try{ localStorage.setItem("yrd-practice","1"); }catch(e){} }
 </script>
 <!-- Practice-Startseite (Overview) seit 09.11.2026, entstanden aus der Probe einstieg/. Walk unter walk.html. Fassung 2: drei Saetze statt 15 Pillen.
      Saetze von Ruben: Wir schaffen Raeume. Wir vermitteln Themen. Wir bringen Menschen zusammen.
@@ -387,7 +388,8 @@ html.voll-an #vollbild{opacity:1;pointer-events:auto;cursor:pointer}   /* (Ruben
   background:linear-gradient(to right,rgba(0,0,0,.78) 0,rgba(0,0,0,.6) 32%,rgba(0,0,0,0) 62%),linear-gradient(to bottom,rgba(0,0,0,.35) 0,rgba(0,0,0,0) 140px),linear-gradient(to top,rgba(0,0,0,.4) 0,rgba(0,0,0,0) 200px)}
 #vollschatten.an{opacity:1}   /* (Ruben 10.11.) waechst mit dem Flug und blendet langsam ein, damit man ihn nicht bemerkt */
 .links-sp,.nav{transition:opacity 1.1s cubic-bezier(.4,0,.2,1) .08s}   /* weisse Schrift sanfter zurueck (Ruben 10.11.) */
-html.voll-vor .links-sp,html.voll-vor .nav{opacity:0;transition:opacity .12s linear}   /* Menue verschwindet waehrend des Aufgehens und kommt weiss zurueck, statt kurz blau auf dem Foto zu stehen */
+html.voll-vor #vollbild{opacity:0!important}   /* (Ruben 12.11.) waehrend des Flugs nur das wachsende Bild, das Vollbild steht erst danach */
+html.voll-wechsel .links-sp,html.voll-wechsel .links-sp *,html.voll-wechsel .nav,html.voll-wechsel .nav *{transition:color 1.2s cubic-bezier(.45,.05,.25,1),background-color 1.2s cubic-bezier(.45,.05,.25,1),box-shadow 1.2s cubic-bezier(.45,.05,.25,1),text-shadow 1.2s cubic-bezier(.45,.05,.25,1),opacity .5s var(--e)!important}   /* (Ruben 12.11.) Schrift faerbt sich mit dem wachsenden Bild von Blau nach Weiss, statt aus- und einzublenden: die Kapitel bleiben mit dem Vollbild verbunden */
 #vollvideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:75% 50%;display:block}
 #vollvideo[hidden]{display:none}
 html.voll-an{--ink:#fff;--ink-4:rgba(255,255,255,.8);--ink-2:rgba(255,255,255,.55);--line:rgba(255,255,255,.4)}
@@ -499,6 +501,7 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .sl .bahn::-webkit-scrollbar{display:none}
   .sl .bahn a,.kbg .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
   .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .sl video,.kbg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}   /* (Ruben 12.11.) Videos auch am Handy */
   .sl .bahn a::after,.kbg .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
   .sl.kap::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.45) 45%,rgba(0,0,0,0) 75%)}
   .sl .bahn a span,.kbg .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
@@ -550,6 +553,14 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .fbar .mpf{all:unset;width:2.4rem;height:2.4rem;border-radius:50%;box-shadow:inset 0 0 0 1px currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;line-height:1;cursor:pointer;touch-action:manipulation}
   .fbar .mpf:disabled{opacity:.3;cursor:default}
   .fbar .mpf:focus-visible{box-shadow:inset 0 0 0 2px currentColor}
+  .fbar .l{gap:8px}
+  /* (Ruben 12.11.) dezenter Ladebalken: duenne Linie, die beim Scrollen von links nach rechts dicker wird; Punkte fuer die vier Kapitel und Kompetenzen an ihrer Stelle auf der Seite */
+  .fbar .tl{position:relative;flex:1 1 auto;min-width:0;height:14px;margin:0 8px}
+  .fbar .tl::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-.5px;background:currentColor;opacity:.35}
+  .fbar .tl .fs{position:absolute;left:0;top:50%;height:3px;margin-top:-1.5px;border-radius:2px;background:currentColor;width:calc(var(--p,0) * 100%)}
+  .fbar .tl i{position:absolute;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:currentColor;opacity:.45;left:calc(var(--x,0) * 100%);transition:opacity .3s ease,transform .3s ease}
+  .fbar .tl i.vorbei{opacity:1}
+  .fbar .tl i.an{opacity:1;transform:scale(1.6)}
   .fbar .mz:empty{display:none}
   .fbar .mz{min-width:2.9em;text-align:center;font-size:13px;font-weight:420;font-variant-numeric:tabular-nums}
   .fbar #inhb{background:none;color:inherit;box-shadow:inset 0 0 0 1px currentColor;margin-left:4px}
@@ -634,10 +645,12 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .sl .bahn > a.an,.kbg .bahn > a.an{opacity:1;pointer-events:auto}
   .sl.stups .bahn > a{animation:none}
   .sl .striche{position:absolute;left:var(--pad);right:var(--pad);top:74px;z-index:3;display:flex;gap:4px;pointer-events:none}
-  .sl .striche i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
+  .sl .fk{right:auto;width:max-content;max-width:calc(100% - 2 * var(--pad))}
+  .sl .fk .striche{position:static;margin-top:10px;filter:drop-shadow(0 0 3px rgba(0,0,0,.45))}   /* (Ruben 12.11.) Bildleiste direkt unter der Pille, damit klar ist, wozu sie gehoert */
+  .sl .striche i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.55);position:relative;overflow:hidden}
   .sl .striche i::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
   .sl .striche i.fertig::after{transform:none}
-  .sl .striche i.laeuft::after{animation:strich 4.5s linear forwards}
+  .sl .striche i.laeuft::after{animation:strich var(--d,4.5s) linear forwards}   /* (Ruben 12.11.) Videos stehen so lange, wie der Film laeuft */
   @keyframes strich{to{transform:none}}
   /* Leiste: Anfragen und Inhalt, am Ende ausgeblendet */
   .fbar{transition:opacity .3s}
@@ -758,7 +771,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   <span class="r"></span>   <!-- Overview / Walk entfaellt, Walk vorerst ausgeblendet (walk.html bleibt) -->
 </nav>
 
-<script src="../projects.js"></script>
+<script src="../projects.js?v=0791746a"></script>
 <script>
 (function(){
   const H=document.documentElement, rig=document.getElementById('rig');
@@ -1068,6 +1081,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     /* Notfall: Rest ohne Pruefung setzen */
     return items.map((it,n)=>{ const m=mass(R,'S'); return {o:it.o,e:it.e,f:'S',x:Math.round(reg.x0+(n%6)*(m.w+R.g)),y:reg.y0+Math.floor(n/6)*(m.h+R.B),w:m.w,h:m.h,ok:false}; });
   }
+  /* (Ruben 12.11.) Ecken des Kartenbilds im Stapel, wie sie auf dem Schirm liegen: damit startet die Miniatur genau in der Lage der Karte und dreht sich ins Raster */
+  function kartenQuad(o){ let j=SIDX[o]; if(j==null){ const ord=ordVon(o); j=STAPEL.findIndex(c=>ordVon(c.o)===ord); } if(j==null||j<0||RUHIG) return null; const pic=cards[j].firstChild;
+    if(!pic._ecken){ pic._ecken=[[0,0],[100,0],[0,100]].map(([x,y])=>{ const s=document.createElement('span'); s.style.cssText='position:absolute;width:0;height:0;pointer-events:none;left:'+x+'%;top:'+y+'%'; pic.appendChild(s); return s; }); }
+    const p=pic._ecken.map(s=>{ const r=s.getBoundingClientRect(); return {x:r.left,y:r.top}; }); if((p[1].x-p[0].x)*(p[2].y-p[0].y)-(p[1].y-p[0].y)*(p[2].x-p[0].x)<0){ const [a,b,c]=p; p[0]=b; p[1]=a; p[2]={x:c.x+b.x-a.x,y:c.y+b.y-a.y}; }   /* von hinten gesehene Karten nicht spiegeln, sonst klappt die Miniatur beim Drehen durch eine schmale Kante */ return Math.hypot(p[1].x-p[0].x,p[1].y-p[0].y)>1?p:null; }
   function kartenRect(o){ let j=SIDX[o]; if(j==null){ const ord=ordVon(o); j=STAPEL.findIndex(c=>ordVon(c.o)===ord); } if(j==null||j<0){ const r=scene.getBoundingClientRect(); return {left:r.left+r.width*.6,top:r.top+r.height*.5,width:10,height:7}; } return cards[j].firstChild.getBoundingClientRect(); }
   let KLISTE=false;   /* (Ruben 11.11.) Kompetenzen als Tabelle oder als Liste */
   function kompetenzBauen(){ const R=raster(); flach.innerHTML=''; window.__flach=[]; H.classList.add('flach');
@@ -1198,12 +1215,13 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       a.addEventListener('keydown',ev=>{ if(ev.key!=='Enter'&&ev.key!==' ') return; ev.preventDefault(); a.click(); });   /* Fokus springt beim Oeffnen in die Vollbild-Navigation (vollNavFokus), Escape oder X bringt ihn zur Miniatur zurueck */
       setze(a,g);
       a.innerHTML=kleinImg(p.src)+'<span>'+p.titel+' <i>'+p.jahr+'</i></span>';
-      const cr=kartenRect(g.o); a.style.transition='none'; a.style.opacity='0';
-      a.style.transform='translate('+(cr.left-g.x)+'px,'+(cr.top-g.y)+'px) scale('+(cr.width/g.w).toFixed(3)+','+(cr.height/g.h).toFixed(3)+')';
+      const q=H.classList.contains('flach')?null:kartenQuad(g.o), fr=flach.getBoundingClientRect(); a.style.transition='none';
+      if(q){ a._morph=1; a.style.transform='matrix('+[(q[1].x-q[0].x)/g.w,(q[1].y-q[0].y)/g.w,(q[2].x-q[0].x)/g.h,(q[2].y-q[0].y)/g.h,q[0].x-fr.left-g.x,q[0].y-fr.top-g.y].map(v=>v.toFixed(4)).join(',')+')'; }   /* startet als Karte im Stapel, gleich gross und gleich gedreht */
+      else { const cr=kartenRect(g.o); a.style.opacity='0'; a.style.transform='translate('+(cr.left-g.x)+'px,'+(cr.top-g.y)+'px) scale('+(cr.width/g.w).toFixed(3)+','+(cr.height/g.h).toFixed(3)+')'; }
       flach.appendChild(a); });
     window.__flach=gesetzt.map(g=>({o:g.o,x:g.x,y:g.y,w:g.w,h:g.h,f:g.f,ok:g.ok}));
     H.classList.add('flach');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>flach.querySelectorAll('.fb').forEach((a,i)=>{ a.style.transition=''; a.style.transitionDelay=(i*45)+'ms'; a.style.transform=''; a.style.opacity=''; })));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>flach.querySelectorAll('.fb').forEach((a,i)=>{ if(a._morph){ a.style.transition='transform 1.1s cubic-bezier(.45,.05,.25,1) '+(i*70)+'ms'; setTimeout(()=>{ a.style.transition=''; a._morph=0; },1300+i*70); } else { a.style.transition=''; a.style.transitionDelay=(i*45)+'ms'; } a.style.transform=''; a.style.opacity=''; })));   /* (Ruben 12.11.) aus dem Stapel heraus drehen sich die Karten nacheinander flach ins Raster */
   }
   /* Vollbild: Fotos der Pille in Rubens Reihenfolge, Pfeile blaettern, X fuehrt zurueck in die Uebersicht */
   let vollListe=[], vollN=0;
@@ -1230,7 +1248,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     w.innerHTML='<img alt="" src="'+vonSrc+'"><img alt="" class="nach" src="'+nachSrc+'">';
     const setz=r=>{ w.style.left=r.left+'px'; w.style.top=r.top+'px'; w.style.width=r.width+'px'; w.style.height=r.height+'px'; };
     setz(von); w.style.transition='none'; document.body.appendChild(w); void w.offsetWidth;
-    const k='cubic-bezier(.2,.8,.2,1)'; w.style.transition='left '+dauer+'ms '+k+',top '+dauer+'ms '+k+',width '+dauer+'ms '+k+',height '+dauer+'ms '+k+',opacity 140ms linear';
+    const k='cubic-bezier(.45,.05,.25,1)'; w.style.transition='left '+dauer+'ms '+k+',top '+dauer+'ms '+k+',width '+dauer+'ms '+k+',height '+dauer+'ms '+k+',opacity 140ms linear';
     w.querySelector('.nach').style.transition='opacity '+dauer+'ms linear'; setz(nach); w.querySelector('.nach').style.opacity='1';
     setTimeout(()=>{ fertig&&fertig(w); },dauer); return w; }
   let vollFokus=null;   /* Pille oder Miniatur, die das Vollbild geoeffnet hat */
@@ -1238,14 +1256,14 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   function schatten(){ let s=document.getElementById('vollschatten'); if(!s){ s=document.createElement('div'); s.id='vollschatten'; s.setAttribute('aria-hidden','true'); document.body.appendChild(s); } return s; }
   function vollNavFokus(){ const nv=document.getElementById('vollnav'); if(nv&&H.classList.contains('voll-an')) nv.focus({preventScroll:true}); }
   function vollZeigen(i,still){ let v=document.getElementById('vollbild'); const gen=++vollGen;
-    if(i==null){ const war=H.classList.contains('voll-an'), it=vollListe[vollN]; H.classList.remove('voll-vor'); { const sh=document.getElementById('vollschatten'); if(sh){ sh.style.transition=''; sh.classList.remove('an'); } } H.classList.remove('voll-an'); if(war) zuBis=performance.now()+400; const vd=document.getElementById('vollvideo'); if(vd) vd.pause();
+    if(i==null){ const war=H.classList.contains('voll-an'), it=vollListe[vollN]; H.classList.remove('voll-vor'); if(war){ H.classList.add('voll-wechsel'); clearTimeout(vollZeigen.wt); vollZeigen.wt=setTimeout(()=>H.classList.remove('voll-wechsel'),1300); } { const sh=document.getElementById('vollschatten'); if(sh){ sh.style.transition=''; sh.classList.remove('an'); } } H.classList.remove('voll-an'); if(war) zuBis=performance.now()+400; const vd=document.getElementById('vollvideo'); if(vd) vd.pause();
       if(vollFokus){ const nv=document.getElementById('vollnav'), ae=document.activeElement; if(vollFokus.isConnected&&(!ae||ae===document.body||(nv&&nv.contains(ae)))) vollFokus.focus({preventScroll:true}); vollFokus=null; }
       if(still) return;   /* Satzwechsel: ohne Rueckflug, das Raster wird ohnehin neu gelegt */
       /* Rueckweg (Ruben 10.11., Variante 2): zur Miniatur des eigenen Projekts, wenn sie im Raster steht, sonst zur Miniatur, von der das Vollbild kam; waehrend des Schrumpfens blendet das Bild in die Miniatur ueber */
       /* (Ruben 10.11.) Das Vollbild bleibt als Miniatur stehen: kein Rueckwechsel, das Foto ersetzt das Bild der Ziel-Miniatur */
       if(war&&it){ const o=typeof it==='object'?it.o:it, z=miniVon(o)||vollHer, src=infoVon(o).src;
         const setzen=()=>{ if(z&&z.e){ const im=z.e.querySelector('img'), sp2=z.e.querySelector('span'), q=infoVon(o); if(im) im.setAttribute('src',src); if(sp2) sp2.innerHTML=q.titel+' <i>'+q.jahr+'</i>'; } };   /* Unterschrift wandert mit dem Foto */
-        if(z&&!RUHIG) flug(src,src,{left:0,top:0,width:innerWidth,height:innerHeight},z.r,300,w=>{ setzen(); setTimeout(()=>{ w.style.opacity='0'; setTimeout(()=>w.remove(),160); },40); }); else setzen(); }
+        if(z&&!RUHIG) flug(src,src,{left:0,top:0,width:innerWidth,height:innerHeight},z.r,750,w=>{ setzen(); setTimeout(()=>{ w.style.opacity='0'; setTimeout(()=>w.remove(),160); },40); }); else setzen(); }
       return; }
     if(!v){ v=document.createElement('div'); v.id='vollbild'; v.setAttribute('aria-hidden','true'); document.body.appendChild(v);
       const vid=document.createElement('video'); vid.id='vollvideo'; vid.muted=true; vid.playsInline=true; vid.setAttribute('playsinline',''); vid.preload='auto'; vid.hidden=true; v.appendChild(vid);
@@ -1277,9 +1295,9 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     vollHer=miniVon(o)||(p?{r:p.getBoundingClientRect(),src:infoVon(o).src}:null);
     const sh=schatten();
     if(RUHIG||!vollHer){ sh.style.transition=''; sh.style.clipPath=''; sh.classList.add('an'); H.classList.add('voll-an'); vollNavFokus(); return; }
-    { const r=vollHer.r; H.classList.add('voll-vor'); sh.style.transition='none'; sh.classList.remove('an'); sh.style.clipPath='inset('+r.top+'px '+(innerWidth-r.right)+'px '+(innerHeight-r.bottom)+'px '+r.left+'px)'; void sh.offsetWidth;
-      sh.style.transition='clip-path 320ms cubic-bezier(.2,.8,.2,1),opacity 1.6s cubic-bezier(.4,0,.2,1)'; sh.style.clipPath='inset(0px 0px 0px 0px)'; sh.classList.add('an'); }   /* Schatten waechst mit dem Bild auf und blendet langsam ein */
-    flug(vollHer.src,infoVon(o).src,vollHer.r,{left:0,top:0,width:innerWidth,height:innerHeight},320,w=>{ if(gen!==vollGen||feld==null){ w.remove(); H.classList.remove('voll-vor'); return; } H.classList.add('voll-an'); H.classList.remove('voll-vor'); vollNavFokus(); setTimeout(()=>{ w.style.opacity='0'; setTimeout(()=>w.remove(),160); },60); }); }
+    { const r=vollHer.r; H.classList.add('voll-vor','voll-wechsel','voll-an'); clearTimeout(vollZeigen.wt); sh.style.transition='none'; sh.classList.remove('an'); sh.style.clipPath='inset('+r.top+'px '+(innerWidth-r.right)+'px '+(innerHeight-r.bottom)+'px '+r.left+'px)'; void sh.offsetWidth;
+      sh.style.transition='clip-path 1100ms cubic-bezier(.45,.05,.25,1),opacity 1.8s cubic-bezier(.4,0,.2,1)'; sh.style.clipPath='inset(0px 0px 0px 0px)'; sh.classList.add('an'); }   /* Schatten waechst mit dem Bild auf und blendet langsam ein */
+    flug(vollHer.src,infoVon(o).src,vollHer.r,{left:0,top:0,width:innerWidth,height:innerHeight},1100,w=>{ if(gen!==vollGen||feld==null){ w.remove(); H.classList.remove('voll-vor','voll-wechsel'); return; } H.classList.add('voll-an'); H.classList.remove('voll-vor'); vollZeigen.wt=setTimeout(()=>H.classList.remove('voll-wechsel'),300); vollNavFokus(); setTimeout(()=>{ w.style.opacity='0'; setTimeout(()=>w.remove(),160); },60); }); }
   function flachZu(){ if(VOLL) vollZeigen(null);
     if(!H.classList.contains('flach')) return; H.classList.remove('flach');
     flach.querySelectorAll('.fb').forEach(a=>{ const cr=kartenRect(a.dataset.o), b=a.getBoundingClientRect(); a.classList.remove('blass','gross'); a.style.transitionDelay='0ms';
@@ -1449,7 +1467,8 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     const alt=(t,j)=>(t||'').replace(/"/g,'&quot;')+(j?' ('+j+')':'');
     const bahn=os=>'<div class="bahn">'+os.map(o=>{ const q=P[idx[o]]; return '<a href="'+q.seite+'"><img alt="'+alt(q.titel,q.jahr)+'" loading="lazy" decoding="async" src="'+bild(o)+'"><span>'+q.titel+'<i>'+q.jahr+'</i></span></a>'; }).join('')+'</div>';
     /* (Auftrag E) Pillen mit Rubens Auswahl: dieselben Fotos wie das Desktop-Vollbild (fotosVon, Video-Heros als Standbild, kein Video am Handy), Unterschrift aus infoVon, Link nur mit Projektseite */
-    const bahnBW=os=>'<div class="bahn">'+os.map(o=>{ const q=infoVon(o)||{}; return '<a'+(q.seite?' href="'+q.seite+'"':'')+'><img alt="'+alt(q.titel,q.jahr)+'" loading="lazy" decoding="async" src="'+q.src+'"><span>'+(q.titel||'')+(q.jahr?'<i>'+q.jahr+'</i>':'')+'</span></a>'; }).join('')+'</div>';
+    const bahnBW=os=>'<div class="bahn">'+os.map(o=>{ const q=infoVon(o)||{}; const vv=({'Bilder/2024-im-angesicht-des-todes/01.jpg':{src:'tod.mp4',seg:[0,29.94],poster:'../Bilder/practice/07-ausstellung/00-tod-video.jpg'},'Bilder/practice/04-temporaer/00-transition-video.jpg':{src:'transition-handy.mp4',seg:[0,15],poster:'../Bilder/practice/04-temporaer/00-transition-handy.jpg'}})[o]||Object.values(VOLLVIDEO).find(x=>x.o===o);   /* (Ruben 12.11.) Transition am Handy als eigene Hochkant-Fassung (EffectCraft Transition_Handy, 720 x 1280, 15 s: 0-10.MP4 von 0 bis 10 s weit, dann 5-10.MP4 von 5 bis 10 s nah und um 90 Grad gedreht) */   /* (Ruben 12.11.) Im Angesicht des Todes am Handy als Hochkant-Video (TOD_IMG_0854, 720 x 1280, 30 s) statt Foto */   /* (Ruben 12.11.) Video-Heros auch am Handy: Standbild als Poster, Film laedt erst, wenn das Feld zu sehen ist */
+      return '<a'+(q.seite?' href="'+q.seite+'"':'')+'>'+(vv?'<video muted playsinline loop preload="none" poster="'+(vv.poster||q.src)+'" data-src="'+vv.src+'" data-dauer="'+Math.round(Math.max(4.5,vv.seg?vv.seg[1]-vv.seg[0]:12)*1000)+'" aria-label="'+alt(q.titel,q.jahr)+'"></video>':'<img alt="'+alt(q.titel,q.jahr)+'" loading="lazy" decoding="async" src="'+({'Bilder/practice/09-formate/01-steady-burn.jpg':'../Bilder/practice/09-formate/01-steady-burn-hoch.jpg','Bilder/2018-oper-offenbach/01.webp':'../Bilder/practice/10-interventionen/02-oper-offenbach-hoch.jpg'}[o]||q.src)+'">')+'<span>'+(q.titel||'')+(q.jahr?'<i>'+q.jahr+'</i>':'')+'</span></a>'; }).join('')+'</div>';
     const ARB=(document.querySelector('.links-sp .arbeit')||{}).textContent||'';
     const fotosF=i=>hatBW(i)?fotosVon(i):F[i][2].filter(o=>o in idx);
     /* (Auftrag F) Einstieg: wer wir sind, das Angebot, Hinweis zum Wischen. Text ENTWURF Claude (Handy-Session), von Ruben noch nicht bestaetigt */
@@ -1461,7 +1480,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       const kq=hatBW(s.f[0])?(infoVon(fotosVon(s.f[0])[0])||{}):((erst&&P[idx[erst]])||{});
       h+='<section class="sl kap" id="k-'+s.k+'" data-t="'+(kq.titel||'')+'" data-j="'+(kq.jahr||'')+'" data-s="'+(kq.seite||'')+'"><img alt=""'+(erstK?'':' loading="lazy"')+' decoding="async" src="'+kb+'"><div class="ueber"><h2>'+s.satz+'</h2><div class="felder-k">'+s.f.map(i=>fotosF(i).length?'<button type="button" data-z="f-'+i+'">'+F[i][1]+' <b aria-hidden="true">↓</b></button>':'<span>'+F[i][1]+'</span>').join('')+'</div></div></section>';   /* (Auftrag F) Felder im Kapitel sind Sprungknoepfe zu ihrer Folie */
       erstK=false;
-      s.f.forEach(i=>{ const bw=hatBW(i), os=bw?fotosVon(i):F[i][2].filter(o=>o in idx); if(!os.length) return;   /* Pillen ohne Fotos (Testseite ?viele) bekommen am Handy keine leere Seite */
+      s.f.forEach(i=>{ const bw=hatBW(i), os=(o0=>i===4&&bw?[o0[0],o0[2],o0[1]].concat(o0.slice(3)).filter(Boolean):o0)(bw?fotosVon(i):F[i][2].filter(o=>o in idx));   /* (Ruben 12.11.) Handy, Ausstellungsarchitektur: blauer Raum direkt nach dem Video, Access dahinter */ if(!os.length) return;   /* Pillen ohne Fotos (Testseite ?viele) bekommen am Handy keine leere Seite */
         h+='<section class="sl" id="f-'+i+'">'+(bw?bahnBW(os):bahn(os))+'<div class="fk"><span class="pill">'+F[i][1]+'</span></div><div class="ueber"><p>'+TXT[i]+'</p><button type="button" class="mehr" hidden>'+(EN?'Read more':'Weiterlesen')+'</button><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
     });
     h+='<section class="sl ende" id="k-a"><div class="anfrage"><p>'+ARB+'</p><span class="kn"><a class="cta" href="mailto:info@yrd.works?subject='+encodeURIComponent(EN?'Project enquiry':'Projektanfrage')+'">'+(EN?'Enquire about a project':'Projekt anfragen')+'</a><a class="cta2" href="../contact/">'+(EN?'Contact':'Kontakt')+'</a></span></div><p>Referenzen</p>'+REF+'<a href="../index/index.html">Alle Projekte im Index</a></section>';   /* (Auftrag D) Index-Link unter der Foerderzeile, eigener leerer Abschnitt entfaellt */
@@ -1471,11 +1490,16 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     feed.querySelectorAll('.sl.kap').forEach(kap=>{ const fd=kap.nextElementSibling, b=fd&&fd.matches('.sl:not(.kap):not(.ende)')&&fd.querySelector('.bahn'); if(!b) return;
       const g=document.createElement('div'); g.className='kgrp'; kap.before(g); const bg=document.createElement('div'); bg.className='kbg'; bg.appendChild(b);
       const im=kap.querySelector(':scope > img'); im&&im.remove(); g.append(bg,kap,fd); });
+    /* (Ruben 12.11.) Handy-Videos spielen nur, solange ihr Feld sichtbar und das Bild in der Reihe vorne ist; vorher wird nichts geladen */
+    (function(){ const vs=[...feed.querySelectorAll('video[data-src]')]; if(!vs.length||matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const pruef=v=>{ const a=v.parentElement, r=a&&a.parentElement, vorn=!r||r.children.length<2||a.classList.contains('an'); if(v._sicht&&vorn){ if(!v.getAttribute('src')) v.src=v.dataset.src; v.muted=true; const p=v.play(); p&&p.catch(()=>{}); } else if(!v.paused) v.pause(); };
+      const io=new IntersectionObserver(es=>es.forEach(e=>{ e.target._sicht=e.isIntersecting; pruef(e.target); }),{threshold:.35});
+      vs.forEach(v=>{ io.observe(v); new MutationObserver(()=>pruef(v)).observe(v.parentElement,{attributes:true,attributeFilter:['class']}); }); })();
     /* (Ruben 12.11.) Kapitel 1 bis 4 nummeriert, damit man weiss, wo man auf der Seite ist */
     ['o','r','t','m'].forEach((k,i)=>{ const kp=document.getElementById('k-'+k); if(!kp) return; kp.dataset.nr=i+1; const h=kp.querySelector('h2'); const n=document.createElement('span'); n.className='knr'; n.textContent=(i+1)+' / 4'; h&&h.before(n); });
-    /* (Ruben 11.11.) Handy hochkant: Bildausschnitt je Foto, wo die Mitte am Motiv vorbeigeht (geprueft am Kontaktbogen 375 x 812) */
-    const MPOS={'02-land/00-hole-mound-video.jpg':'58% 50%','03-bestand/01-bingenheim.jpg':'74% 50%','2024-im-angesicht-des-todes/01.jpg':'90% 50%','07-ausstellung/04-forschungswerkstatt.jpg':'25% 50%','04-temporaer/02-weinfesttische.jpg':'28% 50%'};
-    feed.querySelectorAll('.sl img, .kbg img').forEach(im=>{ const k=Object.keys(MPOS).find(x=>(im.getAttribute('src')||'').endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
+    /* (Ruben 12.11.) Handy hochkant: Bildausschnitt je Foto, von Ruben im Artefakt „Handy-Ausschnitte Practice“ eingestellt (Format 390 x 844); gilt fuer Fotos und Video-Standbilder */
+    const MPOS={'01-zwischennutzung/01-scale.jpg':'49% 50%','02-land/00-hole-mound-video.jpg':'60% 50%','02-land/02-logis.jpg':'72% 50%','03-bestand/01-bingenheim.jpg':'74% 50%','05-skulptur/01-eins-zu-eins.jpg':'59% 50%','05-skulptur/04-scale.jpg':'56% 50%','2024-im-angesicht-des-todes/01.jpg':'51% 50%','07-ausstellung/04-forschungswerkstatt.jpg':'32% 50%','06-buehnen/02-sites.jpg':'47% 50%','06-buehnen/03-kressmann-halle.jpg':'48% 50%','08-lernorte/01-forschungswerkstatt.jpg':'62% 50%','08-lernorte/02-display.jpg':'56% 50%','12-sozial/02-logis.jpg':'74% 50%','12-sozial/04-tables.jpg':'65% 50%','04-temporaer/01-insight-out.jpg':'46% 50%','04-temporaer/02-weinfesttische.jpg':'44% 50%','04-temporaer/03-copy-service.jpg':'32% 50%','2025-bingenheim/02.webp':'52% 50%'};
+    feed.querySelectorAll('.sl img, .kbg img, .sl video, .kbg video').forEach(im=>{ const s=im.getAttribute('src')||im.getAttribute('poster')||'', k=Object.keys(MPOS).find(x=>s.endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
     feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn')||sl.parentElement.querySelector('.kbg .bahn'), z=sl.querySelector('.zahl'); if(!b) return; const n=b.children.length; if(n<2) return;
       sl.classList.add('mehrere');
       });   /* (Ruben 12.11.) seitliches Wischen ersetzt durch Diashow, siehe unten */
@@ -1502,10 +1526,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
        Tippen links (unteres Drittel der Breite) = zurueck, sonst weiter; laeuft nur auf der sichtbaren Folie, steht bei offenem Text und bei reduzierter Bewegung */
     const DAUER=4500, SHOW=new Map();
     feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn')||sl.parentElement.querySelector('.kbg .bahn'); if(!b) return; const as=[...b.children]; if(!as.length) return; as[0].classList.add('an'); if(as.length<2) return;
-      const st=document.createElement('div'); st.className='striche'; st.setAttribute('aria-hidden','true'); st.innerHTML=as.map(()=>'<i></i>').join(''); sl.appendChild(st); const is=[...st.children];
+      const st=document.createElement('div'); st.className='striche'; st.setAttribute('aria-hidden','true'); st.innerHTML=as.map(()=>'<i></i>').join(''); (sl.querySelector('.fk')||sl).appendChild(st); const is=[...st.children];
       const x={k:0,t:null,an:false};
       x.zeige=k=>{ x.k=(k+as.length)%as.length; as.forEach((a,j)=>a.classList.toggle('an',j===x.k)); is.forEach((i,j)=>{ i.classList.remove('laeuft'); i.classList.toggle('fertig',j<x.k); }); void st.offsetWidth; clearTimeout(x.t);
-        if(x.an&&!ruhig&&!sl.classList.contains('auf')){ is[x.k].classList.add('laeuft'); x.t=setTimeout(()=>x.zeige(x.k+1),DAUER); } else is[x.k].classList.add('fertig'); };
+        if(x.an&&!ruhig&&!sl.classList.contains('auf')){ const vd=as[x.k].querySelector('video[data-dauer]'), d=vd?+vd.dataset.dauer:DAUER; is[x.k].style.setProperty('--d',d+'ms'); is[x.k].classList.add('laeuft'); x.t=setTimeout(()=>x.zeige(x.k+1),d); } else is[x.k].classList.add('fertig'); };
       sl.addEventListener('click',e=>{ if(e.target.closest('.mehr')) return; e.preventDefault(); x.zeige(x.k+(e.clientX<innerWidth*.3?-1:1)); });
       SHOW.set(sl,x); x.zeige(0); });
     const ioS=new IntersectionObserver(es=>es.forEach(en=>{ const x=SHOW.get(en.target); if(!x) return; x.an=en.isIntersecting; x.zeige(x.an?x.k:0); }),{threshold:.6});   /* verlassen: zurueck auf das erste Foto, das auch das Kapitelbild ist */
@@ -1526,9 +1550,13 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   (function(){
     const fb=document.querySelector('.fbar'), feed=document.getElementById('feed'); if(!fb||!feed) return;
     const l=fb.querySelector('.l'), r=fb.querySelector('.r'), ib=document.getElementById('inhb');
-    const mp=document.createElement('a'); mp.className='mp'; l.prepend(mp);
+    const mp=document.createElement('a'); mp.className='mp';   /* (Ruben 12.11.) Kapitelname nicht mehr in der Leiste, stattdessen Punkte */
     r.innerHTML='<button type="button" class="mpf ml" aria-label="'+(EN?'Previous chapter':'Voriges Kapitel')+'">‹</button><button type="button" class="mpf mr" aria-label="'+(EN?'Next chapter':'Nächstes Kapitel')+'">›</button>'; r.appendChild(ib);   /* (Ruben 12.11.) Pfeile springen von Kapitel zu Kapitel, links steht das Kapitel */
     const ml=r.querySelector('.ml'), mr=r.querySelector('.mr');
+    /* (Ruben 12.11.) angedeutete Zeitleiste: ein weisser Punkt je Abschnitt, der aktuelle groesser; Pfeile links und rechts davon, Inhalt bleibt rechts */
+    const tl=document.createElement('span'); tl.className='tl'; tl.setAttribute('aria-hidden','true'); l.append(ml,tl,mr);
+    const punkte=['o','r','t','m','k'].map(k=>document.getElementById('k-'+k)).filter(Boolean); tl.innerHTML='<span class="fs"></span>'+punkte.map(()=>'<i></i>').join('');   /* (Ruben 12.11.) vier Hauptkapitel und Kompetenzen; Referenzen sind das Ende der Linie */
+    const pi=[...tl.querySelectorAll('i')], fs=tl.querySelector('.fs'), maxS=()=>Math.max(1,feed.scrollHeight-feed.clientHeight), ort=el=>Math.max(0,Math.min(1,(el.getBoundingClientRect().top-feed.getBoundingClientRect().top+feed.scrollTop)/maxS()));
     const kapitel=()=>[...feed.querySelectorAll('.sl[id^="k-"]')];   /* Einstieg, vier Saetze, Kompetenzen, Ende */
     const kapVon=sl=>{ const ks=kapitel(), al=[...feed.querySelectorAll('.sl')], i=al.indexOf(sl); let k=ks[0]; ks.forEach(x=>{ if(al.indexOf(x)<=i) k=x; }); return k; };
     const kapName=k=>!k?'':k.classList.contains('intro')?'':k.classList.contains('ende')?(EN?'References':'Referenzen'):((k.dataset.nr?k.dataset.nr+' · ':'')+((k.querySelector('h2')||{}).textContent||''));
@@ -1543,6 +1571,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       let t='',j='',hr='';
       if(b){ const a=b.children[k], sp=a.querySelector('span'); t=sp?sp.childNodes[0].textContent:''; j=sp&&sp.querySelector('i')?sp.querySelector('i').textContent:''; hr=a.getAttribute('href')||''; }
       else if(sl.classList.contains('kap')){ t=sl.dataset.t; j=sl.dataset.j; hr=sl.dataset.s; }
+      { const p=Math.max(0,Math.min(1,feed.scrollTop/maxS())), ix=punkte.indexOf(kapVon(sl)); tl.style.setProperty('--p',p.toFixed(4)); pi.forEach((e,i)=>{ const x=ort(punkte[i]); e.style.setProperty('--x',x.toFixed(4)); e.classList.toggle('vorbei',x<=p+.002); e.classList.toggle('an',i===ix); }); }
       const kk=kapVon(sl), ks=kapitel(); mp.textContent=kapName(kk); mp.removeAttribute('href'); ml.disabled=kk===ks[0]&&sl===kk; mr.disabled=kk===ks[ks.length-1];   /* (12.11.) links das Kapitel statt des Projekts */
       const en=feed.querySelector('.sl.ende'); H.classList.toggle('am-ende',!!en&&en.getBoundingClientRect().top<innerHeight*.6);   /* (12.11.) am Ende hat die Seite eigene Knoepfe, die Leiste verdeckte sonst die Referenzen */
       H.classList.toggle('leiste-hell',hell); }
