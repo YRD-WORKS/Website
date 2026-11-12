@@ -650,15 +650,14 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   /* (Ruben 12.11.) Kapitelbild abgedunkelt, damit klar wird, dass etwas Neues beginnt; beim Weiterwischen ins erste Feld hellt es auf (--dunkel setzt das Skript) */
   .kgrp > .kbg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:#000;opacity:var(--dunkel,.45)}
   .sl.kap > img{filter:brightness(.55)}
-  /* (Ruben 12.11.) Kapitel: Satz und Pillen mittig, hebt sich von den Feldern ab */
-  .sl.kap .ueber{top:46%;bottom:auto;transform:translateY(-50%);justify-items:center;text-align:center}   /* optische Mitte: etwas ueber der Bildschirmmitte, am iPhone liegt unten noch die Browserleiste */
+  /* (Ruben 12.11.) Kapitel: Satz und Pillen senkrecht mittig, linksbuendig */
+  .sl.kap .ueber{top:46%;bottom:auto;transform:translateY(-50%);justify-items:start;text-align:left}   /* optische Mitte: etwas ueber der Bildschirmmitte, am iPhone liegt unten noch die Browserleiste */
   .sl.kap .knr{font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:-4px}
-  /* neues Kapitel: Nummer, Satz und Pillen fahren von rechts herein (Probe 12.11.) */
-  .sl.kap .knr,.sl.kap h2,.sl.kap .felder-k > *{opacity:0;transform:translateX(56px);transition:opacity .5s ease,transform .7s var(--e)}
+  /* neues Kapitel: Nummer, Satz und Pillen fahren von links herein (Probe 12.11.) */
+  .sl.kap .knr,.sl.kap h2,.sl.kap .felder-k > *{opacity:0;transform:translateX(-56px);transition:opacity .5s ease,transform .7s var(--e)}
   .sl.kap.da .knr,.sl.kap.da h2,.sl.kap.da .felder-k > *{opacity:1;transform:none}
   .sl.kap.da .knr{transition-delay:0s} .sl.kap.da h2{transition-delay:.08s}
-  .sl.kap .felder-k{align-items:center}
-  #k-k .felder-k{justify-content:center}
+  .sl.kap .felder-k{align-items:flex-start}
   .kgrp > .kbg{z-index:0} .kgrp > .sl{z-index:1}   /* (12.11.) Safari am iPhone legte das stehende Bild sonst ueber den Text des ersten Felds */
   .kgrp > .sl .fk,.kgrp > .sl .ueber{-webkit-transform:translateZ(0);transform:translateZ(0)}
   .sl.kap .ueber,.kgrp > .sl.kap .ueber{-webkit-transform:translateY(-50%) translateZ(0);transform:translateY(-50%) translateZ(0)}   /* Mitte gilt auch in der Gruppe */
@@ -666,7 +665,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   /* Felder im Kapitel als Pillen, blenden nacheinander ein */
   .sl.kap .felder-k{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:6px;opacity:1}
   .sl.kap .felder-k button,.sl.kap .felder-k span{font:inherit;font-size:1.05rem;font-weight:550;line-height:1;padding:.45em .95em .4em;border:0;border-radius:10em;color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px #fff;text-decoration:none;pointer-events:auto;cursor:pointer;
-    opacity:0;transform:translateX(56px);transition:opacity .5s ease,transform .7s var(--e)}
+    opacity:0;transform:translateX(-56px);transition:opacity .5s ease,transform .7s var(--e)}
   .sl.kap .felder-k b{font-weight:550;margin-left:.2em}
   .sl.kap.da .felder-k > *{opacity:1;transform:none}
   .sl.kap.da .felder-k > :nth-child(1){transition-delay:.18s} .sl.kap.da .felder-k > :nth-child(2){transition-delay:.26s} .sl.kap.da .felder-k > :nth-child(3){transition-delay:.34s} .sl.kap.da .felder-k > :nth-child(n+4){transition-delay:.42s}
