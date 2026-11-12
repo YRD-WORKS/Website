@@ -678,7 +678,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .kgrp > .sl.kap{grid-row:1} .kgrp > .sl:not(.kap){grid-row:2}
   /* Felder im Kapitel als Pillen, blenden nacheinander ein */
   .sl.kap .felder-k{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:6px;opacity:1}
-  .sl.kap .felder-k button,.sl.kap .felder-k span{font:inherit;font-size:1.05rem;font-weight:550;line-height:1;padding:.45em .95em .4em;border:0;border-radius:10em;color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px #fff;text-decoration:none;pointer-events:auto;cursor:pointer;
+  .sl.kap .felder-k > button,.sl.kap .felder-k > span{font:inherit;font-size:1.05rem;font-weight:550;line-height:1;padding:.45em .95em .4em;border:0;border-radius:10em;color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px #fff;text-decoration:none;pointer-events:auto;cursor:pointer;
     opacity:0;transform:translateX(-56px);transition:opacity .5s ease,transform .7s var(--e)}
   .sl.kap .felder-k b{font-weight:550;margin-left:.2em}
   .sl.kap.da .felder-k > *{opacity:1;transform:none}
@@ -688,7 +688,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   /* (Ruben 12.11.) Fotos fuellen den Bildschirm ganz (cover), Querformate werden seitlich beschnitten, Motiv in der Mitte (Ausnahmen in MPOS) */
   .kgrp > .sl{background:transparent!important}
   #k-k .felder-k{flex-direction:row;flex-wrap:wrap}   /* 16 Kompetenzen fliessen in Zeilen statt untereinander */
-  #k-k .felder-k span{cursor:default}
+  #k-k .felder-k .kk{display:inline-block;text-align:left;cursor:pointer}
+  #k-k .kk .kkt{display:none}
+  #k-k .kk.auf{flex-basis:100%;border-radius:14px;background:rgba(0,0,0,.55);padding:.6em .95em .7em}
+  #k-k .kk.auf .kkt{display:block;font-weight:400;font-size:.95rem;line-height:1.35;margin-top:.45em}
   .fbar .l{padding-right:6px;overflow:hidden;min-width:0;justify-self:stretch}
   .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .kbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -1497,6 +1500,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       const pruef=v=>{ const a=v.parentElement, r=a&&a.parentElement, vorn=!r||r.children.length<2||a.classList.contains('an'); if(v._sicht&&vorn){ if(!v.getAttribute('src')) v.src=v.dataset.src; v.muted=true; const p=v.play(); p&&p.catch(()=>{}); } else if(!v.paused) v.pause(); };
       const io=new IntersectionObserver(es=>es.forEach(e=>{ e.target._sicht=e.isIntersecting; pruef(e.target); }),{threshold:.35});
       vs.forEach(v=>{ io.observe(v); new MutationObserver(()=>pruef(v)).observe(v.parentElement,{attributes:true,attributeFilter:['class']}); }); })();
+    /* (Ruben 12.11.) Handy: Kompetenz-Pillen klappen auf und zeigen ihren Text, immer nur eine offen */
+    { const kk=document.getElementById('k-k'), st=S.find(x=>x.k==='k'); if(kk&&st) [...kk.querySelectorAll('.felder-k > span')].forEach((sp,j)=>{ const i=st.f[j]; if(i==null||!TXT[i]) return;
+        const b=document.createElement('button'); b.type='button'; b.className='kk'; b.setAttribute('aria-expanded','false'); b.innerHTML='<span class="kkn">'+sp.textContent+'</span><span class="kkt">'+TXT[i]+'</span>'; sp.replaceWith(b);
+        b.addEventListener('click',e=>{ e.stopPropagation(); const auf=!b.classList.contains('auf'); kk.querySelectorAll('.kk.auf').forEach(o=>{ o.classList.remove('auf'); o.setAttribute('aria-expanded','false'); }); b.classList.toggle('auf',auf); b.setAttribute('aria-expanded',String(auf)); }); }); }
     /* (Ruben 12.11.) Kapitel 1 bis 4 nummeriert, damit man weiss, wo man auf der Seite ist */
     S.filter(x=>!x.klein).map(x=>x.k).forEach((k,i)=>{ const kp=document.getElementById('k-'+k); if(!kp) return; kp.dataset.nr=i+1; const h=kp.querySelector('h2'); const n=document.createElement('span'); n.className='knr'; n.textContent=(i+1)+' / 4'; h&&h.before(n); });
     /* (Ruben 12.11.) Handy hochkant: Bildausschnitt je Foto, von Ruben im Artefakt „Handy-Ausschnitte Practice“ eingestellt (Format 390 x 844); gilt fuer Fotos und Video-Standbilder */
