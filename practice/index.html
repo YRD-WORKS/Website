@@ -495,14 +495,14 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .nav{background:none;color:#fff;text-shadow:0 0 12px rgba(0,0,0,.35)}
   .nav .links a[aria-current]{text-decoration-color:#fff}
   .sl{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:var(--ink);color:#fff}
-  .sl .bahn{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+  .sl .bahn,.kbg .bahn{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
   .sl .bahn::-webkit-scrollbar{display:none}
-  .sl .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
+  .sl .bahn a,.kbg .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
   .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .sl .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
+  .sl .bahn a::after,.kbg .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
   .sl.kap::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.45) 45%,rgba(0,0,0,0) 75%)}
-  .sl .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
-  .sl .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
+  .sl .bahn a span,.kbg .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
+  .sl .bahn a span i,.kbg .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
   .sl .ueber{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px));z-index:2;pointer-events:none;display:grid;gap:12px;justify-items:start}
   .sl .fk{position:absolute;left:var(--pad);right:var(--pad);top:96px;z-index:2;pointer-events:none}   /* (Ruben 12.11.) Ueberschrift der Folie oben wie beim Kapitel, unten bleibt nur der Text */
   .sl .ueber .pill,.sl .fk .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
@@ -555,7 +555,7 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .fbar #inhb{background:none;color:inherit;box-shadow:inset 0 0 0 1px currentColor;margin-left:4px}
   html.leiste-hell .fbar,html.kopf-hell .fbar{color:var(--ink);filter:none;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg)}
   #inhb.an{background:var(--ink)!important;color:var(--bg)!important}
-  .sl .bahn a span,.sl .ueber .zahl{display:none}   /* Projekt und Zaehler stehen jetzt in der Leiste */
+  .sl .bahn a span,.sl .ueber .zahl,.kbg .bahn a span{display:none}   /* Projekt und Zaehler stehen jetzt in der Leiste */
   /* Inhaltsliste ueber dem Feed, unter Kopf und Leiste */
   #inh{display:block;position:fixed;inset:0;z-index:9;background:var(--bg);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:96px var(--pad) calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px))}
   #inh[hidden]{display:none}
@@ -629,9 +629,9 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
 @media (prefers-reduced-motion:reduce){ #intro{transition:none} }
 @media (max-width:800px){
   /* (Ruben 12.11.) Diashow statt seitlich wischen */
-  .sl .bahn{overflow:hidden;touch-action:pan-y}
-  .sl .bahn > a{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
-  .sl .bahn > a.an{opacity:1;pointer-events:auto}
+  .sl .bahn,.kbg .bahn{overflow:hidden;touch-action:pan-y}
+  .sl .bahn > a,.kbg .bahn > a{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
+  .sl .bahn > a.an,.kbg .bahn > a.an{opacity:1;pointer-events:auto}
   .sl.stups .bahn > a{animation:none}
   .sl .striche{position:absolute;left:var(--pad);right:var(--pad);top:74px;z-index:3;display:flex;gap:4px;pointer-events:none}
   .sl .striche i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
@@ -655,6 +655,18 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .sl.kap .felder-k b{font-weight:550;margin-left:.2em}
   .sl.kap.da .felder-k > *{opacity:1;transform:none}
   .sl.kap.da .felder-k > :nth-child(1){transition-delay:.25s} .sl.kap.da .felder-k > :nth-child(2){transition-delay:.4s} .sl.kap.da .felder-k > :nth-child(3){transition-delay:.55s}
+}
+@media (max-width:800px){
+  /* (Ruben 12.11.) Fotos weniger stark vergroessert: alle Fotos sind quer (3:2 bis 16:9), im Hochformat schnitt cover nur ein Drittel heraus.
+     Jetzt ein Bildstreifen von 1,15 Bildschirmbreiten Hoehe in der Mitte (gut die Haelfte des Fotos sichtbar), darueber und darunter Schwarz, dort steht die Schrift */
+  .sl .bahn > a,.kgrp > .kbg,.sl.kap,.kbg .bahn > a{background:#000}
+  .kgrp > .sl{background:transparent!important}
+  #k-k .felder-k{flex-direction:row;flex-wrap:wrap}   /* 16 Kompetenzen fliessen in Zeilen statt untereinander */
+  #k-k .felder-k span{cursor:default}
+  .fbar .l{padding-right:6px;overflow:hidden;min-width:0;justify-self:stretch}
+  .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kbg img{position:absolute;width:100%;object-fit:cover;display:block}
+  #feed .sl img,.kgrp > .kbg img{inset:auto 0;top:50%;height:min(100%,calc(100vw * 1.15));transform:translateY(-50%)}
 }
 @media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *{opacity:1;transform:none;transition:none}
 }
