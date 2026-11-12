@@ -651,19 +651,25 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .kgrp > .kbg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:#000;opacity:var(--dunkel,.45)}
   .sl.kap > img{filter:brightness(.55)}
   /* (Ruben 12.11.) Kapitel: Satz und Pillen mittig, hebt sich von den Feldern ab */
-  .sl.kap .ueber{top:50%;bottom:auto;transform:translateY(-50%);justify-items:center;text-align:center}
+  .sl.kap .ueber{top:46%;bottom:auto;transform:translateY(-50%);justify-items:center;text-align:center}   /* optische Mitte: etwas ueber der Bildschirmmitte, am iPhone liegt unten noch die Browserleiste */
+  .sl.kap .knr{font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:-4px}
+  /* neues Kapitel: Nummer, Satz und Pillen fahren von rechts herein (Probe 12.11.) */
+  .sl.kap .knr,.sl.kap h2,.sl.kap .felder-k > *{opacity:0;transform:translateX(56px);transition:opacity .5s ease,transform .7s var(--e)}
+  .sl.kap.da .knr,.sl.kap.da h2,.sl.kap.da .felder-k > *{opacity:1;transform:none}
+  .sl.kap.da .knr{transition-delay:0s} .sl.kap.da h2{transition-delay:.08s}
   .sl.kap .felder-k{align-items:center}
   #k-k .felder-k{justify-content:center}
   .kgrp > .kbg{z-index:0} .kgrp > .sl{z-index:1}   /* (12.11.) Safari am iPhone legte das stehende Bild sonst ueber den Text des ersten Felds */
   .kgrp > .sl .fk,.kgrp > .sl .ueber{-webkit-transform:translateZ(0);transform:translateZ(0)}
+  .sl.kap .ueber,.kgrp > .sl.kap .ueber{-webkit-transform:translateY(-50%) translateZ(0);transform:translateY(-50%) translateZ(0)}   /* Mitte gilt auch in der Gruppe */
   .kgrp > .sl.kap{grid-row:1} .kgrp > .sl:not(.kap){grid-row:2}
   /* Felder im Kapitel als Pillen, blenden nacheinander ein */
   .sl.kap .felder-k{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:6px;opacity:1}
   .sl.kap .felder-k button,.sl.kap .felder-k span{font:inherit;font-size:1.05rem;font-weight:550;line-height:1;padding:.45em .95em .4em;border:0;border-radius:10em;color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px #fff;text-decoration:none;pointer-events:auto;cursor:pointer;
-    opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s var(--e)}
+    opacity:0;transform:translateX(56px);transition:opacity .5s ease,transform .7s var(--e)}
   .sl.kap .felder-k b{font-weight:550;margin-left:.2em}
   .sl.kap.da .felder-k > *{opacity:1;transform:none}
-  .sl.kap.da .felder-k > :nth-child(1){transition-delay:.25s} .sl.kap.da .felder-k > :nth-child(2){transition-delay:.4s} .sl.kap.da .felder-k > :nth-child(3){transition-delay:.55s}
+  .sl.kap.da .felder-k > :nth-child(1){transition-delay:.18s} .sl.kap.da .felder-k > :nth-child(2){transition-delay:.26s} .sl.kap.da .felder-k > :nth-child(3){transition-delay:.34s} .sl.kap.da .felder-k > :nth-child(n+4){transition-delay:.42s}
 }
 @media (max-width:800px){
   /* (Ruben 12.11.) Fotos fuellen den Bildschirm ganz (cover), Querformate werden seitlich beschnitten, Motiv in der Mitte (Ausnahmen in MPOS) */
@@ -674,7 +680,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .kbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 }
-@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *{opacity:1;transform:none;transition:none}
+@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
 }
 </style>
 </head>
@@ -1439,6 +1445,8 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     feed.querySelectorAll('.sl.kap').forEach(kap=>{ const fd=kap.nextElementSibling, b=fd&&fd.matches('.sl:not(.kap):not(.ende)')&&fd.querySelector('.bahn'); if(!b) return;
       const g=document.createElement('div'); g.className='kgrp'; kap.before(g); const bg=document.createElement('div'); bg.className='kbg'; bg.appendChild(b);
       const im=kap.querySelector(':scope > img'); im&&im.remove(); g.append(bg,kap,fd); });
+    /* (Ruben 12.11.) Kapitel 1 bis 4 nummeriert, damit man weiss, wo man auf der Seite ist */
+    ['o','r','t','m'].forEach((k,i)=>{ const kp=document.getElementById('k-'+k); if(!kp) return; kp.dataset.nr=i+1; const h=kp.querySelector('h2'); const n=document.createElement('span'); n.className='knr'; n.textContent=(i+1)+' / 4'; h&&h.before(n); });
     /* (Ruben 11.11.) Handy hochkant: Bildausschnitt je Foto, wo die Mitte am Motiv vorbeigeht (geprueft am Kontaktbogen 375 x 812) */
     const MPOS={'02-land/00-hole-mound-video.jpg':'58% 50%','03-bestand/01-bingenheim.jpg':'74% 50%','2024-im-angesicht-des-todes/01.jpg':'90% 50%','07-ausstellung/04-forschungswerkstatt.jpg':'25% 50%','04-temporaer/02-weinfesttische.jpg':'28% 50%'};
     feed.querySelectorAll('.sl img, .kbg img').forEach(im=>{ const k=Object.keys(MPOS).find(x=>(im.getAttribute('src')||'').endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
@@ -1496,7 +1504,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     const ml=r.querySelector('.ml'), mr=r.querySelector('.mr');
     const kapitel=()=>[...feed.querySelectorAll('.sl[id^="k-"]')];   /* Einstieg, vier Saetze, Kompetenzen, Ende */
     const kapVon=sl=>{ const ks=kapitel(), al=[...feed.querySelectorAll('.sl')], i=al.indexOf(sl); let k=ks[0]; ks.forEach(x=>{ if(al.indexOf(x)<=i) k=x; }); return k; };
-    const kapName=k=>!k?'':k.classList.contains('intro')?'':k.classList.contains('ende')?(EN?'References':'Referenzen'):((k.querySelector('h2')||{}).textContent||'');
+    const kapName=k=>!k?'':k.classList.contains('intro')?'':k.classList.contains('ende')?(EN?'References':'Referenzen'):((k.dataset.nr?k.dataset.nr+' · ':'')+((k.querySelector('h2')||{}).textContent||''));
     function kapGehe(d){ const sl=akt(); if(!sl) return; const ks=kapitel(), k=kapVon(sl), i=ks.indexOf(k); let z;
       if(d<0) z=(sl!==k&&k.getBoundingClientRect().top<-20)?k:ks[i-1]; else z=ks[i+1];   /* zurueck: erst an den Anfang des eigenen Kapitels */
       z&&z.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}); }
