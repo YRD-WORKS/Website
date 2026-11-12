@@ -631,6 +631,24 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
 @media (min-width:801px){ .nav{padding-left:max(16px,clamp(10px,.88vw,22px));padding-right:max(16px,clamp(10px,.88vw,22px))} }
 @media (max-width:800px){ .nav{padding-top:calc(.9rem + env(safe-area-inset-top,0px))} }
 @media (prefers-reduced-motion:reduce){ #intro{transition:none} }
+@media (max-width:800px){
+  /* (Ruben 12.11.) Diashow statt seitlich wischen */
+  .sl .bahn{overflow:hidden;touch-action:pan-y}
+  .sl .bahn > a{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
+  .sl .bahn > a.an{opacity:1;pointer-events:auto}
+  .sl.stups .bahn > a{animation:none}
+  .sl .striche{position:absolute;left:var(--pad);right:var(--pad);top:74px;z-index:3;display:flex;gap:4px;pointer-events:none}
+  .sl .striche i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
+  .sl .striche i::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
+  .sl .striche i.fertig::after{transform:none}
+  .sl .striche i.laeuft::after{animation:strich 4.5s linear forwards}
+  @keyframes strich{to{transform:none}}
+  /* Leiste: Anfragen und Inhalt, am Ende ausgeblendet */
+  .fbar{transition:opacity .3s}
+  html.am-ende .fbar{opacity:0;pointer-events:none}
+  .fbar .anf{font-size:15px;font-weight:550;line-height:1;padding:.45em .95em .4em;border-radius:10em;text-decoration:none;background:#fff;color:var(--ink)}
+  html.leiste-hell .fbar .anf,html.kopf-hell .fbar .anf{background:var(--ink);color:#fff}
+}
 </style>
 </head>
 <body>
@@ -1394,7 +1412,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     feed.querySelectorAll('.sl img').forEach(im=>{ const k=Object.keys(MPOS).find(x=>(im.getAttribute('src')||'').endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
     feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn'), z=sl.querySelector('.zahl'), n=b.children.length; if(n<2) return;
       sl.classList.add('mehrere');
-      b.addEventListener('scroll',()=>{ const k=Math.round(b.scrollLeft/b.clientWidth)+1; z.textContent=k+' / '+n+(k===1?'  ·  wischen für mehr':''); if(k>1) sl.classList.remove('stups'); },{passive:true}); });
+      });   /* (Ruben 12.11.) seitliches Wischen ersetzt durch Diashow, siehe unten */
     /* (Auftrag F) Sprungknoepfe im Kapitel */
     const ruhig=matchMedia('(prefers-reduced-motion:reduce)').matches;
     feed.addEventListener('click',e=>{ const b=e.target.closest('.felder-k button'); if(!b) return; const z=document.getElementById(b.dataset.z); z&&z.scrollIntoView({block:'start',behavior:ruhig?'auto':'smooth'}); });
@@ -1414,6 +1432,19 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       feed.querySelectorAll('.sl.auf').forEach(a=>{ if(a!==sl) a.querySelector('.mehr').click(); });
       if(!ruhig&&sl.classList.contains('mehrere')&&gestupst.size<2&&!gestupst.has(sl)){ gestupst.add(sl); sl.classList.add('stups'); setTimeout(()=>sl.classList.remove('stups'),1600); } }),{threshold:.6});
     feed.querySelectorAll('.sl').forEach(sl=>io.observe(sl));
+    /* (Ruben 12.11.) Handy: die Fotos eines Felds laufen als Diashow (Ueberblenden, Striche oben wie Stories), nur hoch und runter wischen.
+       Tippen links (unteres Drittel der Breite) = zurueck, sonst weiter; laeuft nur auf der sichtbaren Folie, steht bei offenem Text und bei reduzierter Bewegung */
+    const DAUER=4500, SHOW=new Map();
+    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn'), as=[...b.children]; if(!as.length) return; as[0].classList.add('an'); if(as.length<2) return;
+      const st=document.createElement('div'); st.className='striche'; st.setAttribute('aria-hidden','true'); st.innerHTML=as.map(()=>'<i></i>').join(''); sl.appendChild(st); const is=[...st.children];
+      const x={k:0,t:null,an:false};
+      x.zeige=k=>{ x.k=(k+as.length)%as.length; as.forEach((a,j)=>a.classList.toggle('an',j===x.k)); is.forEach((i,j)=>{ i.classList.remove('laeuft'); i.classList.toggle('fertig',j<x.k); }); void st.offsetWidth; clearTimeout(x.t);
+        if(x.an&&!ruhig&&!sl.classList.contains('auf')){ is[x.k].classList.add('laeuft'); x.t=setTimeout(()=>x.zeige(x.k+1),DAUER); } else is[x.k].classList.add('fertig'); };
+      b.addEventListener('click',e=>{ e.preventDefault(); x.zeige(x.k+(e.clientX<innerWidth*.3?-1:1)); });
+      SHOW.set(sl,x); x.zeige(0); });
+    const ioS=new IntersectionObserver(es=>es.forEach(en=>{ const x=SHOW.get(en.target); if(!x) return; x.an=en.isIntersecting; x.zeige(x.k); }),{threshold:.6});
+    SHOW.forEach((x,sl)=>ioS.observe(sl));
+    feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const x=SHOW.get(m.closest('.sl')); x&&setTimeout(()=>x.zeige(x.k),0); });   /* Text auf: Diashow steht, Text zu: laeuft weiter */
     const q=location.search.match(/[?&]([ortmk])(&|=|$)/); if(q&&innerWidth<=800){ const z=document.getElementById('k-'+q[1]); z&&z.scrollIntoView(); }
   })();
 
@@ -1423,8 +1454,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     const fb=document.querySelector('.fbar'), feed=document.getElementById('feed'); if(!fb||!feed) return;
     const l=fb.querySelector('.l'), r=fb.querySelector('.r'), ib=document.getElementById('inhb');
     const mp=document.createElement('a'); mp.className='mp'; l.prepend(mp);
-    r.innerHTML='<button type="button" class="mpf ml" aria-label="Zurück">‹</button><span class="mz" aria-live="polite"></span><button type="button" class="mpf mr" aria-label="Weiter">›</button>'; r.appendChild(ib);
-    const ml=r.querySelector('.ml'), mr=r.querySelector('.mr'), mz=r.querySelector('.mz');
+    r.innerHTML='<a class="anf" href="mailto:info@yrd.works?subject='+encodeURIComponent(EN?'Project enquiry':'Projektanfrage')+'">'+(EN?'Enquire':'Anfragen')+'</a>'; r.appendChild(ib);   /* (Ruben 12.11.) Pfeile und Zaehler entfallen, Wischen reicht; Anfrage immer in Reichweite */
     const seiten=()=>[...feed.querySelectorAll('.sl')];
     const akt=()=>{ let b=null, bd=1e9; seiten().forEach(e=>{ const d=Math.abs(e.getBoundingClientRect().top); if(d<bd){ bd=d; b=e; } }); return b; };
     const lage=sl=>{ const b=sl&&sl.querySelector('.bahn'); if(!b) return {b:null,n:0,k:0}; const n=b.children.length; return {b,n,k:Math.min(n-1,Math.round(b.scrollLeft/b.clientWidth))}; };
@@ -1433,13 +1463,12 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       if(b){ const a=b.children[k], sp=a.querySelector('span'); t=sp?sp.childNodes[0].textContent:''; j=sp&&sp.querySelector('i')?sp.querySelector('i').textContent:''; hr=a.getAttribute('href')||''; }
       else if(sl.classList.contains('kap')){ t=sl.dataset.t; j=sl.dataset.j; hr=sl.dataset.s; }
       mp.innerHTML=t?t+(j?' <i>'+j+'</i>':''):''; if(hr) mp.href=hr; else mp.removeAttribute('href');
-      mz.textContent=n>1?(k+1)+' / '+n:''; const alle=seiten(), i=alle.indexOf(sl);
-      ml.disabled=i<=0&&k<=0; mr.disabled=i>=alle.length-1&&(!b||k>=n-1); H.classList.toggle('leiste-hell',hell); }
+      const en=feed.querySelector('.sl.ende'); H.classList.toggle('am-ende',!!en&&en.getBoundingClientRect().top<innerHeight*.6);   /* (12.11.) am Ende hat die Seite eigene Knoepfe, die Leiste verdeckte sonst die Referenzen */
+      H.classList.toggle('leiste-hell',hell); }
     function gehe(d){ const sl=akt(); if(!sl) return; const {b,n,k}=lage(sl), alle=seiten(), i=alle.indexOf(sl);
       if(b&&k+d>=0&&k+d<n){ b.scrollTo({left:(k+d)*b.clientWidth,behavior:'smooth'}); return; }
       const z=alle[i+d]; if(!z) return; z.scrollIntoView({behavior:'smooth'});
       const zb=z.querySelector('.bahn'); if(zb) zb.scrollLeft=d<0?zb.scrollWidth:0; }
-    ml.addEventListener('click',()=>gehe(-1)); mr.addEventListener('click',()=>gehe(1));
     /* (Ruben 12.11.) Schrift verblasst, bevor sie unter die obere Leiste rutscht, und blendet erst ueber der unteren Leiste ein; sonst kreuzen sich Text und Leiste */
     const nav=document.querySelector('.nav'), BL=40;
     function blende(){ const nb=(nav.querySelector('a')||nav).getBoundingClientRect().bottom+4, ft=fb.getBoundingClientRect().top;
