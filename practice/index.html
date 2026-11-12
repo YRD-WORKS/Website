@@ -647,6 +647,9 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
   .kgrp > .kbg{grid-row:1 / span 2;grid-column:1;align-self:start;position:sticky;top:0;height:50%;overflow:hidden}
   .kgrp > .kbg .bahn{position:absolute;inset:0}
   .kgrp > .sl{grid-column:1;height:auto;background:transparent}
+  /* (Ruben 12.11.) Kapitelbild abgedunkelt, damit klar wird, dass etwas Neues beginnt; beim Weiterwischen ins erste Feld hellt es auf (--dunkel setzt das Skript) */
+  .kgrp > .kbg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:#000;opacity:var(--dunkel,.45)}
+  .sl.kap > img{filter:brightness(.55)}
   .kgrp > .kbg{z-index:0} .kgrp > .sl{z-index:1}   /* (12.11.) Safari am iPhone legte das stehende Bild sonst ueber den Text des ersten Felds */
   .kgrp > .sl .fk,.kgrp > .sl .ueber{-webkit-transform:translateZ(0);transform:translateZ(0)}
   .kgrp > .sl.kap{grid-row:1} .kgrp > .sl:not(.kap){grid-row:2}
@@ -1469,6 +1472,10 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       SHOW.set(sl,x); x.zeige(0); });
     const ioS=new IntersectionObserver(es=>es.forEach(en=>{ const x=SHOW.get(en.target); if(!x) return; x.an=en.isIntersecting; x.zeige(x.an?x.k:0); }),{threshold:.6});   /* verlassen: zurueck auf das erste Foto, das auch das Kapitelbild ist */
     SHOW.forEach((x,sl)=>ioS.observe(sl));
+    /* (Ruben 12.11.) Abdunkeln des Kapitelbilds folgt dem Wischen: voll auf dem Kapitel, weg im ersten Feld */
+    const GR=[...feed.querySelectorAll('.kgrp')]; let dq=0;
+    const dunkel=()=>{ dq=0; GR.forEach(g=>{ const t=g.getBoundingClientRect().top; if(t>innerHeight||t<-2*innerHeight) return; const p=Math.max(0,Math.min(1,-t/innerHeight)); g.querySelector('.kbg').style.setProperty('--dunkel',(.45*(1-p)).toFixed(3)); }); };
+    feed.addEventListener('scroll',()=>{ if(!dq) dq=requestAnimationFrame(dunkel); },{passive:true}); dunkel();
     const ioK=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle('da',en.isIntersecting)),{threshold:.6});   /* (12.11.) Feld-Pillen im Kapitel blenden nacheinander ein */
     feed.querySelectorAll('.sl.kap').forEach(k=>ioK.observe(k));
     feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const x=SHOW.get(m.closest('.sl')); x&&setTimeout(()=>x.zeige(x.k),0); });   /* Text auf: Diashow steht, Text zu: laeuft weiter */
