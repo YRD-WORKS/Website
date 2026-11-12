@@ -495,16 +495,17 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .nav{background:none;color:#fff;text-shadow:0 0 12px rgba(0,0,0,.35)}
   .nav .links a[aria-current]{text-decoration-color:#fff}
   .sl{position:relative;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:var(--ink);color:#fff}
-  .sl .bahn{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+  .sl .bahn,.kbg .bahn{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
   .sl .bahn::-webkit-scrollbar{display:none}
-  .sl .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
+  .sl .bahn a,.kbg .bahn a{flex:none;position:relative;width:100%;height:100%;scroll-snap-align:start;display:block;color:#fff;text-decoration:none}
   .sl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-  .sl .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
+  .sl .bahn a::after,.kbg .bahn a::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 78%,rgba(0,0,0,.8))}
   .sl.kap::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(0,0,0,.62),rgba(0,0,0,.45) 45%,rgba(0,0,0,0) 75%)}
-  .sl .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
-  .sl .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
+  .sl .bahn a span,.kbg .bahn a span{position:absolute;right:var(--pad);top:64px;z-index:2;font-size:13px;font-weight:420;text-align:right;text-shadow:0 0 18px rgba(0,0,0,.65)}   /* Schatten wie die weisse Schrift im Vollbild, oben Verlauf so dunkel wie am Kapitelanfang (.sl.kap): lesbar auf hellen Fotos (Auftrag D) */
+  .sl .bahn a span i,.kbg .bahn a span i{font-style:normal;opacity:.75;margin-left:.35em}
   .sl .ueber{position:absolute;left:var(--pad);right:var(--pad);bottom:calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px));z-index:2;pointer-events:none;display:grid;gap:12px;justify-items:start}
-  .sl .ueber .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
+  .sl .fk{position:absolute;left:var(--pad);right:var(--pad);top:96px;z-index:2;pointer-events:none}   /* (Ruben 12.11.) Ueberschrift der Folie oben wie beim Kapitel, unten bleibt nur der Text */
+  .sl .ueber .pill,.sl .fk .pill{pointer-events:none;background:#fff;color:var(--ink);box-shadow:none;font-size:1.05rem;padding:.45em .95em .4em}
   .sl .ueber p{margin:0;font-size:1.1rem;line-height:1.3;font-weight:550;text-wrap:pretty;hyphens:auto}
   .sl .ueber .zahl{font-size:13px;font-weight:420;opacity:.8}
   .sl.kap .ueber{bottom:auto;top:96px}
@@ -554,7 +555,7 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .fbar #inhb{background:none;color:inherit;box-shadow:inset 0 0 0 1px currentColor;margin-left:4px}
   html.leiste-hell .fbar,html.kopf-hell .fbar{color:var(--ink);filter:none;box-shadow:inset 0 0 0 1px var(--ink);background:var(--bg)}
   #inhb.an{background:var(--ink)!important;color:var(--bg)!important}
-  .sl .bahn a span,.sl .ueber .zahl{display:none}   /* Projekt und Zaehler stehen jetzt in der Leiste */
+  .sl .bahn a span,.sl .ueber .zahl,.kbg .bahn a span{display:none}   /* Projekt und Zaehler stehen jetzt in der Leiste */
   /* Inhaltsliste ueber dem Feed, unter Kopf und Leiste */
   #inh{display:block;position:fixed;inset:0;z-index:9;background:var(--bg);color:var(--ink);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:96px var(--pad) calc(var(--fb-h) + var(--fb-b) + 22px + env(safe-area-inset-bottom,0px))}
   #inh[hidden]{display:none}
@@ -583,14 +584,14 @@ html.typo .satz .kz{white-space:nowrap}   /* Satz und Knopf immer in einer Zeile
   .sl.kap .felder-k button b{font-weight:550;text-decoration:none;display:inline-block}
   .sl.kap .felder-k button:focus-visible{outline:2px solid #fff;outline-offset:3px}
   /* Feldname ist Beschriftung, kein Knopf: nur umrandet */
-  .sl .ueber .pill{background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;box-shadow:inset 0 0 0 1px #fff}
+  .sl .ueber .pill,.sl .fk .pill{background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;box-shadow:inset 0 0 0 1px #fff}
   /* Weiterlesen */
   .sl .ueber .mehr{all:unset;pointer-events:auto;cursor:pointer;font-size:13px;font-weight:550;text-decoration:underline;text-underline-offset:.2em}
   .sl .ueber .mehr[hidden]{display:none}
   .sl .ueber .mehr:focus-visible{outline:2px solid #fff;outline-offset:3px}
   .sl.lang .ueber p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
   .sl.auf::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(0,0,0,.6);pointer-events:none}
-  .sl.auf .ueber{top:96px;align-content:start;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}   /* aufgeklappt: Text unter dem Kopf, scrollt selbst, wenn er nicht passt */
+  .sl.auf .ueber{top:148px;align-content:start;overflow-y:auto;overscroll-behavior:contain;pointer-events:auto}   /* aufgeklappt: Text unter dem Kopf, scrollt selbst, wenn er nicht passt */
   /* einmal anstupsen: die naechste Aufnahme schaut kurz herein (nur die ersten zwei Bildreihen) */
   .sl.stups .bahn > a{animation:stups 1.2s ease-in-out .3s}
   @keyframes stups{0%,100%{transform:none}45%,55%{transform:translateX(-64px)}}
@@ -626,6 +627,60 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
 @media (min-width:801px){ .nav{padding-left:max(16px,clamp(10px,.88vw,22px));padding-right:max(16px,clamp(10px,.88vw,22px))} }
 @media (max-width:800px){ .nav{padding-top:calc(.9rem + env(safe-area-inset-top,0px))} }
 @media (prefers-reduced-motion:reduce){ #intro{transition:none} }
+@media (max-width:800px){
+  /* (Ruben 12.11.) Diashow statt seitlich wischen */
+  .sl .bahn,.kbg .bahn{overflow:hidden;touch-action:pan-y}
+  .sl .bahn > a,.kbg .bahn > a{position:absolute;inset:0;opacity:0;transition:opacity .9s ease;pointer-events:none}
+  .sl .bahn > a.an,.kbg .bahn > a.an{opacity:1;pointer-events:auto}
+  .sl.stups .bahn > a{animation:none}
+  .sl .striche{position:absolute;left:var(--pad);right:var(--pad);top:74px;z-index:3;display:flex;gap:4px;pointer-events:none}
+  .sl .striche i{flex:1;height:2px;border-radius:1px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
+  .sl .striche i::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
+  .sl .striche i.fertig::after{transform:none}
+  .sl .striche i.laeuft::after{animation:strich 4.5s linear forwards}
+  @keyframes strich{to{transform:none}}
+  /* Leiste: Anfragen und Inhalt, am Ende ausgeblendet */
+  .fbar{transition:opacity .3s}
+  html.am-ende .fbar{opacity:0;pointer-events:none}
+  /* Kapitel und erstes Feld: ein stehendes Bild unter zwei Fensterhoehen Text */
+  .kgrp{position:relative;height:200%;display:grid;grid-template-rows:1fr 1fr}
+  .kgrp > .kbg{grid-row:1 / span 2;grid-column:1;align-self:start;position:sticky;top:0;height:50%;overflow:hidden}
+  .kgrp > .kbg .bahn{position:absolute;inset:0}
+  .kgrp > .sl{grid-column:1;height:auto;background:transparent}
+  /* (Ruben 12.11.) Kapitelbild abgedunkelt, damit klar wird, dass etwas Neues beginnt; beim Weiterwischen ins erste Feld hellt es auf (--dunkel setzt das Skript) */
+  .kgrp > .kbg::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:#000;opacity:var(--dunkel,.45)}
+  .sl.kap > img{filter:brightness(.55)}
+  /* (Ruben 12.11.) Kapitel: Satz und Pillen senkrecht mittig, linksbuendig */
+  .sl.kap .ueber{top:46%;bottom:auto;transform:translateY(-50%);justify-items:start;text-align:left}   /* optische Mitte: etwas ueber der Bildschirmmitte, am iPhone liegt unten noch die Browserleiste */
+  .sl.kap .knr{font-size:15px;font-weight:550;letter-spacing:.04em;opacity:.85;margin-bottom:-4px}
+  /* neues Kapitel: Nummer, Satz und Pillen fahren von links herein (Probe 12.11.) */
+  .sl.kap .knr,.sl.kap h2,.sl.kap .felder-k > *{opacity:0;transform:translateX(-56px);transition:opacity .5s ease,transform .7s var(--e)}
+  .sl.kap.da .knr,.sl.kap.da h2,.sl.kap.da .felder-k > *{opacity:1;transform:none}
+  .sl.kap.da .knr{transition-delay:0s} .sl.kap.da h2{transition-delay:.08s}
+  .sl.kap .felder-k{align-items:flex-start}
+  .kgrp > .kbg{z-index:0} .kgrp > .sl{z-index:1}   /* (12.11.) Safari am iPhone legte das stehende Bild sonst ueber den Text des ersten Felds */
+  .kgrp > .sl .fk,.kgrp > .sl .ueber{-webkit-transform:translateZ(0);transform:translateZ(0)}
+  .sl.kap .ueber,.kgrp > .sl.kap .ueber{-webkit-transform:translateY(-50%) translateZ(0);transform:translateY(-50%) translateZ(0)}   /* Mitte gilt auch in der Gruppe */
+  .kgrp > .sl.kap{grid-row:1} .kgrp > .sl:not(.kap){grid-row:2}
+  /* Felder im Kapitel als Pillen, blenden nacheinander ein */
+  .sl.kap .felder-k{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:6px;opacity:1}
+  .sl.kap .felder-k button,.sl.kap .felder-k span{font:inherit;font-size:1.05rem;font-weight:550;line-height:1;padding:.45em .95em .4em;border:0;border-radius:10em;color:#fff;background:rgba(0,0,0,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px #fff;text-decoration:none;pointer-events:auto;cursor:pointer;
+    opacity:0;transform:translateX(-56px);transition:opacity .5s ease,transform .7s var(--e)}
+  .sl.kap .felder-k b{font-weight:550;margin-left:.2em}
+  .sl.kap.da .felder-k > *{opacity:1;transform:none}
+  .sl.kap.da .felder-k > :nth-child(1){transition-delay:.18s} .sl.kap.da .felder-k > :nth-child(2){transition-delay:.26s} .sl.kap.da .felder-k > :nth-child(3){transition-delay:.34s} .sl.kap.da .felder-k > :nth-child(n+4){transition-delay:.42s}
+}
+@media (max-width:800px){
+  /* (Ruben 12.11.) Fotos fuellen den Bildschirm ganz (cover), Querformate werden seitlich beschnitten, Motiv in der Mitte (Ausnahmen in MPOS) */
+  .kgrp > .sl{background:transparent!important}
+  #k-k .felder-k{flex-direction:row;flex-wrap:wrap}   /* 16 Kompetenzen fliessen in Zeilen statt untereinander */
+  #k-k .felder-k span{cursor:default}
+  .fbar .l{padding-right:6px;overflow:hidden;min-width:0;justify-self:stretch}
+  .fbar .mp{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kbg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+}
+@media (max-width:800px) and (prefers-reduced-motion:reduce){ .sl.kap .felder-k > *,.sl.kap .knr,.sl.kap h2{opacity:1;transform:none;transition:none}
+}
 </style>
 </head>
 <body>
@@ -1380,16 +1435,23 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       h+='<section class="sl kap" id="k-'+s.k+'" data-t="'+(kq.titel||'')+'" data-j="'+(kq.jahr||'')+'" data-s="'+(kq.seite||'')+'"><img alt=""'+(erstK?'':' loading="lazy"')+' decoding="async" src="'+kb+'"><div class="ueber"><h2>'+s.satz+'</h2><div class="felder-k">'+s.f.map(i=>fotosF(i).length?'<button type="button" data-z="f-'+i+'">'+F[i][1]+' <b aria-hidden="true">↓</b></button>':'<span>'+F[i][1]+'</span>').join('')+'</div></div></section>';   /* (Auftrag F) Felder im Kapitel sind Sprungknoepfe zu ihrer Folie */
       erstK=false;
       s.f.forEach(i=>{ const bw=hatBW(i), os=bw?fotosVon(i):F[i][2].filter(o=>o in idx); if(!os.length) return;   /* Pillen ohne Fotos (Testseite ?viele) bekommen am Handy keine leere Seite */
-        h+='<section class="sl" id="f-'+i+'">'+(bw?bahnBW(os):bahn(os))+'<div class="ueber"><span class="pill">'+F[i][1]+'</span><p>'+TXT[i]+'</p><button type="button" class="mehr" hidden>'+(EN?'Read more':'Weiterlesen')+'</button><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
+        h+='<section class="sl" id="f-'+i+'">'+(bw?bahnBW(os):bahn(os))+'<div class="fk"><span class="pill">'+F[i][1]+'</span></div><div class="ueber"><p>'+TXT[i]+'</p><button type="button" class="mehr" hidden>'+(EN?'Read more':'Weiterlesen')+'</button><span class="zahl">'+(os.length>1?'1 / '+os.length+'  ·  wischen für mehr':'')+'</span></div></section>'; });
     });
     h+='<section class="sl ende" id="k-a"><div class="anfrage"><p>'+ARB+'</p><span class="kn"><a class="cta" href="mailto:info@yrd.works?subject='+encodeURIComponent(EN?'Project enquiry':'Projektanfrage')+'">'+(EN?'Enquire about a project':'Projekt anfragen')+'</a><a class="cta2" href="../contact/">'+(EN?'Contact':'Kontakt')+'</a></span></div><p>Referenzen</p>'+REF+'<a href="../index/index.html">Alle Projekte im Index</a></section>';   /* (Auftrag D) Index-Link unter der Foerderzeile, eigener leerer Abschnitt entfaellt */
     feed.innerHTML=h;
+    /* (Ruben 12.11.) Kapitel und erstes Feld teilen sich ein stehendes Bild: beim Weiterwischen faehrt das Bild nicht neu herein, nur der Text wechselt.
+       Bild (Bahn des ersten Felds) liegt sticky in .kbg, Kapitel und Feld liegen als zwei Fensterhoehen darueber. */
+    feed.querySelectorAll('.sl.kap').forEach(kap=>{ const fd=kap.nextElementSibling, b=fd&&fd.matches('.sl:not(.kap):not(.ende)')&&fd.querySelector('.bahn'); if(!b) return;
+      const g=document.createElement('div'); g.className='kgrp'; kap.before(g); const bg=document.createElement('div'); bg.className='kbg'; bg.appendChild(b);
+      const im=kap.querySelector(':scope > img'); im&&im.remove(); g.append(bg,kap,fd); });
+    /* (Ruben 12.11.) Kapitel 1 bis 4 nummeriert, damit man weiss, wo man auf der Seite ist */
+    ['o','r','t','m'].forEach((k,i)=>{ const kp=document.getElementById('k-'+k); if(!kp) return; kp.dataset.nr=i+1; const h=kp.querySelector('h2'); const n=document.createElement('span'); n.className='knr'; n.textContent=(i+1)+' / 4'; h&&h.before(n); });
     /* (Ruben 11.11.) Handy hochkant: Bildausschnitt je Foto, wo die Mitte am Motiv vorbeigeht (geprueft am Kontaktbogen 375 x 812) */
     const MPOS={'02-land/00-hole-mound-video.jpg':'58% 50%','03-bestand/01-bingenheim.jpg':'74% 50%','2024-im-angesicht-des-todes/01.jpg':'90% 50%','07-ausstellung/04-forschungswerkstatt.jpg':'25% 50%','04-temporaer/02-weinfesttische.jpg':'28% 50%'};
-    feed.querySelectorAll('.sl img').forEach(im=>{ const k=Object.keys(MPOS).find(x=>(im.getAttribute('src')||'').endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
-    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn'), z=sl.querySelector('.zahl'), n=b.children.length; if(n<2) return;
+    feed.querySelectorAll('.sl img, .kbg img').forEach(im=>{ const k=Object.keys(MPOS).find(x=>(im.getAttribute('src')||'').endsWith(x)); if(k) im.style.objectPosition=MPOS[k]; });
+    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn')||sl.parentElement.querySelector('.kbg .bahn'), z=sl.querySelector('.zahl'); if(!b) return; const n=b.children.length; if(n<2) return;
       sl.classList.add('mehrere');
-      b.addEventListener('scroll',()=>{ const k=Math.round(b.scrollLeft/b.clientWidth)+1; z.textContent=k+' / '+n+(k===1?'  ·  wischen für mehr':''); if(k>1) sl.classList.remove('stups'); },{passive:true}); });
+      });   /* (Ruben 12.11.) seitliches Wischen ersetzt durch Diashow, siehe unten */
     /* (Auftrag F) Sprungknoepfe im Kapitel */
     const ruhig=matchMedia('(prefers-reduced-motion:reduce)').matches;
     feed.addEventListener('click',e=>{ const b=e.target.closest('.felder-k button'); if(!b) return; const z=document.getElementById(b.dataset.z); z&&z.scrollIntoView({block:'start',behavior:ruhig?'auto':'smooth'}); });
@@ -1398,7 +1460,7 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const u=sl.querySelector('.ueber'), m=sl.querySelector('.mehr');
         sl.classList.remove('lang'); m.hidden=true;
         if(sl.classList.contains('auf')) return;
-        const zu=u.getBoundingClientRect().top-sl.getBoundingClientRect().top<120;   /* Text reicht bis unter den Kopf */
+        const zu=u.getBoundingClientRect().top-sl.getBoundingClientRect().top<148;   /* (12.11.) Grenze unter der Ueberschrift oben */   /* Text reicht bis unter den Kopf */
         sl.classList.toggle('lang',zu); m.hidden=!zu; }); }
     feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const sl=m.closest('.sl'), auf=!sl.classList.contains('auf');
       sl.classList.toggle('auf',auf); sl.classList.toggle('lang',!auf); H.classList.toggle('text-auf',auf); m.textContent=auf?(EN?'Close':'Schließen'):(EN?'Read more':'Weiterlesen'); });
@@ -1409,6 +1471,25 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       feed.querySelectorAll('.sl.auf').forEach(a=>{ if(a!==sl) a.querySelector('.mehr').click(); });
       if(!ruhig&&sl.classList.contains('mehrere')&&gestupst.size<2&&!gestupst.has(sl)){ gestupst.add(sl); sl.classList.add('stups'); setTimeout(()=>sl.classList.remove('stups'),1600); } }),{threshold:.6});
     feed.querySelectorAll('.sl').forEach(sl=>io.observe(sl));
+    /* (Ruben 12.11.) Handy: die Fotos eines Felds laufen als Diashow (Ueberblenden, Striche oben wie Stories), nur hoch und runter wischen.
+       Tippen links (unteres Drittel der Breite) = zurueck, sonst weiter; laeuft nur auf der sichtbaren Folie, steht bei offenem Text und bei reduzierter Bewegung */
+    const DAUER=4500, SHOW=new Map();
+    feed.querySelectorAll('.sl:not(.kap):not(.ende):not(.intro)').forEach(sl=>{ const b=sl.querySelector('.bahn')||sl.parentElement.querySelector('.kbg .bahn'); if(!b) return; const as=[...b.children]; if(!as.length) return; as[0].classList.add('an'); if(as.length<2) return;
+      const st=document.createElement('div'); st.className='striche'; st.setAttribute('aria-hidden','true'); st.innerHTML=as.map(()=>'<i></i>').join(''); sl.appendChild(st); const is=[...st.children];
+      const x={k:0,t:null,an:false};
+      x.zeige=k=>{ x.k=(k+as.length)%as.length; as.forEach((a,j)=>a.classList.toggle('an',j===x.k)); is.forEach((i,j)=>{ i.classList.remove('laeuft'); i.classList.toggle('fertig',j<x.k); }); void st.offsetWidth; clearTimeout(x.t);
+        if(x.an&&!ruhig&&!sl.classList.contains('auf')){ is[x.k].classList.add('laeuft'); x.t=setTimeout(()=>x.zeige(x.k+1),DAUER); } else is[x.k].classList.add('fertig'); };
+      sl.addEventListener('click',e=>{ if(e.target.closest('.mehr')) return; e.preventDefault(); x.zeige(x.k+(e.clientX<innerWidth*.3?-1:1)); });
+      SHOW.set(sl,x); x.zeige(0); });
+    const ioS=new IntersectionObserver(es=>es.forEach(en=>{ const x=SHOW.get(en.target); if(!x) return; x.an=en.isIntersecting; x.zeige(x.an?x.k:0); }),{threshold:.6});   /* verlassen: zurueck auf das erste Foto, das auch das Kapitelbild ist */
+    SHOW.forEach((x,sl)=>ioS.observe(sl));
+    /* (Ruben 12.11.) Abdunkeln des Kapitelbilds folgt dem Wischen: voll auf dem Kapitel, weg im ersten Feld */
+    const GR=[...feed.querySelectorAll('.kgrp')]; let dq=0;
+    const dunkel=()=>{ dq=0; GR.forEach(g=>{ const t=g.getBoundingClientRect().top; if(t>innerHeight||t<-2*innerHeight) return; const p=Math.max(0,Math.min(1,-t/innerHeight)); g.querySelector('.kbg').style.setProperty('--dunkel',(.45*(1-p)).toFixed(3)); }); };
+    feed.addEventListener('scroll',()=>{ if(!dq) dq=requestAnimationFrame(dunkel); },{passive:true}); dunkel();
+    const ioK=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle('da',en.isIntersecting)),{threshold:.6});   /* (12.11.) Feld-Pillen im Kapitel blenden nacheinander ein */
+    feed.querySelectorAll('.sl.kap').forEach(k=>ioK.observe(k));
+    feed.addEventListener('click',e=>{ const m=e.target.closest('.mehr'); if(!m) return; const x=SHOW.get(m.closest('.sl')); x&&setTimeout(()=>x.zeige(x.k),0); });   /* Text auf: Diashow steht, Text zu: laeuft weiter */
     const q=location.search.match(/[?&]([ortmk])(&|=|$)/); if(q&&innerWidth<=800){ const z=document.getElementById('k-'+q[1]); z&&z.scrollIntoView(); }
   })();
 
@@ -1418,8 +1499,15 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
     const fb=document.querySelector('.fbar'), feed=document.getElementById('feed'); if(!fb||!feed) return;
     const l=fb.querySelector('.l'), r=fb.querySelector('.r'), ib=document.getElementById('inhb');
     const mp=document.createElement('a'); mp.className='mp'; l.prepend(mp);
-    r.innerHTML='<button type="button" class="mpf ml" aria-label="Zurück">‹</button><span class="mz" aria-live="polite"></span><button type="button" class="mpf mr" aria-label="Weiter">›</button>'; r.appendChild(ib);
-    const ml=r.querySelector('.ml'), mr=r.querySelector('.mr'), mz=r.querySelector('.mz');
+    r.innerHTML='<button type="button" class="mpf ml" aria-label="'+(EN?'Previous chapter':'Voriges Kapitel')+'">‹</button><button type="button" class="mpf mr" aria-label="'+(EN?'Next chapter':'Nächstes Kapitel')+'">›</button>'; r.appendChild(ib);   /* (Ruben 12.11.) Pfeile springen von Kapitel zu Kapitel, links steht das Kapitel */
+    const ml=r.querySelector('.ml'), mr=r.querySelector('.mr');
+    const kapitel=()=>[...feed.querySelectorAll('.sl[id^="k-"]')];   /* Einstieg, vier Saetze, Kompetenzen, Ende */
+    const kapVon=sl=>{ const ks=kapitel(), al=[...feed.querySelectorAll('.sl')], i=al.indexOf(sl); let k=ks[0]; ks.forEach(x=>{ if(al.indexOf(x)<=i) k=x; }); return k; };
+    const kapName=k=>!k?'':k.classList.contains('intro')?'':k.classList.contains('ende')?(EN?'References':'Referenzen'):((k.dataset.nr?k.dataset.nr+' · ':'')+((k.querySelector('h2')||{}).textContent||''));
+    function kapGehe(d){ const sl=akt(); if(!sl) return; const ks=kapitel(), k=kapVon(sl), i=ks.indexOf(k); let z;
+      if(d<0) z=(sl!==k&&k.getBoundingClientRect().top<-20)?k:ks[i-1]; else z=ks[i+1];   /* zurueck: erst an den Anfang des eigenen Kapitels */
+      z&&z.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}); }
+    ml.addEventListener('click',()=>kapGehe(-1)); mr.addEventListener('click',()=>kapGehe(1));
     const seiten=()=>[...feed.querySelectorAll('.sl')];
     const akt=()=>{ let b=null, bd=1e9; seiten().forEach(e=>{ const d=Math.abs(e.getBoundingClientRect().top); if(d<bd){ bd=d; b=e; } }); return b; };
     const lage=sl=>{ const b=sl&&sl.querySelector('.bahn'); if(!b) return {b:null,n:0,k:0}; const n=b.children.length; return {b,n,k:Math.min(n-1,Math.round(b.scrollLeft/b.clientWidth))}; };
@@ -1427,18 +1515,17 @@ html.intro-on.einlauf #saetze > .satz{animation-play-state:paused}   /* Saetze w
       let t='',j='',hr='';
       if(b){ const a=b.children[k], sp=a.querySelector('span'); t=sp?sp.childNodes[0].textContent:''; j=sp&&sp.querySelector('i')?sp.querySelector('i').textContent:''; hr=a.getAttribute('href')||''; }
       else if(sl.classList.contains('kap')){ t=sl.dataset.t; j=sl.dataset.j; hr=sl.dataset.s; }
-      mp.innerHTML=t?t+(j?' <i>'+j+'</i>':''):''; if(hr) mp.href=hr; else mp.removeAttribute('href');
-      mz.textContent=n>1?(k+1)+' / '+n:''; const alle=seiten(), i=alle.indexOf(sl);
-      ml.disabled=i<=0&&k<=0; mr.disabled=i>=alle.length-1&&(!b||k>=n-1); H.classList.toggle('leiste-hell',hell); }
+      const kk=kapVon(sl), ks=kapitel(); mp.textContent=kapName(kk); mp.removeAttribute('href'); ml.disabled=kk===ks[0]&&sl===kk; mr.disabled=kk===ks[ks.length-1];   /* (12.11.) links das Kapitel statt des Projekts */
+      const en=feed.querySelector('.sl.ende'); H.classList.toggle('am-ende',!!en&&en.getBoundingClientRect().top<innerHeight*.6);   /* (12.11.) am Ende hat die Seite eigene Knoepfe, die Leiste verdeckte sonst die Referenzen */
+      H.classList.toggle('leiste-hell',hell); }
     function gehe(d){ const sl=akt(); if(!sl) return; const {b,n,k}=lage(sl), alle=seiten(), i=alle.indexOf(sl);
       if(b&&k+d>=0&&k+d<n){ b.scrollTo({left:(k+d)*b.clientWidth,behavior:'smooth'}); return; }
       const z=alle[i+d]; if(!z) return; z.scrollIntoView({behavior:'smooth'});
       const zb=z.querySelector('.bahn'); if(zb) zb.scrollLeft=d<0?zb.scrollWidth:0; }
-    ml.addEventListener('click',()=>gehe(-1)); mr.addEventListener('click',()=>gehe(1));
     /* (Ruben 12.11.) Schrift verblasst, bevor sie unter die obere Leiste rutscht, und blendet erst ueber der unteren Leiste ein; sonst kreuzen sich Text und Leiste */
     const nav=document.querySelector('.nav'), BL=40;
     function blende(){ const nb=(nav.querySelector('a')||nav).getBoundingClientRect().bottom+4, ft=fb.getBoundingClientRect().top;
-      feed.querySelectorAll('.sl').forEach(sl=>{ const sr=sl.getBoundingClientRect(); const els=sl.classList.contains('intro')?[...sl.children]:sl.classList.contains('ende')?[...sl.querySelectorAll(':scope > p, .anfrage p, .anfrage .kn, .ref .pill, :scope > a')]:[...sl.querySelectorAll('.ueber')];   /* im Ende einzeln, damit die lange Referenzliste zeilenweise blendet */
+      feed.querySelectorAll('.sl').forEach(sl=>{ const sr=sl.getBoundingClientRect(); const els=sl.classList.contains('intro')?[...sl.children]:sl.classList.contains('ende')?[...sl.querySelectorAll(':scope > p, .anfrage p, .anfrage .kn, .ref .pill, :scope > a')]:[...sl.querySelectorAll('.fk, .ueber')];   /* im Ende einzeln, damit die lange Referenzliste zeilenweise blendet */
         els.forEach(el=>{ if(sl.classList.contains('auf')||sr.bottom<-50||sr.top>innerHeight+50){ el.style.opacity=''; return; } const r=el.getBoundingClientRect(); if(!r.height){ return; }
           let o;
           if(sl.classList.contains('ende')) o=Math.min(1,(r.top-nb)/BL,(ft-r.bottom)/BL);   /* langer Abschnitt: feste Zone an beiden Leisten */
